@@ -20,7 +20,9 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
-import core.ScreenHandler;
+import core.AssetsManager;
+import core.map.MapRenderer;
+import core.player.PlayerHandler;
 
 /**
  *
@@ -28,39 +30,25 @@ import core.ScreenHandler;
  */
 public class GameScreen implements Screen {
     private final ScreenHandler game;
-    private float unitScale = 1 / 32f; // tile size
-    private TiledMap map;
-    private OrthogonalTiledMapRenderer mapRenderer;
+    private final PlayerHandler player;
+    private final MapRenderer mapRenderer;
+//    private float unitScale = 1 / 32f; // tile size
+//    private TiledMap map;
+//    private OrthogonalTiledMapRenderer mapRenderer;
+    
 
     private OrthographicCamera camera;
 
-    public GameScreen(final ScreenHandler game) {
+    public GameScreen(final ScreenHandler game, PlayerHandler player) {
         this.game = game;
-
-        // load the drop sound effect and the rain background "music"
-        
-//        rainMusic.setLooping(true);
-//
-//        this.map = new TmxMapLoader().load("assets/map/testMapSet.tmx");
-//        this.mapRenderer = new OrthogonalTiledMapRenderer(map, unitScale);
+        this.player = player;
+        this.mapRenderer = new MapRenderer();
         
         this.camera = new OrthographicCamera();
         
-        
-//        this.camera.setToOrtho(false, 30, 20);
-        
+        this.camera.setToOrtho(false, 400, 400);
         
         this.camera.update();
-        
-        
-//        this.map = new TmxMapLoader(new ExternalFileHandleResolver()).load("assets/map/testMapSet.tmx");
-//        // create a Rectangle to logically represent the bucket
-//        bucket = new Rectangle();
-//        bucket.x = 800 / 2 - 64 / 2; // center the bucket horizontally
-//        bucket.y = 20; // bottom left corner of the bucket is 20 pixels above
-//                                        // the bottom screen edge
-//        bucket.width = 64;
-//        bucket.height = 64;
 
     }
 
@@ -71,11 +59,9 @@ public class GameScreen implements Screen {
         this.camera.update();
         this.game.batch.setProjectionMatrix(camera.combined);
         
-//        this.mapRenderer.setView(camera);
-//        this.mapRenderer.render();
-//        this.game.batch.begin();
-//        this.mapRenderer.renderTileLayer((TiledMapTileLayer)this.map.getLayers().get(0));
-//        this.game.batch.end();
+        this.game.batch.begin();
+        this.game.batch.draw(this.player.getStandImg(), 10, 100);
+        this.game.batch.end();
         
     }
 
@@ -102,12 +88,9 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
-//        this.dropImage.dispose();
-//        this.bucketImage.dispose();
-//        this.dropSound.dispose();
-//        this.rainMusic.dispose();
-        this.map.dispose();
-        this.mapRenderer.dispose();
+//        this.map.dispose();
+//        this.mapRenderer.dispose();
+        AssetsManager.assets.clear();
         this.game.dispose();
     }
 

@@ -7,7 +7,7 @@ package launcher;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import core.ScreenHandler;
+import core.screens.ScreenHandler;
 
 /**
  *

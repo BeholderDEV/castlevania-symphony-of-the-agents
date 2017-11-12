@@ -10,8 +10,8 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.utils.viewport.Viewport;
-import core.ScreenHandler;
+import core.AssetsManager;
+import core.player.PlayerHandler;
 
 /**
  *
@@ -25,8 +25,8 @@ public class MainMenuScreen implements Screen {
     public MainMenuScreen(ScreenHandler game) {
         this.game = game;
         this.camera = new OrthographicCamera();
-        this.camera.setToOrtho(false, 1280, 720);
-        this.title = new Texture(Gdx.files.internal("assets/img/titlescreen.jpg"));
+        this.camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        this.title = AssetsManager.assets.get("assets/img/titlescreen.jpg", Texture.class);
     }
 
     @Override
@@ -42,9 +42,9 @@ public class MainMenuScreen implements Screen {
         this.game.batch.end();
 
         if(Gdx.input.isKeyPressed(Input.Keys.ENTER) || Gdx.input.isTouched()){
-//            this.game.setScreen(new GameScreen(game));
+            AssetsManager.loadFirstFaseAssets();
+            this.game.setScreen(new GameScreen(game, new PlayerHandler()));
             this.dispose();
-            Gdx.app.exit();
         }
         if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE)){
             this.dispose();
@@ -74,5 +74,6 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void dispose() {
+        AssetsManager.assets.unload("assets/img/titlescreen.jpg");
     }
 }

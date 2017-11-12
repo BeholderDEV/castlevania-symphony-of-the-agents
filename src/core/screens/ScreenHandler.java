@@ -3,11 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package core;
+package core.screens;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import core.AssetsManager;
 import core.screens.MainMenuScreen;
 
 /**
@@ -21,6 +23,8 @@ public class ScreenHandler extends Game{
     public void create() {
         this.batch = new SpriteBatch();
         this.font = new BitmapFont();
+        AssetsManager.assets.load("assets/img/titlescreen.jpg", Texture.class);
+        AssetsManager.assets.finishLoading();
         this.setScreen(new MainMenuScreen(this));
     }
 
