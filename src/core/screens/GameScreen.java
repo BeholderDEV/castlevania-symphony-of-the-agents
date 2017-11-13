@@ -6,6 +6,7 @@
 package core.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.loaders.resolvers.ExternalFileHandleResolver;
@@ -14,6 +15,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -29,6 +31,8 @@ import core.player.PlayerHandler;
  * @author Augustop
  */
 public class GameScreen implements Screen {
+    private final int SCREEN_WIDTH = 400;
+    private final int SCREEN_HEIGHT = 400;
     private final ScreenHandler game;
     private final PlayerHandler player;
     private final MapRenderer mapRenderer;
@@ -46,10 +50,11 @@ public class GameScreen implements Screen {
         
         this.camera = new OrthographicCamera();
         
-        this.camera.setToOrtho(false, 400, 400);
+        this.camera.setToOrtho(false, SCREEN_WIDTH, SCREEN_HEIGHT);
         
         this.camera.update();
-
+        
+        this.player.getPlayerBody().setPosition(10, 100);
     }
 
     @Override
@@ -58,11 +63,32 @@ public class GameScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         this.camera.update();
         this.game.batch.setProjectionMatrix(camera.combined);
+        this.player.updatePlayer(delta);
         
         this.game.batch.begin();
-        this.game.batch.draw(this.player.getStandImg(), 10, 100);
+        
+        this.renderPlayer();
+        
         this.game.batch.end();
         
+        this.verifyMenuInputs();
+    }
+    
+    private void renderPlayer(){
+        Rectangle playerRec = this.player.getPlayerBody();
+        if(playerRec.x < 0) playerRec.setX(0);
+        if(playerRec.x > this.SCREEN_WIDTH - playerRec.width) playerRec.setX(this.SCREEN_WIDTH - playerRec.width);
+        if(this.player.isFacingRight()){
+            this.game.batch.draw(this.player.getCurrentFrame(), playerRec.x, playerRec.y, playerRec.width, playerRec.height);
+        }else{
+            this.game.batch.draw(this.player.getCurrentFrame(), playerRec.x + playerRec.width, playerRec.y, -playerRec.width, playerRec.height);
+        }
+    }
+    
+    private void verifyMenuInputs(){
+        if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE)){
+            Gdx.app.exit();
+        }
     }
 
     @Override
