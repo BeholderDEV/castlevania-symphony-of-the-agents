@@ -25,6 +25,7 @@ import com.badlogic.gdx.utils.Array;
 import core.AssetsManager;
 import core.map.MapRenderer;
 import core.player.PlayerHandler;
+import javax.swing.Renderer;
 
 /**
  *
@@ -35,33 +36,44 @@ public class GameScreen implements Screen {
     private final int SCREEN_HEIGHT = 400;
     private final ScreenHandler game;
     private final PlayerHandler player;
-    private final MapRenderer mapRenderer;
-//    private float unitScale = 1 / 32f; // tile size
-//    private TiledMap map;
-//    private OrthogonalTiledMapRenderer mapRenderer;
-    
+//    private final MapRenderer mapRenderer;
+    private float unitScale = 1.5f; // tile size
+    private TiledMap map;
+    private OrthogonalTiledMapRenderer mapRenderer;
+ 
 
     private OrthographicCamera camera;
 
     public GameScreen(final ScreenHandler game, PlayerHandler player) {
         this.game = game;
         this.player = player;
-        this.mapRenderer = new MapRenderer();
+//        this.mapRenderer = new MapRenderer();
         
         this.camera = new OrthographicCamera();
         
         this.camera.setToOrtho(false, SCREEN_WIDTH, SCREEN_HEIGHT);
         
+        map = new TmxMapLoader().load("assets/map/testMapSet.tmx");
+        mapRenderer = new OrthogonalTiledMapRenderer(map, unitScale);
+        
         this.camera.update();
+        mapRenderer.setView(camera);
         
         this.player.getPlayerBody().setPosition(10, 100);
     }
 
     @Override
     public void render(float delta) {
+        
         Gdx.gl.glClearColor(0, 0, 0.2f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        
+        mapRenderer.render();
+        this.camera.position.x = this.player.getPlayerBody().x;
+        
         this.camera.update();
+        mapRenderer.setView(camera);
+        
         this.game.batch.setProjectionMatrix(camera.combined);
         this.player.updatePlayer(delta);
         
@@ -77,7 +89,7 @@ public class GameScreen implements Screen {
     private void renderPlayer(){
         Rectangle playerRec = this.player.getPlayerBody();
         if(playerRec.x < 0) playerRec.setX(0);
-        if(playerRec.x > this.SCREEN_WIDTH - playerRec.width) playerRec.setX(this.SCREEN_WIDTH - playerRec.width);
+        //if(playerRec.x > this.SCREEN_WIDTH - playerRec.width) playerRec.setX(this.SCREEN_WIDTH - playerRec.width);
         if(this.player.isFacingRight()){
             this.game.batch.draw(this.player.getCurrentFrame(), playerRec.x, playerRec.y, playerRec.width, playerRec.height);
         }else{
