@@ -42,13 +42,15 @@ public class MapHandler {
         
         ShapeRenderer a = new ShapeRenderer();
         a.begin(ShapeRenderer.ShapeType.Filled);
-        a.rect(rectobj.getRectangle().x*unitScale, rectobj.getRectangle().y*unitScale, rectobj.getRectangle().width*unitScale, rectobj.getRectangle().height*unitScale);
+//        a.rect(rectobj.getRectangle().x*unitScale, rectobj.getRectangle().y*unitScale, rectobj.getRectangle().width*unitScale, rectobj.getRectangle().height*unitScale);
+//        a.rect(rectobj.getRectangle().x, rectobj.getRectangle().y, rectobj.getRectangle().width / unitScale, rectobj.getRectangle().height);
         a.end();
         a.dispose();
-//        System.out.println(rectobj.getRectangle().width);
-//        System.out.println(rectobj.getRectangle().height);
-//        System.out.println(rectobj.getRectangle().x);
-//        System.out.println(rectobj.getRectangle().y);
+//        System.out.println(rectobj.getRectangle().width * unitScale);
+        System.out.println(rectobj.getRectangle().width);
+        System.out.println(rectobj.getRectangle().height) ;
+        System.out.println(rectobj.getRectangle().x);
+        System.out.println(rectobj.getRectangle().y);
         
     }
 

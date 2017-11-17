@@ -23,11 +23,11 @@ public class PlayerHandler {
     enum State {
         Standing, Walking, Jumping, Crounching, Attacking
     }
-    private final int NORMAL_WIDTH = 80;
+    private final float NORMAL_WIDTH = 0.75f;
 //    private final int NORMAL_HEIGHT = (50 / 32) * NORMAL_WIDTH;
-    private final int NORMAL_HEIGHT = 160;
-    private final int WALKING_SPEED = 150;
-    private final int JUMPING_SPEED = 700;
+    private final float NORMAL_HEIGHT = 1.5f;
+    private final int WALKING_SPEED = 1;
+    private final int JUMPING_SPEED = 10;
     private float stateTime;
     private final TextureRegion standImg;
     private final TextureRegion jumpImg;
@@ -99,15 +99,15 @@ public class PlayerHandler {
     
     //Detect the ground when using an actual map
     private void defineActionJumping(float deltaTime){
-        this.velocity.y = (this.velocity.y < 0) ? this.velocity.y - JUMPING_SPEED / 30 : this.velocity.y - JUMPING_SPEED / 30;
-        this.velocity.x = (this.velocity.x > 0) ? this.velocity.x + WALKING_SPEED / 2: 0;
+        this.velocity.y = (this.velocity.y < 0) ? this.velocity.y - JUMPING_SPEED / 28f : this.velocity.y - JUMPING_SPEED /21f;
+        this.velocity.x = (this.velocity.x > 0) ? this.velocity.x + WALKING_SPEED / 1.1f: 0;
         this.playerBody.x += this.velocity.x * deltaTime * ((this.facesRight) ? 1: -1);
         this.playerBody.y += this.velocity.y * deltaTime;
         if(this.velocity.x >= WALKING_SPEED){
             this.velocity.x = WALKING_SPEED;
         }
-        if(this.playerBody.y <= 100){
-            this.playerBody.y = 100;
+        if(this.playerBody.y <= 1){
+            this.playerBody.y = 1;
             this.currentState = State.Standing;
         }
     }

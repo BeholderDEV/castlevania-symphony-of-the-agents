@@ -24,6 +24,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import core.AssetsManager;
 import core.map.MapHandler;
@@ -37,12 +38,13 @@ import javax.swing.Renderer;
 public class GameScreen implements Screen {
 //    private final int SCREEN_WIDTH = Gdx.graphics.getWidth();
 //    private final int SCREEN_HEIGHT = Gdx.graphics.getHeight();
-    public final int SCREEN_WIDTH = 800;
-    public final int SCREEN_HEIGHT = 768;
+    public final int SCREEN_WIDTH = 8;
+    public final int SCREEN_HEIGHT = 6;
     private final ScreenHandler game;
     private final PlayerHandler player;
     private final MapHandler mapHandler;
     private OrthographicCamera camera;
+    Stage stage;
 
     public GameScreen(final ScreenHandler game, PlayerHandler player) {
         this.game = game;
@@ -51,35 +53,39 @@ public class GameScreen implements Screen {
         this.camera = new OrthographicCamera();
         this.camera.setToOrtho(false, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-        this.mapHandler = new MapHandler("assets/map/testMapSet.tmx", 3.2f);
+        this.mapHandler = new MapHandler("assets/map/testMapSet.tmx", 1 / 32f);
         
         
         this.camera.update();
         this.mapHandler.getMapRenderer().setView(camera);
-        
-        this.player.getPlayerBody().setPosition(10, 100);
+//        stage = new Stage();
+//        stage.getViewport().setCamera(camera);
+        this.player.getPlayerBody().setPosition(1, 1);
+        //stage.addActor(player);
 //        this.mapHandler.testCollision(this.player.getPlayerBody());
     }
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0, 0, 0.2f, 1);
+        Gdx.gl.glClearColor(0.5f, 0.5f, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        this.mapHandler.getMapRenderer().render();
+
+        camera.position.x = player.getPlayerBody().x;
+        camera.update();
         this.player.updatePlayer(delta);
-        this.updateCameraPosition();
-        this.camera.update();
+//        this.updateCameraPosition();
         this.mapHandler.getMapRenderer().setView(camera);
+        this.mapHandler.getMapRenderer().render();
         this.game.batch.setProjectionMatrix(camera.combined);
         
-        this.mapHandler.testCollision(this.player.getPlayerBody(), camera);
+        
 
         this.game.batch.begin();
         
         this.renderPlayer();
         
         this.game.batch.end();
-        
+//        this.mapHandler.testCollision(this.player.getPlayerBody(), camera);
         this.verifyMenuInputs();
     }
     
