@@ -38,7 +38,7 @@ public class GameScreen implements Screen {
 //    private final int SCREEN_WIDTH = Gdx.graphics.getWidth();
 //    private final int SCREEN_HEIGHT = Gdx.graphics.getHeight();
     public final int SCREEN_WIDTH = 800;
-    public final int SCREEN_HEIGHT = 600;
+    public final int SCREEN_HEIGHT = 768;
     private final ScreenHandler game;
     private final PlayerHandler player;
     private final MapHandler mapHandler;
@@ -72,7 +72,7 @@ public class GameScreen implements Screen {
         this.mapHandler.getMapRenderer().setView(camera);
         this.game.batch.setProjectionMatrix(camera.combined);
         
-//        this.mapHandler.testCollision(this.player.getPlayerBody());
+        this.mapHandler.testCollision(this.player.getPlayerBody(), camera);
 
         this.game.batch.begin();
         

@@ -6,6 +6,7 @@
 package core.map;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
@@ -31,16 +32,17 @@ public class MapHandler {
         mapRenderer = new OrthogonalTiledMapRenderer(map, this.unitScale);
     }
 
-    public void testCollision(Rectangle player){
+    public void testCollision(Rectangle player, OrthographicCamera cam){
         RectangleMapObject rectobj = (RectangleMapObject) map.getLayers().get("controlObjects").getObjects().get(0); // get by name later
 //        if(rectobj.getRectangle().overlaps(player)){
 //            System.out.println("Ayy");
 //            return;
 //        }
 //        System.out.println("lmao");
+        
         ShapeRenderer a = new ShapeRenderer();
         a.begin(ShapeRenderer.ShapeType.Filled);
-        a.rect(rectobj.getRectangle().x, rectobj.getRectangle().y, rectobj.getRectangle().width, rectobj.getRectangle().height);
+        a.rect(rectobj.getRectangle().x*unitScale, rectobj.getRectangle().y*unitScale, rectobj.getRectangle().width*unitScale, rectobj.getRectangle().height*unitScale);
         a.end();
         a.dispose();
 //        System.out.println(rectobj.getRectangle().width);
