@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import core.AssetsManager;
+import core.player.PlayerHandler;
 import core.screens.MainMenuScreen;
 
 /**
@@ -23,9 +24,11 @@ public class ScreenHandler extends Game{
     public void create() {
         this.batch = new SpriteBatch();
         this.font = new BitmapFont();
-        AssetsManager.assets.load("assets/img/titlescreen.jpg", Texture.class);
-        AssetsManager.assets.finishLoading();
-        this.setScreen(new MainMenuScreen(this));
+//        AssetsManager.assets.load("assets/img/titlescreen.jpg", Texture.class);
+//        AssetsManager.assets.finishLoading();
+//        this.setScreen(new MainMenuScreen(this));
+        AssetsManager.loadFirstFaseAssets();
+        this.setScreen(new GameScreen(this, new PlayerHandler()));
     }
 
     public void render() {

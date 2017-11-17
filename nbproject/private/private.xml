@@ -3,13 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Alisson/Documents/Git/castlevania-symphony-of-the-agents/src/core/AnimationManager.java</file>
-            <file>file:/C:/Users/Alisson/Documents/Git/castlevania-symphony-of-the-agents/src/core/screens/ScreenHandler.java</file>
-            <file>file:/C:/Users/Alisson/Documents/Git/castlevania-symphony-of-the-agents/src/core/player/PlayerHandler.java</file>
-            <file>file:/C:/Users/Alisson/Documents/Git/castlevania-symphony-of-the-agents/src/core/screens/MainMenuScreen.java</file>
-            <file>file:/C:/Users/Alisson/Documents/Git/castlevania-symphony-of-the-agents/src/core/AssetsManager.java</file>
-            <file>file:/C:/Users/Alisson/Documents/Git/castlevania-symphony-of-the-agents/src/launcher/Launcher.java</file>
-            <file>file:/C:/Users/Alisson/Documents/Git/castlevania-symphony-of-the-agents/src/core/screens/GameScreen.java</file>
+            <file>file:/C:/Augustop/Programming/castlevania-symphony-of-the-agents/src/core/player/PlayerHandler.java</file>
+            <file>file:/C:/Augustop/Programming/castlevania-symphony-of-the-agents/src/core/screens/ScreenHandler.java</file>
+            <file>file:/C:/Augustop/Programming/castlevania-symphony-of-the-agents/src/launcher/Launcher.java</file>
+            <file>file:/C:/Augustop/Programming/castlevania-symphony-of-the-agents/src/core/AssetsManager.java</file>
+            <file>file:/C:/Augustop/Programming/castlevania-symphony-of-the-agents/src/core/map/MapRenderer.java</file>
+            <file>file:/C:/Augustop/Programming/castlevania-symphony-of-the-agents/src/ai/AgentCreator.java</file>
+            <file>file:/C:/Augustop/Programming/castlevania-symphony-of-the-agents/src/core/screens/MainMenuScreen.java</file>
+            <file>file:/C:/Augustop/Programming/castlevania-symphony-of-the-agents/src/core/screens/GameScreen.java</file>
+            <file>file:/C:/Augustop/Programming/castlevania-symphony-of-the-agents/src/core/AnimationManager.java</file>
         </group>
     </open-files>
 </project-private>

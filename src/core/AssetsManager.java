@@ -20,6 +20,7 @@ public class AssetsManager {
     public static void loadFirstFaseAssets(){
         assets.load("assets/img/playerSprites.png", Texture.class); // Asynchronous loading
         assets.finishLoading(); // Forces to wait until all assets are loaded
+//        assets.get("assets/img/playerSprites.png", Texture.class).setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 //        float progress = assets.getProgress();
     }
 }

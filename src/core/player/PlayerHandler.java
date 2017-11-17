@@ -23,8 +23,11 @@ public class PlayerHandler {
     enum State {
         Standing, Walking, Jumping, Crounching, Attacking
     }
-    private int normalWidth = 32;
-    private int normalHeight = 50;
+    private final int NORMAL_WIDTH = 80;
+//    private final int NORMAL_HEIGHT = (50 / 32) * NORMAL_WIDTH;
+    private final int NORMAL_HEIGHT = 160;
+    private final int WALKING_SPEED = 150;
+    private final int JUMPING_SPEED = 700;
     private float stateTime;
     private final TextureRegion standImg;
     private final TextureRegion jumpImg;
@@ -40,12 +43,12 @@ public class PlayerHandler {
         this.crouchImg = new TextureRegion(AssetsManager.assets.get("assets/img/playerSprites.png", Texture.class), 62, 19, 26, 37);
         this.jumpImg = new TextureRegion(AssetsManager.assets.get("assets/img/playerSprites.png", Texture.class), 121, 9, 25, 47);
         this.prepareAnimations();
-        this.playerBody = new Rectangle(0, 0, this.normalWidth, this.normalHeight);
+        this.playerBody = new Rectangle(0, 0, this.NORMAL_WIDTH, this.NORMAL_HEIGHT);
         this.stateTime = 0;
     }
     
     private void prepareAnimations(){
-        this.walkAnimation = AnimationManager.generateAnimation(new TextureRegion(AssetsManager.assets.get("assets/img/playerSprites.png", Texture.class), 176, 6, 194, 50), this.normalWidth, this.normalHeight, Animation.PlayMode.LOOP);
+        this.walkAnimation = AnimationManager.generateAnimation(new TextureRegion(AssetsManager.assets.get("assets/img/playerSprites.png", Texture.class), 176, 6, 194, 50), 32, 50, Animation.PlayMode.LOOP);
     }
     
     public void updatePlayer(float deltaTime){
@@ -73,35 +76,35 @@ public class PlayerHandler {
         }
         if(Gdx.input.isKeyPressed(Keys.LEFT) || Gdx.input.isKeyPressed(Keys.A)) {
             this.currentState = State.Walking;
-            this.playerBody.x -= 50 * deltaTime;
-            this.velocity.x = 50;
+            this.playerBody.x -= WALKING_SPEED * deltaTime;
+            this.velocity.x = WALKING_SPEED;
             this.facesRight = false;
         }
         if(Gdx.input.isKeyPressed(Keys.RIGHT) || Gdx.input.isKeyPressed(Keys.D)) {
             this.currentState = State.Walking;
-            this.playerBody.x += 50 * deltaTime;
-            this.velocity.x = 50;
+            this.playerBody.x += WALKING_SPEED * deltaTime;
+            this.velocity.x = WALKING_SPEED;
             this.facesRight = true;
         }
         if(Gdx.input.isKeyPressed(Keys.DOWN) || Gdx.input.isKeyPressed(Keys.S)){
             this.currentState = State.Crounching;
-            this.playerBody.height = 37;
+            this.playerBody.height = Math.round(this.NORMAL_HEIGHT - this.NORMAL_HEIGHT * 0.25);
         }
         if(Gdx.input.isKeyPressed(Keys.UP) || Gdx.input.isKeyPressed(Keys.W)){
             this.currentState = State.Jumping;
-            this.playerBody.y += 400 * deltaTime;
-            this.velocity.y = 400;
+            this.playerBody.y += JUMPING_SPEED * deltaTime;
+            this.velocity.y = JUMPING_SPEED;
         }
     }
     
     //Detect the ground when using an actual map
     private void defineActionJumping(float deltaTime){
-        this.velocity.y = (this.velocity.y < 0) ? this.velocity.y - 17 : this.velocity.y - 10;
-        this.velocity.x = (this.velocity.x > 0) ? this.velocity.x + 2: 0;
+        this.velocity.y = (this.velocity.y < 0) ? this.velocity.y - JUMPING_SPEED / 30 : this.velocity.y - JUMPING_SPEED / 30;
+        this.velocity.x = (this.velocity.x > 0) ? this.velocity.x + WALKING_SPEED / 2: 0;
         this.playerBody.x += this.velocity.x * deltaTime * ((this.facesRight) ? 1: -1);
         this.playerBody.y += this.velocity.y * deltaTime;
-        if(this.velocity.x >= 100){
-            this.velocity.x = 100;
+        if(this.velocity.x >= WALKING_SPEED){
+            this.velocity.x = WALKING_SPEED;
         }
         if(this.playerBody.y <= 100){
             this.playerBody.y = 100;
@@ -115,7 +118,7 @@ public class PlayerHandler {
             return;
         }
         this.currentState = State.Standing;
-        this.playerBody.height = this.normalHeight;
+        this.playerBody.height = this.NORMAL_HEIGHT;
     }
     
     public TextureRegion getCurrentFrame(){

@@ -12,18 +12,21 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.loaders.resolvers.ExternalFileHandleResolver;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import core.AssetsManager;
-import core.map.MapRenderer;
+import core.map.MapHandler;
 import core.player.PlayerHandler;
 import javax.swing.Renderer;
 
@@ -32,51 +35,45 @@ import javax.swing.Renderer;
  * @author Augustop
  */
 public class GameScreen implements Screen {
-    private final int SCREEN_WIDTH = 400;
-    private final int SCREEN_HEIGHT = 400;
+//    private final int SCREEN_WIDTH = Gdx.graphics.getWidth();
+//    private final int SCREEN_HEIGHT = Gdx.graphics.getHeight();
+    public final int SCREEN_WIDTH = 800;
+    public final int SCREEN_HEIGHT = 600;
     private final ScreenHandler game;
     private final PlayerHandler player;
-//    private final MapRenderer mapRenderer;
-    private float unitScale = 1.5f; // tile size
-    private TiledMap map;
-    private OrthogonalTiledMapRenderer mapRenderer;
- 
-
+    private final MapHandler mapHandler;
     private OrthographicCamera camera;
 
     public GameScreen(final ScreenHandler game, PlayerHandler player) {
         this.game = game;
         this.player = player;
-//        this.mapRenderer = new MapRenderer();
         
         this.camera = new OrthographicCamera();
-        
         this.camera.setToOrtho(false, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+        this.mapHandler = new MapHandler("assets/map/testMapSet.tmx", 3.2f);
         
-        map = new TmxMapLoader().load("assets/map/testMapSet.tmx");
-        mapRenderer = new OrthogonalTiledMapRenderer(map, unitScale);
         
         this.camera.update();
-        mapRenderer.setView(camera);
+        this.mapHandler.getMapRenderer().setView(camera);
         
         this.player.getPlayerBody().setPosition(10, 100);
+//        this.mapHandler.testCollision(this.player.getPlayerBody());
     }
 
     @Override
     public void render(float delta) {
-        
         Gdx.gl.glClearColor(0, 0, 0.2f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        
-        mapRenderer.render();
-        this.camera.position.x = this.player.getPlayerBody().x;
-        
-        this.camera.update();
-        mapRenderer.setView(camera);
-        
-        this.game.batch.setProjectionMatrix(camera.combined);
+        this.mapHandler.getMapRenderer().render();
         this.player.updatePlayer(delta);
+        this.updateCameraPosition();
+        this.camera.update();
+        this.mapHandler.getMapRenderer().setView(camera);
+        this.game.batch.setProjectionMatrix(camera.combined);
         
+//        this.mapHandler.testCollision(this.player.getPlayerBody());
+
         this.game.batch.begin();
         
         this.renderPlayer();
@@ -84,6 +81,19 @@ public class GameScreen implements Screen {
         this.game.batch.end();
         
         this.verifyMenuInputs();
+    }
+    
+    private void updateCameraPosition(){
+        if(this.player.getPlayerBody().x + this.player.getPlayerBody().width / 2 <= 400){
+            this.camera.position.x = 400;
+            return;
+        }
+        if(this.player.getPlayerBody().x + this.player.getPlayerBody().width / 2 >= SCREEN_WIDTH * 2){
+            this.camera.position.x = SCREEN_WIDTH * 2f;
+            return;
+        }
+        this.camera.position.x = this.player.getPlayerBody().x + this.player.getPlayerBody().width / 2;
+        
     }
     
     private void renderPlayer(){
