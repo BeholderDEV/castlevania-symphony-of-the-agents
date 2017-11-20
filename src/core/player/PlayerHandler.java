@@ -23,11 +23,11 @@ public class PlayerHandler {
     enum State {
         Standing, Walking, Jumping, Crounching, Attacking
     }
-    private final float NORMAL_WIDTH = 0.75f;
+    private final float NORMAL_WIDTH = 4f;
 //    private final int NORMAL_HEIGHT = (50 / 32) * NORMAL_WIDTH;
-    private final float NORMAL_HEIGHT = 1.5f;
-    private final int WALKING_SPEED = 1;
-    private final int JUMPING_SPEED = 10;
+    private final float NORMAL_HEIGHT = 6f;
+    private final int WALKING_SPEED = 7;
+    private final int JUMPING_SPEED = 20;
     private float stateTime;
     private final TextureRegion standImg;
     private final TextureRegion jumpImg;

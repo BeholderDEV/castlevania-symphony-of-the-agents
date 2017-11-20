@@ -21,8 +21,8 @@ import core.player.PlayerHandler;
  * @author Augustop
  */
 public class GameScreen implements Screen {
-    public final int SCREEN_WIDTH = 8;
-    public final int SCREEN_HEIGHT = 6;
+    public final int SCREEN_WIDTH = 100;
+    public final int SCREEN_HEIGHT = 20;
     private final ScreenHandler game;
     private final PlayerHandler player;
     private final MapHandler mapHandler;
@@ -33,14 +33,13 @@ public class GameScreen implements Screen {
         this.player = player;
         
         this.camera = new OrthographicCamera();
-        this.camera.setToOrtho(false, SCREEN_WIDTH, SCREEN_HEIGHT);
+        this.camera.setToOrtho(false, 50, 20);
 
-        this.mapHandler = new MapHandler("assets/map/testMapSet.tmx", 1 / 32f);
-        
+        this.mapHandler = new MapHandler("assets/map/mapadahora.tmx", 1 / 8f);
         
         this.camera.update();
         this.mapHandler.getMapRenderer().setView(camera);
-        this.player.getPlayerBody().setPosition(1, 1);
+        this.player.getPlayerBody().setPosition(1, 4);
     }
 
     @Override
@@ -48,7 +47,7 @@ public class GameScreen implements Screen {
         Gdx.gl.glClearColor(0.5f, 0.5f, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        camera.position.x = player.getPlayerBody().x;
+//        camera.position.x = player.getPlayerBody().x;
         camera.update();
         this.player.updatePlayer(delta);
 //        this.updateCameraPosition();
