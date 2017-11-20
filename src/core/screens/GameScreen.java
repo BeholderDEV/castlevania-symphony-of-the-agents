@@ -40,30 +40,30 @@ public class GameScreen implements Screen {
         
         this.camera.update();
         this.mapHandler.getMapRenderer().setView(camera);
-        this.player.getPlayerBody().setPosition(1, 4);
+        this.player.getPlayerBody().setPosition(1, 3.4f);
     }
 
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0.5f, 0.5f, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
         
-        this.player.updatePlayer(delta);
+        this.player.updatePlayer(delta, this.mapHandler);
+        
+        
         this.updateCameraPosition();
         this.camera.update();
+        
         this.mapHandler.getMapRenderer().setView(camera);
         this.mapHandler.getMapRenderer().render();
         this.game.batch.setProjectionMatrix(camera.combined);
         
-        
-
         this.game.batch.begin();
-        
-        this.renderPlayer();
-        
+        this.renderPlayer(); 
         this.game.batch.end();
-        this.mapHandler.testCollision(this.player.getPlayerBody(), camera);
+        
+//        this.mapHandler.testCollision(this.player.getPlayerBody(), camera);
+        
         this.verifyMenuInputs();
     }
     

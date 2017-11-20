@@ -14,6 +14,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import core.AnimationManager;
 import core.AssetsManager;
+import core.map.MapHandler;
 
 /**
  *
@@ -50,7 +51,7 @@ public class PlayerHandler {
         this.walkAnimation = AnimationManager.generateAnimation(new TextureRegion(AssetsManager.assets.get("assets/img/playerSprites.png", Texture.class), 176, 6, 194, 50), 32, 50, Animation.PlayMode.LOOP);
     }
     
-    public void updatePlayer(float deltaTime){
+    public void updatePlayer(float deltaTime, MapHandler map){
         this.stateTime += deltaTime;
         
         switch(this.currentState){
@@ -65,23 +66,25 @@ public class PlayerHandler {
                 this.defineActionCrounching(deltaTime);
             break;
         }
+        
+        this.updatePosition(deltaTime);
+        this.checkCollisions(map, deltaTime);
     }
     
     private void defineActionStanding(float deltaTime){
         this.currentState = State.Standing;
         this.velocity.x = 0;
+        this.velocity.y = 0;
         if((Gdx.input.isKeyPressed(Keys.LEFT) || Gdx.input.isKeyPressed(Keys.A)) && (Gdx.input.isKeyPressed(Keys.RIGHT) || Gdx.input.isKeyPressed(Keys.D))){
             return;
         }
         if(Gdx.input.isKeyPressed(Keys.LEFT) || Gdx.input.isKeyPressed(Keys.A)) {
             this.currentState = State.Walking;
-            this.playerBody.x -= WALKING_SPEED * deltaTime;
             this.velocity.x = WALKING_SPEED;
             this.facesRight = false;
         }
         if(Gdx.input.isKeyPressed(Keys.RIGHT) || Gdx.input.isKeyPressed(Keys.D)) {
             this.currentState = State.Walking;
-            this.playerBody.x += WALKING_SPEED * deltaTime;
             this.velocity.x = WALKING_SPEED;
             this.facesRight = true;
         }
@@ -91,7 +94,6 @@ public class PlayerHandler {
         }
         if(Gdx.input.isKeyPressed(Keys.UP) || Gdx.input.isKeyPressed(Keys.W)){
             this.currentState = State.Jumping;
-            this.playerBody.y += JUMPING_SPEED * deltaTime;
             this.velocity.y = JUMPING_SPEED;
         }
     }
@@ -100,14 +102,8 @@ public class PlayerHandler {
     private void defineActionJumping(float deltaTime){
         this.velocity.y = (this.velocity.y < 0) ? this.velocity.y - JUMPING_SPEED / 28f : this.velocity.y - JUMPING_SPEED /21f;
         this.velocity.x = (this.velocity.x > 0) ? this.velocity.x + WALKING_SPEED / 1.1f: 0;
-        this.playerBody.x += this.velocity.x * deltaTime * ((this.facesRight) ? 1: -1);
-        this.playerBody.y += this.velocity.y * deltaTime;
         if(this.velocity.x >= WALKING_SPEED){
             this.velocity.x = WALKING_SPEED;
-        }
-        if(this.playerBody.y <= 1){
-            this.playerBody.y = 1;
-            this.currentState = State.Standing;
         }
     }
     
@@ -118,6 +114,24 @@ public class PlayerHandler {
         }
         this.currentState = State.Standing;
         this.playerBody.height = this.NORMAL_HEIGHT;
+    }
+    
+    private void checkCollisions(MapHandler map, float delta){
+        if(map.checkLayerCollision(MapHandler.Layer.ground, Math.round(this.playerBody.x), Math.round(this.playerBody.y), Math.round(this.playerBody.x + this.playerBody.width), Math.round(this.playerBody.y + this.playerBody.height * 0.01f))){
+            if(this.currentState == State.Jumping){
+//                this.playerBody.y -= (this.velocity.y * delta);
+                this.currentState = State.Standing;
+            }
+        }else{
+            if(this.currentState != State.Jumping){
+                this.currentState = State.Jumping;
+            }
+        }
+    }
+    
+    private void updatePosition(float delta){
+        this.playerBody.x += this.velocity.x * delta * ((this.facesRight) ? 1: -1);;
+        this.playerBody.y += this.velocity.y * delta;
     }
     
     public TextureRegion getCurrentFrame(){
@@ -152,8 +166,17 @@ public class PlayerHandler {
     public float getStateTime() {
         return stateTime;
     }
+    
+    public Vector2 getVelocity() {
+        return velocity;
+    }
 
     public boolean isFacingRight() {
         return facesRight;
     }
+
+    public void setCurrentState(State currentState) {
+        this.currentState = currentState;
+    }
+    
 }

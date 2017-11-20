@@ -36,29 +36,6 @@ public class MapHandler {
         map = new TmxMapLoader().load(mapName);
         mapRenderer = new OrthogonalTiledMapRenderer(map, this.unitScale);
     }
-
-    public void testCollision(Rectangle player, OrthographicCamera cam){
-        
-        System.out.println(this.checkLayerCollision(Layer.ground, Math.round(player.x), Math.round(player.y), Math.round(player.x + player.width), Math.round(player.y + player.height)));
-//        for (Rectangle tile : tileArray) {
-//            if(tile.overlaps(player.o))
-//        }
-//        if(rectobj.getRectangle().overlaps(player)){
-//            System.out.println("Ayy");
-//            return;
-//        }
-//        System.out.println("lmao");
-        
-//        ShapeRenderer a = new ShapeRenderer();
-//        a.begin(ShapeRenderer.ShapeType.Filled);
-//        a.rect(player.x, player.y, 100, 100);
-//        a.end();
-//        a.dispose();
-//        System.out.println(rectobj.getRectangle().width);
-//        System.out.println(rectobj.getRectangle().height) ;
-//        System.out.println(player.x);
-//        System.out.println(player.y);
-    }
     
     public boolean checkLayerCollision(Layer layer, int startX, int startY, int endX, int endY){
         TiledMapTileLayer ground = (TiledMapTileLayer) this.map.getLayers().get(layer.name());
