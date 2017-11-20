@@ -9,42 +9,24 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.assets.loaders.resolvers.ExternalFileHandleResolver;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.Array;
 import core.AssetsManager;
 import core.map.MapHandler;
 import core.player.PlayerHandler;
-import javax.swing.Renderer;
 
 /**
  *
  * @author Augustop
  */
 public class GameScreen implements Screen {
-//    private final int SCREEN_WIDTH = Gdx.graphics.getWidth();
-//    private final int SCREEN_HEIGHT = Gdx.graphics.getHeight();
     public final int SCREEN_WIDTH = 8;
     public final int SCREEN_HEIGHT = 6;
     private final ScreenHandler game;
     private final PlayerHandler player;
     private final MapHandler mapHandler;
     private OrthographicCamera camera;
-    Stage stage;
 
     public GameScreen(final ScreenHandler game, PlayerHandler player) {
         this.game = game;
@@ -58,11 +40,7 @@ public class GameScreen implements Screen {
         
         this.camera.update();
         this.mapHandler.getMapRenderer().setView(camera);
-//        stage = new Stage();
-//        stage.getViewport().setCamera(camera);
         this.player.getPlayerBody().setPosition(1, 1);
-        //stage.addActor(player);
-//        this.mapHandler.testCollision(this.player.getPlayerBody());
     }
 
     @Override
