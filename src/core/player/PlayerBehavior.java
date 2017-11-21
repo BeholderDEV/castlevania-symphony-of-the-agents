@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import core.map.MapHandler;
+import java.awt.Dimension;
 
 /**
  *
@@ -25,6 +26,7 @@ public class PlayerBehavior {
     private final float NORMAL_HEIGHT = 6f;
     private final int WALKING_SPEED = 12;
     private final int JUMPING_SPEED = WALKING_SPEED * 3;
+    private final Dimension FOOT_SIZE = new Dimension(15, 25);
     private boolean facesRight = true;
     private boolean upstairs = false;
     private float stateTime;
@@ -78,7 +80,7 @@ public class PlayerBehavior {
             this.currentState = State.CROUNCHING;
             this.playerBody.height = Math.round(this.NORMAL_HEIGHT - this.NORMAL_HEIGHT * 0.25);
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)){
+        if(Gdx.input.isKeyPressed(Input.Keys.SPACE)){
             this.currentState = State.JUMPING;
             this.velocity.y = JUMPING_SPEED;
         }
@@ -93,6 +95,8 @@ public class PlayerBehavior {
     }
     
     private void defineActionCrounching(float deltaTime){
+        this.velocity.x = 0;
+        this.velocity.y = 0;
         if(Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)){
             this.currentState = State.CROUNCHING;
             return;
@@ -108,6 +112,7 @@ public class PlayerBehavior {
         if((Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) && (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D))){
             return;
         }
+        
         if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)){
             this.velocity.x = WALKING_SPEED;
             this.velocity.y = WALKING_SPEED;
@@ -159,13 +164,24 @@ public class PlayerBehavior {
         if(this.currentState == State.STANDING || this.currentState == State.WALKING){
             Boolean collisionWithStair;
             if(this.facesRight){
-                collisionWithStair = map.checkCollisionWithStairEntrance(Math.round(this.playerBody.x), Math.round(this.playerBody.y), Math.round((this.playerBody.x + this.playerBody.width) - this.playerBody.width * 0.20f), Math.round(this.playerBody.y + this.playerBody.height * 0.10f), this.facesRight);
+//                System.out.println("Start sem round");
+                collisionWithStair = map.checkCollisionWithStairEntrance(Math.round((this.playerBody.x + this.playerBody.width) - this.playerBody.width * (this.FOOT_SIZE.width / 100f)),
+                                    Math.round(this.playerBody.y), 
+                                    Math.round(this.playerBody.x + this.playerBody.width), 
+                                    Math.round(this.playerBody.y + this.playerBody.height * (this.FOOT_SIZE.height / 100f)), 
+                                    this.facesRight);
             }else{
-                collisionWithStair = map.checkCollisionWithStairEntrance(Math.round(this.playerBody.x), Math.round(this.playerBody.y), Math.round(this.playerBody.x + this.playerBody.width * 0.20f), Math.round(this.playerBody.y + this.playerBody.height * 0.10f), this.facesRight);
+                collisionWithStair = map.checkCollisionWithStairEntrance(Math.round(this.playerBody.x), 
+                                    Math.round(this.playerBody.y), 
+                                    Math.round(this.playerBody.x + this.playerBody.width * (this.FOOT_SIZE.width / 100f)), 
+                                    Math.round(this.playerBody.y + this.playerBody.height * ((this.FOOT_SIZE.height / 100f))), 
+                                    this.facesRight);
             }
             if(collisionWithStair != null){
-                this.upstairs = collisionWithStair.booleanValue();
-                this.currentState = State.ON_STAIRS;
+                if(!collisionWithStair || (collisionWithStair && (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)))){
+                    this.upstairs = collisionWithStair.booleanValue();
+                    this.currentState = State.ON_STAIRS;
+                }
             }
         }
     }

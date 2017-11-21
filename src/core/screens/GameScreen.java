@@ -9,14 +9,17 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import core.AssetsManager;
 import core.map.MapHandler;
 import core.player.PlayerHandler;
+import java.awt.Dimension;
 
 /**
  *
@@ -29,6 +32,7 @@ public class GameScreen implements Screen {
     private final PlayerHandler player;
     private final MapHandler mapHandler;
     private OrthographicCamera camera;
+    
 
     public GameScreen(final ScreenHandler game, PlayerHandler player) {
         this.game = game;
@@ -59,11 +63,33 @@ public class GameScreen implements Screen {
         this.mapHandler.getMapRenderer().render();
         this.game.batch.setProjectionMatrix(camera.combined);
         
-        
+//        AssetsManager.assets.load("assets/img/square.png", Texture.class);
+//        AssetsManager.assets.load("assets/img/squarer.png", Texture.class);
+//        AssetsManager.assets.finishLoading();
         this.game.batch.begin();
         this.renderPlayer(); 
-        this.game.batch.end();
-        
+//        
+//        this.game.batch.draw(AssetsManager.assets.get("assets/img/squarer.png", Texture.class), this.player.getPlayerBody().x, this.player.getPlayerBody().y, this.player.getPlayerBody().width, this.player.getPlayerBody().height);
+//        
+//        float x = (this.player.getPlayerBody().x + this.player.getPlayerBody().width) - (this.player.getPlayerBody().width * (this.FOOT_SIZE.width / 100f));
+//        System.out.println(x);
+//        
+//        float w = this.player.getPlayerBody().x +this.player.getPlayerBody().width - x;
+//        System.out.println(w);
+//        
+//        
+//        float y= this.player.getPlayerBody().y;
+//        float h= this.player.getPlayerBody().height * (this.FOOT_SIZE.height / 100f);
+//        
+//        System.out.println("x: "+this.player.getPlayerBody().x +" - w: "+this.player.getPlayerBody().width);
+//        System.out.println("y: "+this.player.getPlayerBody().y +" - h: "+this.player.getPlayerBody().height);
+//        this.game.batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), 
+//                
+//                x,
+//                y, 
+//                w,
+//                h);
+        this.game.batch.end();        
         this.verifyPlayerStatus();
         this.verifyMenuInputs();
     }

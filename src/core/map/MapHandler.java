@@ -45,7 +45,8 @@ public class MapHandler {
     }
     
     public Boolean checkCollisionWithStairEntrance(int startX, int startY, int endX, int endY, boolean facesRight){
-
+//        System.out.println("Start " + startX);
+//        System.out.println("End " + endX);
         TiledMapTileLayer tileLayer = (TiledMapTileLayer) this.map.getLayers().get("stair");
         for (int x = startX; x <= endX; x++) {
             for (int y = startY; y <= endY; y++) {
