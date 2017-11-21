@@ -16,7 +16,7 @@ import com.badlogic.gdx.math.Rectangle;
  */
 public class MapHandler {
     public enum Layer{
-        ground, stair
+        GROUND, STAIR
     }
     
     private float unitScale;
@@ -33,7 +33,7 @@ public class MapHandler {
     }
     
     public boolean checkLayerCollision(Layer layer, int startX, int startY, int endX, int endY){
-        TiledMapTileLayer tileLayer = (TiledMapTileLayer) this.map.getLayers().get(layer.name());
+        TiledMapTileLayer tileLayer = (TiledMapTileLayer) this.map.getLayers().get(layer.name().toLowerCase());
         for (int x = startX; x <= endX; x++) {
             for (int y = startY; y <= endY; y++) {
                 if(tileLayer.getCell(x, y) != null){
@@ -44,21 +44,28 @@ public class MapHandler {
         return false;
     }
     
-    public boolean checkCollisionWithStairEntrance(int startX, int startY, int endX, int endY, boolean facesRight){
+    public String checkCollisionWithStairEntrance(int startX, int startY, int endX, int endY, boolean facesRight){
+
         TiledMapTileLayer tileLayer = (TiledMapTileLayer) this.map.getLayers().get("stair");
         for (int x = startX; x <= endX; x++) {
             for (int y = startY; y <= endY; y++) {
                 if(tileLayer.getCell(x, y) != null){
                     if(facesRight && tileLayer.getCell(x + 1, y + 1) != null){
-                        return true;
+                        return "upstairs";
                     }
                     if(!facesRight && tileLayer.getCell(x - 1, y + 1) != null){
-                        return true;
+                        return "upstairs";
+                    }
+                    if(facesRight && tileLayer.getCell(x + 1, y - 1) != null){
+                        return "downstairs";
+                    }
+                    if(!facesRight && tileLayer.getCell(x - 1, y - 1) != null){
+                        return "downstairs";
                     }
                 }
             }
         }
-        return false;
+        return "No collision";
     }
     
     public OrthogonalTiledMapRenderer getMapRenderer() {
