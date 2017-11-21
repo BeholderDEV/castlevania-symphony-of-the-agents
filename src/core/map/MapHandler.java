@@ -44,28 +44,28 @@ public class MapHandler {
         return false;
     }
     
-    public String checkCollisionWithStairEntrance(int startX, int startY, int endX, int endY, boolean facesRight){
+    public Boolean checkCollisionWithStairEntrance(int startX, int startY, int endX, int endY, boolean facesRight){
 
         TiledMapTileLayer tileLayer = (TiledMapTileLayer) this.map.getLayers().get("stair");
         for (int x = startX; x <= endX; x++) {
             for (int y = startY; y <= endY; y++) {
                 if(tileLayer.getCell(x, y) != null){
                     if(facesRight && tileLayer.getCell(x + 1, y + 1) != null){
-                        return "upstairs";
+                        return true;
                     }
                     if(!facesRight && tileLayer.getCell(x - 1, y + 1) != null){
-                        return "upstairs";
+                        return true;
                     }
                     if(facesRight && tileLayer.getCell(x + 1, y - 1) != null){
-                        return "downstairs";
+                        return false;
                     }
                     if(!facesRight && tileLayer.getCell(x - 1, y - 1) != null){
-                        return "downstairs";
+                        return false;
                     }
                 }
             }
         }
-        return "No collision";
+        return null;
     }
     
     public OrthogonalTiledMapRenderer getMapRenderer() {
