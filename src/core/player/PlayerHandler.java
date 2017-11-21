@@ -10,6 +10,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.FileTextureData;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import core.AnimationManager;
@@ -26,8 +27,8 @@ public class PlayerHandler {
     }
     private final float NORMAL_WIDTH = 4f;
     private final float NORMAL_HEIGHT = 6f;
-    private final int WALKING_SPEED = 7;
-    private final int JUMPING_SPEED = 30;
+    private final int WALKING_SPEED = 12;
+    private final int JUMPING_SPEED = WALKING_SPEED * 3;
     private float stateTime;
     private final TextureRegion standImg;
     private final TextureRegion jumpImg;

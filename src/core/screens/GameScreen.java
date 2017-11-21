@@ -11,6 +11,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import core.AssetsManager;
@@ -58,13 +59,22 @@ public class GameScreen implements Screen {
         this.mapHandler.getMapRenderer().render();
         this.game.batch.setProjectionMatrix(camera.combined);
         
+        
         this.game.batch.begin();
         this.renderPlayer(); 
         this.game.batch.end();
         
-//        this.mapHandler.testCollision(this.player.getPlayerBody(), camera);
-        
+        this.verifyPlayerStatus();
         this.verifyMenuInputs();
+    }
+    
+    private void verifyPlayerStatus(){
+        if(this.player.getPlayerBody().y + this.player.getPlayerBody().height < 0){
+            AssetsManager.assets.load("assets/img/gameover_screen.png", Texture.class);
+            AssetsManager.assets.finishLoading();
+            this.game.setScreen(new GameoverScreen(game));
+            this.mapHandler.disposeMap();
+        }
     }
     
     private void updateCameraPosition(){
@@ -93,6 +103,7 @@ public class GameScreen implements Screen {
     
     private void verifyMenuInputs(){
         if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE)){
+            this.dispose();
             Gdx.app.exit();
         }
     }
@@ -120,10 +131,8 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
-//        this.map.dispose();
-//        this.mapRenderer.dispose();
+        this.mapHandler.disposeMap();
         AssetsManager.assets.clear();
-        this.game.dispose();
     }
 
 }

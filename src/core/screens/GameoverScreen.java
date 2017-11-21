@@ -4,45 +4,37 @@
  * and open the template in the editor.
  */
 package core.screens;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import core.AssetsManager;
 import core.player.PlayerHandler;
 
 /**
  *
  * @author Augustop
  */
-public class MainMenuScreen extends ImageScreen{
-
-    public MainMenuScreen(ScreenHandler game) {
-        super(game, "assets/img/titlescreen.jpg");
+public class GameoverScreen extends ImageScreen{
+    
+    public GameoverScreen(ScreenHandler game) {
+        super(game, "assets/img/gameover_screen.png");
+    }
+    
+    @Override
+    public void show() {
+        
     }
 
     @Override
-    public void render(float delta) {
-        super.render(delta);
+    public void render(float f) {
+        super.render(f);
         if(Gdx.input.isKeyPressed(Input.Keys.ENTER) || Gdx.input.isTouched()){
-            AssetsManager.loadFirstFaseAssets();
             super.game.setScreen(new GameScreen(super.game, new PlayerHandler()));
             this.dispose();
         }
     }
 
     @Override
-    public void resize(int width, int height) {
-    }
-
-    @Override
-    public void show() {
-    }
-
-    @Override
-    public void hide() {
+    public void resize(int i, int i1) {
     }
 
     @Override
@@ -54,7 +46,12 @@ public class MainMenuScreen extends ImageScreen{
     }
 
     @Override
+    public void hide() {
+    }
+
+    @Override
     public void dispose() {
         super.dispose();
     }
+    
 }

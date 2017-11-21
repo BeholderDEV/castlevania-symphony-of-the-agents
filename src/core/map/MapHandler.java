@@ -54,4 +54,9 @@ public class MapHandler {
     public OrthogonalTiledMapRenderer getMapRenderer() {
         return mapRenderer;
     }
+    
+    public void disposeMap(){
+        this.map.dispose();
+    }
+    
 }
