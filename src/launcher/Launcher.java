@@ -21,8 +21,10 @@ public class Launcher {
     public static void main(String[] args) {
         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
         config.title = "Symphony of the Agents";
-        config.width = 1280;
-        config.height = 720;
+//        config.width = 1280;
+//        config.height = 720;
+        config.width = 600;
+        config.height = 400;
         new LwjglApplication(new ScreenHandler(), config);
     }
     

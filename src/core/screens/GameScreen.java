@@ -41,7 +41,7 @@ public class GameScreen implements Screen {
         
         this.camera.update();
         this.mapHandler.getMapRenderer().setView(camera);
-        this.player.getPlayerBody().setPosition(1, 3.4f);
+        this.player.getPlayerBody().setPosition(23, 3.4f);
     }
 
     @Override
@@ -72,7 +72,7 @@ public class GameScreen implements Screen {
         if(this.player.getPlayerBody().y + this.player.getPlayerBody().height < 0){
             AssetsManager.assets.load("assets/img/gameover_screen.png", Texture.class);
             AssetsManager.assets.finishLoading();
-            this.game.setScreen(new GameoverScreen(game));
+            this.game.setScreen(new GameOverScreen(game));
             this.mapHandler.disposeMap();
         }
     }

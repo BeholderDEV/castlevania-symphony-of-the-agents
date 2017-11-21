@@ -13,9 +13,9 @@ import core.player.PlayerHandler;
  *
  * @author Augustop
  */
-public class GameoverScreen extends ImageScreen{
+public class GameOverScreen extends ImageScreen{
     
-    public GameoverScreen(ScreenHandler game) {
+    public GameOverScreen(ScreenHandler game) {
         super(game, "assets/img/gameover_screen.png");
     }
     

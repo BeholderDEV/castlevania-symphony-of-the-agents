@@ -5,17 +5,10 @@
  */
 package core.map;
 
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Pool;
-import com.badlogic.gdx.utils.Pools;
 
 /**
  *
@@ -25,11 +18,13 @@ public class MapHandler {
     public enum Layer{
         ground, stair
     }
+    
     private float unitScale;
     private TiledMap map;
     private OrthogonalTiledMapRenderer mapRenderer;
 //    private final Pool<Rectangle> tilePool = Pools.get(Rectangle.class);
 //    private final Array<Rectangle> tileArray = new Array<>();
+    
     
     public MapHandler(String mapName, float unitScale) {
         this.unitScale = unitScale;
@@ -38,19 +33,34 @@ public class MapHandler {
     }
     
     public boolean checkLayerCollision(Layer layer, int startX, int startY, int endX, int endY){
-        TiledMapTileLayer ground = (TiledMapTileLayer) this.map.getLayers().get(layer.name());
-//        this.tilePool.freeAll(this.tileArray);
-//        this.tileArray.clear();
+        TiledMapTileLayer tileLayer = (TiledMapTileLayer) this.map.getLayers().get(layer.name());
         for (int x = startX; x <= endX; x++) {
             for (int y = startY; y <= endY; y++) {
-                if(ground.getCell(x, y) != null){
+                if(tileLayer.getCell(x, y) != null){
                     return true;
                 }
             }
         }
         return false;
     }
-
+    
+    public boolean checkCollisionWithStairEntrance(int startX, int startY, int endX, int endY, boolean facesRight){
+        TiledMapTileLayer tileLayer = (TiledMapTileLayer) this.map.getLayers().get("stair");
+        for (int x = startX; x <= endX; x++) {
+            for (int y = startY; y <= endY; y++) {
+                if(tileLayer.getCell(x, y) != null){
+                    if(facesRight && tileLayer.getCell(x + 1, y + 1) != null){
+                        return true;
+                    }
+                    if(!facesRight && tileLayer.getCell(x - 1, y + 1) != null){
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    
     public OrthogonalTiledMapRenderer getMapRenderer() {
         return mapRenderer;
     }

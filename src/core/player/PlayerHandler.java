@@ -99,7 +99,6 @@ public class PlayerHandler {
         }
     }
     
-    //Detect the ground when using an actual map
     private void defineActionJumping(float deltaTime){
         this.velocity.y = (this.velocity.y < 0) ? this.velocity.y - JUMPING_SPEED / 28f : this.velocity.y - JUMPING_SPEED /21f;
         this.velocity.x = (this.velocity.x > 0) ? this.velocity.x + WALKING_SPEED / 1.1f: 0;
@@ -120,14 +119,19 @@ public class PlayerHandler {
     private void checkCollisions(MapHandler map, float delta){
         if(map.checkLayerCollision(MapHandler.Layer.ground, Math.round(this.playerBody.x), Math.round(this.playerBody.y), Math.round(this.playerBody.x + this.playerBody.width), Math.round(this.playerBody.y + this.playerBody.height * 0.01f))){
             if(this.currentState == State.Jumping){
-//                this.playerBody.y -= (this.velocity.y * delta);
                 this.currentState = State.Standing;
+                this.playerBody.y = Math.round(this.playerBody.y) + 0.4f;
             }
         }else{
             if(this.currentState != State.Jumping){
                 this.currentState = State.Jumping;
             }
         }
+        if((this.currentState == State.Standing || this.currentState == State.Walking) && 
+            map.checkCollisionWithStairEntrance(Math.round(this.playerBody.x), Math.round(this.playerBody.y), Math.round((this.playerBody.x + this.playerBody.width) - this.playerBody.width * 0.20f), Math.round(this.playerBody.y + this.playerBody.height * 0.10f), this.facesRight)){
+            System.out.println("Colidiu com o inicio da escada");
+        }
+        
     }
     
     private void updatePosition(float delta){
