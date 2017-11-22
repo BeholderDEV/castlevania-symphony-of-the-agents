@@ -5,16 +5,25 @@
  */
 package core.map;
 
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.MapObjects;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Pool;
+import com.badlogic.gdx.utils.Pools;
 
 /**
  *
  * @author Augustop
  */
 public class MapHandler {
+    
     public enum Layer{
         GROUND, STAIR
     }
@@ -22,14 +31,28 @@ public class MapHandler {
     private float unitScale;
     private TiledMap map;
     private OrthogonalTiledMapRenderer mapRenderer;
-//    private final Pool<Rectangle> tilePool = Pools.get(Rectangle.class);
-//    private final Array<Rectangle> tileArray = new Array<>();
-    
+    private final Pool<Rectangle> rectanglePool = Pools.get(Rectangle.class);
     
     public MapHandler(String mapName, float unitScale) {
         this.unitScale = unitScale;
-        map = new TmxMapLoader().load(mapName);
-        mapRenderer = new OrthogonalTiledMapRenderer(map, this.unitScale);
+        this.map = new TmxMapLoader().load(mapName);
+        this.mapRenderer = new OrthogonalTiledMapRenderer(map, this.unitScale);
+        this.prepareMapObjects();
+    }
+    
+    private void prepareMapObjects(){
+        MapObjects objects = this.map.getLayers().get("objects").getObjects();
+        Rectangle rectObject = null;
+        for (MapObject object : objects) {
+            if(!(object instanceof RectangleMapObject)){
+                continue;
+            }
+            rectObject = ((RectangleMapObject)object).getRectangle();
+            rectObject.x *= this.unitScale; 
+            rectObject.y *= this.unitScale; 
+            rectObject.width *= this.unitScale; 
+            rectObject.height *= this.unitScale;
+        }
     }
     
     public boolean checkLayerCollision(Layer layer, int startX, int startY, int endX, int endY){
@@ -44,29 +67,77 @@ public class MapHandler {
         return false;
     }
     
-    public Boolean checkCollisionWithStairEntrance(int startX, int startY, int endX, int endY, boolean facesRight){
-//        System.out.println("Start " + startX);
-//        System.out.println("End " + endX);
+    public Vector2 checkCloseToGroundFromTile(int tileX, int tileY, boolean upstairs, boolean facesRight, int groundDistance){
+        TiledMapTileLayer tileLayer = (TiledMapTileLayer) this.map.getLayers().get("ground");
+        if(upstairs && facesRight && tileLayer.getCell(tileX + groundDistance,  tileY + groundDistance) != null){
+            return new Vector2(tileX + groundDistance, tileY + groundDistance);
+        }
+        if(upstairs && !facesRight && tileLayer.getCell(tileX - groundDistance,  tileY + groundDistance) != null){
+            return new Vector2(tileX - groundDistance, tileY + groundDistance);
+        }
+        if(!upstairs && facesRight && tileLayer.getCell(tileX + groundDistance,  tileY - groundDistance) != null){
+            return new Vector2(tileX + groundDistance, tileY - groundDistance);
+        }
+        if(!upstairs && !facesRight && tileLayer.getCell(tileX - groundDistance,  tileY - groundDistance) != null){
+            return new Vector2(tileX - groundDistance, tileY - groundDistance);
+        }
+        return null;
+    }
+    
+    public Rectangle checkCollisionWithStairBoundary(float x, float y, float width, float height){
+        MapObjects objects = this.map.getLayers().get("objects").getObjects();
+        Rectangle objectToCollide = this.rectanglePool.obtain();
+        objectToCollide.set(x, y, width, height);
+        for (MapObject object : objects) {
+            if(object.getName().equals("stairBoundary")){
+                if(((RectangleMapObject)object).getRectangle().overlaps(objectToCollide)){
+                    this.rectanglePool.free(objectToCollide);
+                    return ((RectangleMapObject)object).getRectangle();
+                }
+            }            
+        }
+        this.rectanglePool.free(objectToCollide);
+        return null;
+    }
+    
+    public String checkStairsDirection(int startX, int startY, int endX, int endY){
         TiledMapTileLayer tileLayer = (TiledMapTileLayer) this.map.getLayers().get("stair");
         for (int x = startX; x <= endX; x++) {
             for (int y = startY; y <= endY; y++) {
                 if(tileLayer.getCell(x, y) != null){
-                    if(facesRight && tileLayer.getCell(x + 1, y + 1) != null){
-                        return true;
+                    if(tileLayer.getCell(x + 1, y + 1) != null){
+                        return "rightUp";
                     }
-                    if(!facesRight && tileLayer.getCell(x - 1, y + 1) != null){
-                        return true;
+                    if(tileLayer.getCell(x - 1, y + 1) != null){
+                        return "leftUp";
                     }
-                    if(facesRight && tileLayer.getCell(x + 1, y - 1) != null){
-                        return false;
+                    if(tileLayer.getCell(x + 1, y - 1) != null){
+                        return "rightDown";
                     }
-                    if(!facesRight && tileLayer.getCell(x - 1, y - 1) != null){
-                        return false;
+                    if(tileLayer.getCell(x - 1, y - 1) != null){
+                        return "leftDown";
                     }
                 }
             }
         }
-        return null;
+        return "Failed";
+    }
+    
+    public boolean checkValidLayerMove(Layer layer,int tileX, int tileY, boolean facesRight){
+        TiledMapTileLayer tileLayer = (TiledMapTileLayer) this.map.getLayers().get(layer.name().toLowerCase());
+        return tileLayer.getCell(tileX ,  tileY) != null;
+    }
+    
+    public void renderMapObjects(SpriteBatch batch, Texture objectTexture){
+        MapObjects objects = this.map.getLayers().get("objects").getObjects();
+        Rectangle rectObject;
+        for (MapObject object : objects) {
+            if(!(object instanceof RectangleMapObject)){
+                continue;
+            }
+            rectObject = ((RectangleMapObject)object).getRectangle();
+            batch.draw(objectTexture, rectObject.x, rectObject.y, rectObject.width, rectObject.height);
+        }
     }
     
     public OrthogonalTiledMapRenderer getMapRenderer() {

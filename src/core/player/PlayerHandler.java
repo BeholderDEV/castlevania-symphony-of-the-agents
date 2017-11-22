@@ -5,15 +5,9 @@
  */
 package core.player;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
-import core.AnimationManager;
-import core.AssetsManager;
 import core.map.MapHandler;
 
 /**
@@ -30,9 +24,9 @@ public class PlayerHandler {
     }
     
     public void updatePlayer(float deltaTime, MapHandler map){
-        this.behaviorHandler.defineAction(deltaTime);
+        this.behaviorHandler.defineAction(deltaTime, map);
         this.behaviorHandler.updatePosition(deltaTime);
-        this.behaviorHandler.checkCollisions(map, deltaTime);
+        this.behaviorHandler.checkCollisions(map);
     }
     
     public TextureRegion getCurrentFrame(){
@@ -52,6 +46,10 @@ public class PlayerHandler {
             default:
                 return this.animationHandler.getStandImg();
         }
+    }
+    
+    public void drawRecOnPlayer(SpriteBatch batch){
+        this.behaviorHandler.drawRec(batch);
     }
     
     public Rectangle getPlayerBody(){

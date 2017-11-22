@@ -62,33 +62,10 @@ public class GameScreen implements Screen {
         this.mapHandler.getMapRenderer().setView(camera);
         this.mapHandler.getMapRenderer().render();
         this.game.batch.setProjectionMatrix(camera.combined);
-        
-//        AssetsManager.assets.load("assets/img/square.png", Texture.class);
-//        AssetsManager.assets.load("assets/img/squarer.png", Texture.class);
-//        AssetsManager.assets.finishLoading();
         this.game.batch.begin();
-        this.renderPlayer(); 
-//        
-//        this.game.batch.draw(AssetsManager.assets.get("assets/img/squarer.png", Texture.class), this.player.getPlayerBody().x, this.player.getPlayerBody().y, this.player.getPlayerBody().width, this.player.getPlayerBody().height);
-//        
-//        float x = (this.player.getPlayerBody().x + this.player.getPlayerBody().width) - (this.player.getPlayerBody().width * (this.FOOT_SIZE.width / 100f));
-//        System.out.println(x);
-//        
-//        float w = this.player.getPlayerBody().x +this.player.getPlayerBody().width - x;
-//        System.out.println(w);
-//        
-//        
-//        float y= this.player.getPlayerBody().y;
-//        float h= this.player.getPlayerBody().height * (this.FOOT_SIZE.height / 100f);
-//        
-//        System.out.println("x: "+this.player.getPlayerBody().x +" - w: "+this.player.getPlayerBody().width);
-//        System.out.println("y: "+this.player.getPlayerBody().y +" - h: "+this.player.getPlayerBody().height);
-//        this.game.batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), 
-//                
-//                x,
-//                y, 
-//                w,
-//                h);
+        this.renderPlayer();
+        this.mapHandler.renderMapObjects(this.game.batch, AssetsManager.assets.get("assets/img/square.png", Texture.class));
+        this.player.drawRecOnPlayer(this.game.batch);
         this.game.batch.end();        
         this.verifyPlayerStatus();
         this.verifyMenuInputs();

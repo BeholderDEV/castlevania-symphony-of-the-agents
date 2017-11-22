@@ -18,6 +18,9 @@ public class AssetsManager {
     
     // Possible an loading screen
     public static void loadFirstFaseAssets(){
+        assets.load("assets/img/square.png", Texture.class);
+        assets.load("assets/img/squarer.png", Texture.class);        
+        
         assets.load("assets/img/playerSprites.png", Texture.class); // Asynchronous loading
         assets.finishLoading(); // Forces to wait until all assets are loaded
 //        assets.get("assets/img/playerSprites.png", Texture.class).setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);

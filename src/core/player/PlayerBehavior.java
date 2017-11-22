@@ -7,9 +7,11 @@ package core.player;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import core.AssetsManager;
 import core.map.MapHandler;
 import java.awt.Dimension;
 
@@ -18,15 +20,17 @@ import java.awt.Dimension;
  * @author Alisson
  */
 public class PlayerBehavior {
+    
     public enum State {
         STANDING, WALKING, JUMPING, CROUNCHING, ATTACKING, ON_STAIRS
     }
     
+    private final int NORMAL_GROUND_DISTANCE = 1; // used for ground detection from stairs
     private final float NORMAL_WIDTH = 4f;
     private final float NORMAL_HEIGHT = 6f;
     private final int WALKING_SPEED = 12;
     private final int JUMPING_SPEED = WALKING_SPEED * 3;
-    private final Dimension FOOT_SIZE = new Dimension(15, 25);
+    private final Dimension FOOT_SIZE = new Dimension(32, 25);
     private boolean facesRight = true;
     private boolean upstairs = false;
     private float stateTime;
@@ -39,7 +43,7 @@ public class PlayerBehavior {
         this.stateTime = 0;
     }
     
-    public void defineAction(float deltaTime){
+    public void defineAction(float deltaTime, MapHandler map){
         this.stateTime += deltaTime;
         switch(this.currentState){
             case WALKING:
@@ -53,7 +57,7 @@ public class PlayerBehavior {
                 this.defineActionCrounching(deltaTime);
             break;
             case ON_STAIRS:
-                this.defineActionOnStairs(deltaTime);
+                this.defineActionOnStairs(deltaTime, map);
             break;
         }
     }
@@ -61,16 +65,14 @@ public class PlayerBehavior {
     
     private void defineActionStanding(float deltaTime){
         this.currentState = State.STANDING;
-        this.velocity.x = 0;
-        this.velocity.y = 0;
+        this.velocity.set(0, 0);
         if((Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) && (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D))){
             return;
         }
         if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
             this.currentState = State.WALKING;
             this.velocity.x = WALKING_SPEED;
-            this.facesRight = false;
-        }
+            this.facesRight = false;        }
         if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
             this.currentState = State.WALKING;
             this.velocity.x = WALKING_SPEED;
@@ -80,6 +82,7 @@ public class PlayerBehavior {
             this.currentState = State.CROUNCHING;
             this.playerBody.height = Math.round(this.NORMAL_HEIGHT - this.NORMAL_HEIGHT * 0.25);
         }
+        
         if(Gdx.input.isKeyPressed(Input.Keys.SPACE)){
             this.currentState = State.JUMPING;
             this.velocity.y = JUMPING_SPEED;
@@ -95,8 +98,7 @@ public class PlayerBehavior {
     }
     
     private void defineActionCrounching(float deltaTime){
-        this.velocity.x = 0;
-        this.velocity.y = 0;
+        this.velocity.set(0, 0);
         if(Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)){
             this.currentState = State.CROUNCHING;
             return;
@@ -105,90 +107,127 @@ public class PlayerBehavior {
         this.playerBody.height = this.NORMAL_HEIGHT;
     }
     
-    private void defineActionOnStairs(float deltaTime){
-        this.velocity.x = 0;
-        this.velocity.y = 0;
+    private void defineActionOnStairs(float deltaTime, MapHandler map){
+        this.velocity.set(0, 0);
 
         if((Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) && (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D))){
+            this.stateTime -= deltaTime;
             return;
         }
         
-        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)){
-            this.velocity.x = WALKING_SPEED;
-            this.velocity.y = WALKING_SPEED;
-            if(this.upstairs && !this.facesRight){
-                this.upstairs = false;
+        if((Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) || (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D))){
+            this.velocity.set(WALKING_SPEED, WALKING_SPEED);
+            
+            if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)){
+                if((this.upstairs && !this.facesRight) || (!this.upstairs && this.facesRight)){
+                    this.upstairs = false;
+                    this.velocity.y *= -1;
+                }else if(!this.upstairs && !this.facesRight){
+                    this.upstairs = true;
+                }
                 this.facesRight = true;
-                this.velocity.y *= -1;
-            }else if(!this.upstairs && this.facesRight){
-                this.velocity.y *= -1;
-            }else if(!this.upstairs && !this.facesRight){
-                this.facesRight = true;
-                this.upstairs = true;
+            }else{
+                if((this.upstairs && this.facesRight) || (!this.upstairs && !this.facesRight)){
+                    this.upstairs = false;
+                    this.velocity.y *= -1;
+                }else if(!this.upstairs && this.facesRight){
+                    this.upstairs = true;
+                }
+                this.facesRight = false;
             }
+            int footTileX = (this.facesRight) ? Math.round((this.playerBody.x + this.velocity.x * deltaTime * ((this.facesRight) ? 1: -1) + this.playerBody.width) - this.playerBody.width * (this.FOOT_SIZE.width / 100f)): 
+                                                Math.round(this.playerBody.x + this.velocity.x * deltaTime * ((this.facesRight) ? 1: -1) + this.playerBody.width * (this.FOOT_SIZE.width / 100f)); 
+            int footTileY = Math.round(this.playerBody.y + this.velocity.y * deltaTime + this.FOOT_SIZE.height / 100f);
+            if(this.checkIfReachedGroundFromStairs(map, footTileX, footTileY)){
+                return;
+            }
+//            if(!map.checkValidLayerMove(MapHandler.Layer.STAIR, footTileX + 1, footTileY, facesRight)){
+//                this.velocity.set(0, 0);
+//                this.stateTime -= deltaTime;
+//                return;
+//            }
             this.stateTime += deltaTime;
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)){
-            this.velocity.x = WALKING_SPEED;
-            this.velocity.y = WALKING_SPEED;
-            if(this.upstairs && this.facesRight){
-                this.facesRight = false;
-                this.upstairs = false;
-                this.velocity.y *= -1;
-            }else if(!this.upstairs && this.facesRight){
-                this.upstairs = true;
-                this.facesRight = false;
-            }else if(!this.upstairs && !this.facesRight){
-                this.velocity.y *= -1;
-            }
-            this.stateTime += deltaTime;
-        }
+
         if(Gdx.input.isKeyPressed(Input.Keys.SPACE)){
             this.currentState = State.JUMPING;
             this.velocity.y = JUMPING_SPEED;
         }
+
         this.stateTime -= deltaTime;
     }
     
-    public void checkCollisions(MapHandler map, float delta){
+    public void checkCollisions(MapHandler map){
+        this.checkGroundCollision(map);
+        this.checkStairsCollision(map);
+    }
+    
+    private void checkGroundCollision(MapHandler map){
         if(map.checkLayerCollision(MapHandler.Layer.GROUND, Math.round(this.playerBody.x), Math.round(this.playerBody.y), Math.round(this.playerBody.x + this.playerBody.width), Math.round(this.playerBody.y + this.playerBody.height * 0.01f))){
-            if(this.currentState == State.JUMPING || this.currentState == State.ON_STAIRS){
+            if(this.currentState == State.JUMPING){
                 this.currentState = State.STANDING;
                 this.playerBody.y = Math.round(this.playerBody.y) + 0.4f;
             }
-        }else{
-            if(this.currentState != State.JUMPING && this.currentState != State.ON_STAIRS){
-                this.currentState = State.JUMPING;
-            }
+        }else if(this.currentState != State.JUMPING && this.currentState != State.ON_STAIRS){
+            this.currentState = State.JUMPING;
         }
+    }
+    
+    private boolean checkIfReachedGroundFromStairs(MapHandler map, int footTileX, int footTileY){
+        Vector2 ground = map.checkCloseToGroundFromTile(footTileX, footTileY, this.upstairs, this.facesRight, this.NORMAL_GROUND_DISTANCE);
+        if(ground != null){
+            this.velocity.y = 0;
+            this.playerBody.y = ground.y + 0.4f;
+            this.currentState = State.STANDING;
+            return true;
+        }
+        return false;
+    }
+    
+    private void checkStairsCollision(MapHandler map){
         if(this.currentState == State.STANDING || this.currentState == State.WALKING){
-            Boolean collisionWithStair;
-            if(this.facesRight){
-//                System.out.println("Start sem round");
-                collisionWithStair = map.checkCollisionWithStairEntrance(Math.round((this.playerBody.x + this.playerBody.width) - this.playerBody.width * (this.FOOT_SIZE.width / 100f)),
-                                    Math.round(this.playerBody.y), 
-                                    Math.round(this.playerBody.x + this.playerBody.width), 
-                                    Math.round(this.playerBody.y + this.playerBody.height * (this.FOOT_SIZE.height / 100f)), 
-                                    this.facesRight);
-            }else{
-                collisionWithStair = map.checkCollisionWithStairEntrance(Math.round(this.playerBody.x), 
-                                    Math.round(this.playerBody.y), 
-                                    Math.round(this.playerBody.x + this.playerBody.width * (this.FOOT_SIZE.width / 100f)), 
-                                    Math.round(this.playerBody.y + this.playerBody.height * ((this.FOOT_SIZE.height / 100f))), 
-                                    this.facesRight);
+            float x = (this.facesRight) ? (this.playerBody.x + this.playerBody.width) - this.playerBody.width * (this.FOOT_SIZE.width / 100f): 
+                                           this.playerBody.x + this.playerBody.width * (this.FOOT_SIZE.width / 100f);            
+            Rectangle stairBoundary = map.checkCollisionWithStairBoundary(x, this.playerBody.y, this.playerBody.width * (this.FOOT_SIZE.width / 8f / 100f), this.playerBody.height * (this.FOOT_SIZE.height / 100f));
+            if(stairBoundary == null){
+                return;
             }
-            if(collisionWithStair != null){
-                if(!collisionWithStair || (collisionWithStair && (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)))){
-                    this.upstairs = collisionWithStair.booleanValue();
-                    this.currentState = State.ON_STAIRS;
+            String stairDirection = map.checkStairsDirection(Math.round(stairBoundary.x), Math.round(stairBoundary.y), Math.round(stairBoundary.x + stairBoundary.width), Math.round(stairBoundary.y + stairBoundary.height));
+            if(stairDirection.equals("Failed")){
+                System.out.println(stairDirection);
+                return;
+            }
+//            System.out.println(stairDirection);
+            if((stairDirection.equals("rightUp") && this.facesRight) || (stairDirection.equals("leftUp") && !this.facesRight)){
+                if(!(Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W))){
+                    return;
                 }
+                this.upstairs = true;
+            }else if((stairDirection.equals("rightDown") && this.facesRight) || (stairDirection.equals("leftDown") && !this.facesRight)){
+                this.upstairs = false;
+            }else{
+                return;
             }
+            this.currentState = State.ON_STAIRS;
         }
     }
     
     public void updatePosition(float delta){
         this.playerBody.x += this.velocity.x * delta * ((this.facesRight) ? 1: -1);
         this.playerBody.y += this.velocity.y * delta;
+    }
+    
+    public void drawRec(SpriteBatch batch){
+        if(this.currentState == State.ON_STAIRS){
+            int footTileX = (this.facesRight) ? Math.round((this.playerBody.x + this.playerBody.width) - this.playerBody.width * (this.FOOT_SIZE.width / 100f)): 
+                                                Math.round(this.playerBody.x + this.playerBody.width * (this.FOOT_SIZE.width / 100f)); 
+            int footTileY = Math.round(this.playerBody.y + this.FOOT_SIZE.height / 100f);
+            batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), footTileX, footTileY, 1, 1);
+            return;
+        }
+        float x = (this.facesRight) ? (this.playerBody.x + this.playerBody.width) - this.playerBody.width * (this.FOOT_SIZE.width / 100f): this.playerBody.x + this.playerBody.width * (this.FOOT_SIZE.width / 100f);
+        batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), x, this.playerBody.y, this.playerBody.width * (this.FOOT_SIZE.width / 8f / 100f), this.playerBody.height * (this.FOOT_SIZE.height / 100f));
+//        batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), 40, 15, 1, 1);
     }
     
     public Rectangle getPlayerBody() {
