@@ -67,19 +67,19 @@ public class MapHandler {
         return false;
     }
     
-    public Vector2 checkCloseToGroundFromTile(int tileX, int tileY, boolean upstairs, boolean facesRight, int groundDistance){
-        TiledMapTileLayer tileLayer = (TiledMapTileLayer) this.map.getLayers().get("ground");
-        if(upstairs && facesRight && tileLayer.getCell(tileX + groundDistance,  tileY + groundDistance) != null){
-            return new Vector2(tileX + groundDistance, tileY + groundDistance);
+    public Vector2 getCloseTileFromLayer(Layer layer, int tileX, int tileY, boolean upstairs, boolean facesRight, int layerDistance){
+        TiledMapTileLayer tileLayer = (TiledMapTileLayer) this.map.getLayers().get(layer.name().toLowerCase());
+        if(upstairs && facesRight && tileLayer.getCell(tileX + layerDistance,  tileY + layerDistance) != null){
+            return new Vector2(tileX + layerDistance, tileY + layerDistance);
         }
-        if(upstairs && !facesRight && tileLayer.getCell(tileX - groundDistance,  tileY + groundDistance) != null){
-            return new Vector2(tileX - groundDistance, tileY + groundDistance);
+        if(upstairs && !facesRight && tileLayer.getCell(tileX - layerDistance,  tileY + layerDistance) != null){
+            return new Vector2(tileX - layerDistance, tileY + layerDistance);
         }
-        if(!upstairs && facesRight && tileLayer.getCell(tileX + groundDistance,  tileY - groundDistance) != null){
-            return new Vector2(tileX + groundDistance, tileY - groundDistance);
+        if(!upstairs && facesRight && tileLayer.getCell(tileX + layerDistance,  tileY - layerDistance) != null){
+            return new Vector2(tileX + layerDistance, tileY - layerDistance);
         }
-        if(!upstairs && !facesRight && tileLayer.getCell(tileX - groundDistance,  tileY - groundDistance) != null){
-            return new Vector2(tileX - groundDistance, tileY - groundDistance);
+        if(!upstairs && !facesRight && tileLayer.getCell(tileX - layerDistance,  tileY - layerDistance) != null){
+            return new Vector2(tileX - layerDistance, tileY - layerDistance);
         }
         return null;
     }

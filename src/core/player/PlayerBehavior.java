@@ -159,7 +159,18 @@ public class PlayerBehavior {
     
     public void checkCollisions(MapHandler map){
         this.checkGroundCollision(map);
-        this.checkStairsCollision(map);
+        if(this.currentState == State.STANDING || this.currentState == State.WALKING){
+            Rectangle stairBoundary = this.checkStairsCollision(map);
+            if(stairBoundary != null){
+                this.fixPositionForStairClimbing(map, stairBoundary);
+            }
+        }
+    }
+    
+    private void fixPositionForStairClimbing(MapHandler map, Rectangle stairBoundary){
+        Vector2 tileForStair = map.getCloseTileFromLayer(MapHandler.Layer.STAIR, Math.round(stairBoundary.x), Math.round(stairBoundary.y), this.upstairs, this.facesRight, this.NORMAL_GROUND_DISTANCE);
+        System.out.println(tileForStair.toString());
+//        this.playerBody.setPosition(tileForStair);
     }
     
     private void checkGroundCollision(MapHandler map){
@@ -174,7 +185,7 @@ public class PlayerBehavior {
     }
     
     private boolean checkIfReachedGroundFromStairs(MapHandler map, int footTileX, int footTileY){
-        Vector2 ground = map.checkCloseToGroundFromTile(footTileX, footTileY, this.upstairs, this.facesRight, this.NORMAL_GROUND_DISTANCE);
+        Vector2 ground = map.getCloseTileFromLayer(MapHandler.Layer.GROUND, footTileX, footTileY, this.upstairs, this.facesRight, this.NORMAL_GROUND_DISTANCE);
         if(ground != null){
             this.velocity.y = 0;
             this.playerBody.y = ground.y + 0.4f;
@@ -184,32 +195,31 @@ public class PlayerBehavior {
         return false;
     }
     
-    private void checkStairsCollision(MapHandler map){
-        if(this.currentState == State.STANDING || this.currentState == State.WALKING){
-            float x = (this.facesRight) ? (this.playerBody.x + this.playerBody.width) - this.playerBody.width * (this.FOOT_SIZE.width / 100f): 
-                                           this.playerBody.x + this.playerBody.width * (this.FOOT_SIZE.width / 100f);            
-            Rectangle stairBoundary = map.checkCollisionWithStairBoundary(x, this.playerBody.y, this.playerBody.width * (this.FOOT_SIZE.width / 8f / 100f), this.playerBody.height * (this.FOOT_SIZE.height / 100f));
-            if(stairBoundary == null){
-                return;
-            }
-            String stairDirection = map.checkStairsDirection(Math.round(stairBoundary.x), Math.round(stairBoundary.y), Math.round(stairBoundary.x + stairBoundary.width), Math.round(stairBoundary.y + stairBoundary.height));
-            if(stairDirection.equals("Failed")){
-                System.out.println(stairDirection);
-                return;
-            }
-//            System.out.println(stairDirection);
-            if((stairDirection.equals("rightUp") && this.facesRight) || (stairDirection.equals("leftUp") && !this.facesRight)){
-                if(!(Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W))){
-                    return;
-                }
-                this.upstairs = true;
-            }else if((stairDirection.equals("rightDown") && this.facesRight) || (stairDirection.equals("leftDown") && !this.facesRight)){
-                this.upstairs = false;
-            }else{
-                return;
-            }
-            this.currentState = State.ON_STAIRS;
+    private Rectangle checkStairsCollision(MapHandler map){
+        float x = (this.facesRight) ? (this.playerBody.x + this.playerBody.width) - this.playerBody.width * (this.FOOT_SIZE.width / 100f): 
+                                       this.playerBody.x + this.playerBody.width * (this.FOOT_SIZE.width / 100f);            
+        Rectangle stairBoundary = map.checkCollisionWithStairBoundary(x, this.playerBody.y, this.playerBody.width * (this.FOOT_SIZE.width / 8f / 100f), this.playerBody.height * (this.FOOT_SIZE.height / 100f));
+        if(stairBoundary == null){
+            return null;
         }
+        String stairDirection = map.checkStairsDirection(Math.round(stairBoundary.x), Math.round(stairBoundary.y), Math.round(stairBoundary.x + stairBoundary.width), Math.round(stairBoundary.y + stairBoundary.height));
+        if(stairDirection.equals("Failed")){
+            System.out.println(stairDirection);
+            return null;
+        }
+//            System.out.println(stairDirection);
+        if((stairDirection.equals("rightUp") && this.facesRight) || (stairDirection.equals("leftUp") && !this.facesRight)){
+            if(!(Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W))){
+                return null;
+            }
+            this.upstairs = true;
+        }else if((stairDirection.equals("rightDown") && this.facesRight) || (stairDirection.equals("leftDown") && !this.facesRight)){
+            this.upstairs = false;
+        }else{
+            return null;
+        }
+        this.currentState = State.ON_STAIRS;
+        return stairBoundary;
     }
     
     public void updatePosition(float delta){
@@ -227,7 +237,8 @@ public class PlayerBehavior {
         }
         float x = (this.facesRight) ? (this.playerBody.x + this.playerBody.width) - this.playerBody.width * (this.FOOT_SIZE.width / 100f): this.playerBody.x + this.playerBody.width * (this.FOOT_SIZE.width / 100f);
         batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), x, this.playerBody.y, this.playerBody.width * (this.FOOT_SIZE.width / 8f / 100f), this.playerBody.height * (this.FOOT_SIZE.height / 100f));
-//        batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), 40, 15, 1, 1);
+        batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), 29, 5, 1, 1);
+//        batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), 38, 14, 1, 1);
     }
     
     public Rectangle getPlayerBody() {

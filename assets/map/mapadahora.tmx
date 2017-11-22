@@ -120,7 +120,7 @@
  <objectgroup name="objects">
   <object id="15" name="stairBoundary" x="224" y="157" width="5" height="9.66667"/>
   <object id="17" name="stairBoundary" x="507.167" y="156.333" width="5" height="9.33333"/>
-  <object id="20" name="stairBoundary" x="311.5" y="66.75" width="3.33333" height="15.3333"/>
-  <object id="26" name="stairBoundary" x="418.25" y="67" width="6.66667" height="16"/>
+  <object id="20" name="stairBoundary" x="311.5" y="69.4167" width="6.33333" height="8.3333"/>
+  <object id="26" name="stairBoundary" x="418.25" y="69.3333" width="5.66667" height="9"/>
  </objectgroup>
 </map>
