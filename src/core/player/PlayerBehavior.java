@@ -25,7 +25,8 @@ public class PlayerBehavior {
         STANDING, WALKING, JUMPING, CROUNCHING, ATTACKING, ON_STAIRS
     }
     
-    private final int NORMAL_GROUND_DISTANCE = 1; // used for ground detection from stairs
+    private final Dimension Stair_TO_GROUND_DISTANCE = new Dimension(2, 1); // used for ground detection from stairs
+    private final float DISTANCE_FROM_GROUND_LAYER = 0.4f;
     private final float NORMAL_WIDTH = 4f;
     private final float NORMAL_HEIGHT = 6f;
     private final int WALKING_SPEED = 12;
@@ -135,17 +136,12 @@ public class PlayerBehavior {
                 }
                 this.facesRight = false;
             }
-            int footTileX = (this.facesRight) ? Math.round((this.playerBody.x + this.velocity.x * deltaTime * ((this.facesRight) ? 1: -1) + this.playerBody.width) - this.playerBody.width * (this.FOOT_SIZE.width / 100f)): 
-                                                Math.round(this.playerBody.x + this.velocity.x * deltaTime * ((this.facesRight) ? 1: -1) + this.playerBody.width * (this.FOOT_SIZE.width / 100f)); 
-            int footTileY = Math.round(this.playerBody.y + this.velocity.y * deltaTime + this.FOOT_SIZE.height / 100f);
-            if(this.checkIfReachedGroundFromStairs(map, footTileX, footTileY)){
+
+            if(!this.checkValidStairStep(map)){
+                this.currentState = State.WALKING;
+                this.velocity.y = 0;
                 return;
-            }
-//            if(!map.checkValidLayerMove(MapHandler.Layer.STAIR, footTileX + 1, footTileY, facesRight)){
-//                this.velocity.set(0, 0);
-//                this.stateTime -= deltaTime;
-//                return;
-//            }
+            }            
             this.stateTime += deltaTime;
         }
 
@@ -155,6 +151,26 @@ public class PlayerBehavior {
         }
 
         this.stateTime -= deltaTime;
+    }
+    
+    private boolean checkValidStairStep(MapHandler map){
+        int footTileX = 0;
+        int footTileY = 0;
+        if((this.facesRight && this.upstairs) || (!this.facesRight && !this.upstairs)){
+            footTileX = Math.round((this.playerBody.x + this.playerBody.width) - this.playerBody.width * (this.FOOT_SIZE.width / 100f));
+            footTileY = Math.round(this.playerBody.y + this.FOOT_SIZE.height / 100f);
+        }
+        if((!this.facesRight && this.upstairs) || (this.facesRight && !this.upstairs)){
+            footTileX = Math.round(this.playerBody.x);
+            footTileY = Math.round(this.playerBody.y + this.FOOT_SIZE.height / 100f);
+        }
+        if(!map.checkValidLayerMove(MapHandler.Layer.STAIR, footTileX, footTileY) && !map.checkValidLayerMove(MapHandler.Layer.STAIR, footTileX, footTileY - 1)){
+            return false;
+        }
+        if(this.checkIfReachedGroundFromStairs(map, footTileX, footTileY)){
+            return false;
+        }
+        return true;
     }
     
     public void checkCollisions(MapHandler map){
@@ -168,16 +184,25 @@ public class PlayerBehavior {
     }
     
     private void fixPositionForStairClimbing(MapHandler map, Rectangle stairBoundary){
-        Vector2 tileForStair = map.getCloseTileFromLayer(MapHandler.Layer.STAIR, Math.round(stairBoundary.x), Math.round(stairBoundary.y), this.upstairs, this.facesRight, this.NORMAL_GROUND_DISTANCE);
-        System.out.println(tileForStair.toString());
-//        this.playerBody.setPosition(tileForStair);
+        if(this.facesRight && this.upstairs){
+            this.playerBody.setPosition(Math.round(stairBoundary.x) - 2, Math.round(stairBoundary.y));
+        }
+        if(!this.facesRight && this.upstairs){
+            this.playerBody.setPosition(Math.round(stairBoundary.x) , Math.round(stairBoundary.y));
+        }
+        if(this.facesRight && !this.upstairs){
+            this.playerBody.setPosition(Math.round(stairBoundary.x) + 0.3f, Math.round(stairBoundary.y));
+        }
+        if(!this.facesRight && !this.upstairs){
+            this.playerBody.setPosition(Math.round(stairBoundary.x) - 2.5f, Math.round(stairBoundary.y));
+        }
     }
     
     private void checkGroundCollision(MapHandler map){
         if(map.checkLayerCollision(MapHandler.Layer.GROUND, Math.round(this.playerBody.x), Math.round(this.playerBody.y), Math.round(this.playerBody.x + this.playerBody.width), Math.round(this.playerBody.y + this.playerBody.height * 0.01f))){
             if(this.currentState == State.JUMPING){
                 this.currentState = State.STANDING;
-                this.playerBody.y = Math.round(this.playerBody.y) + 0.4f;
+                this.playerBody.y = Math.round(this.playerBody.y) + this.DISTANCE_FROM_GROUND_LAYER;
             }
         }else if(this.currentState != State.JUMPING && this.currentState != State.ON_STAIRS){
             this.currentState = State.JUMPING;
@@ -185,11 +210,17 @@ public class PlayerBehavior {
     }
     
     private boolean checkIfReachedGroundFromStairs(MapHandler map, int footTileX, int footTileY){
-        Vector2 ground = map.getCloseTileFromLayer(MapHandler.Layer.GROUND, footTileX, footTileY, this.upstairs, this.facesRight, this.NORMAL_GROUND_DISTANCE);
+        Vector2 ground = map.getCloseTileFromLayer(MapHandler.Layer.GROUND, footTileX, footTileY, this.upstairs, this.facesRight, this.Stair_TO_GROUND_DISTANCE);
         if(ground != null){
-            this.velocity.y = 0;
-            this.playerBody.y = ground.y + 0.4f;
-            this.currentState = State.STANDING;
+            this.playerBody.y = (map.checkValidLayerMove(MapHandler.Layer.GROUND, Math.round(ground.x), Math.round(ground.y + 1))) 
+                                ? ground.y + 1 + this.DISTANCE_FROM_GROUND_LAYER
+                                : ground.y + this.DISTANCE_FROM_GROUND_LAYER;
+            if(this.upstairs && this.facesRight){
+                this.playerBody.x = ground.x - 2f;
+            }
+            if(this.upstairs && !this.facesRight){
+                this.playerBody.x = ground.x - 1.2f;
+            }
             return true;
         }
         return false;
@@ -202,6 +233,7 @@ public class PlayerBehavior {
         if(stairBoundary == null){
             return null;
         }
+//        System.out.println("Bound " + (stairBoundary.y + stairBoundary.height));
         String stairDirection = map.checkStairsDirection(Math.round(stairBoundary.x), Math.round(stairBoundary.y), Math.round(stairBoundary.x + stairBoundary.width), Math.round(stairBoundary.y + stairBoundary.height));
         if(stairDirection.equals("Failed")){
             System.out.println(stairDirection);
@@ -221,7 +253,7 @@ public class PlayerBehavior {
         this.currentState = State.ON_STAIRS;
         return stairBoundary;
     }
-    
+        
     public void updatePosition(float delta){
         this.playerBody.x += this.velocity.x * delta * ((this.facesRight) ? 1: -1);
         this.playerBody.y += this.velocity.y * delta;
@@ -229,16 +261,26 @@ public class PlayerBehavior {
     
     public void drawRec(SpriteBatch batch){
         if(this.currentState == State.ON_STAIRS){
-            int footTileX = (this.facesRight) ? Math.round((this.playerBody.x + this.playerBody.width) - this.playerBody.width * (this.FOOT_SIZE.width / 100f)): 
-                                                Math.round(this.playerBody.x + this.playerBody.width * (this.FOOT_SIZE.width / 100f)); 
-            int footTileY = Math.round(this.playerBody.y + this.FOOT_SIZE.height / 100f);
+            int footTileX = 0;
+            int footTileY = 0;
+            if((this.facesRight && this.upstairs) || (!this.facesRight && !this.upstairs)){
+                footTileX = Math.round((this.playerBody.x + this.playerBody.width) - this.playerBody.width * (this.FOOT_SIZE.width / 100f));
+                footTileY = Math.round(this.playerBody.y + this.FOOT_SIZE.height / 100f);
+            }
+            if((!this.facesRight && this.upstairs) || (this.facesRight && !this.upstairs)){
+                footTileX = Math.round(this.playerBody.x);
+                footTileY = Math.round(this.playerBody.y + this.FOOT_SIZE.height / 100f);
+            }
             batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), footTileX, footTileY, 1, 1);
+//            batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), footTileX, footTileY - 1, 1, 1);
             return;
         }
         float x = (this.facesRight) ? (this.playerBody.x + this.playerBody.width) - this.playerBody.width * (this.FOOT_SIZE.width / 100f): this.playerBody.x + this.playerBody.width * (this.FOOT_SIZE.width / 100f);
         batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), x, this.playerBody.y, this.playerBody.width * (this.FOOT_SIZE.width / 8f / 100f), this.playerBody.height * (this.FOOT_SIZE.height / 100f));
         batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), 29, 5, 1, 1);
-//        batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), 38, 14, 1, 1);
+//        batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), 63, 4, 1, 1);
+//        batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), 63, 4, 1, 1);
+        batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), 63, 5, 1, 1);
     }
     
     public Rectangle getPlayerBody() {

@@ -64,8 +64,8 @@ public class GameScreen implements Screen {
         this.game.batch.setProjectionMatrix(camera.combined);
         this.game.batch.begin();
         this.renderPlayer();
-        this.mapHandler.renderMapObjects(this.game.batch, AssetsManager.assets.get("assets/img/square.png", Texture.class));
-        this.player.drawRecOnPlayer(this.game.batch);
+//        this.mapHandler.renderMapObjects(this.game.batch, AssetsManager.assets.get("assets/img/square.png", Texture.class));
+//        this.player.drawRecOnPlayer(this.game.batch);
         this.game.batch.end();        
         this.verifyPlayerStatus();
         this.verifyMenuInputs();

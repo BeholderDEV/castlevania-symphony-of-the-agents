@@ -17,6 +17,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pools;
+import java.awt.Dimension;
 
 /**
  *
@@ -67,23 +68,23 @@ public class MapHandler {
         return false;
     }
     
-    public Vector2 getCloseTileFromLayer(Layer layer, int tileX, int tileY, boolean upstairs, boolean facesRight, int layerDistance){
+    public Vector2 getCloseTileFromLayer(Layer layer, int tileX, int tileY, boolean upstairs, boolean facesRight, Dimension layerDistance){
         TiledMapTileLayer tileLayer = (TiledMapTileLayer) this.map.getLayers().get(layer.name().toLowerCase());
-        if(upstairs && facesRight && tileLayer.getCell(tileX + layerDistance,  tileY + layerDistance) != null){
-            return new Vector2(tileX + layerDistance, tileY + layerDistance);
+        if(upstairs && facesRight && tileLayer.getCell(tileX + layerDistance.width,  tileY + layerDistance.height) != null){
+            return new Vector2(tileX + layerDistance.width,  tileY + layerDistance.height);
         }
-        if(upstairs && !facesRight && tileLayer.getCell(tileX - layerDistance,  tileY + layerDistance) != null){
-            return new Vector2(tileX - layerDistance, tileY + layerDistance);
+        if(upstairs && !facesRight && tileLayer.getCell(tileX - layerDistance.width,  tileY + layerDistance.height) != null){
+            return new Vector2(tileX - layerDistance.width,  tileY + layerDistance.height);
         }
-        if(!upstairs && facesRight && tileLayer.getCell(tileX + layerDistance,  tileY - layerDistance) != null){
-            return new Vector2(tileX + layerDistance, tileY - layerDistance);
+        if(!upstairs && facesRight && tileLayer.getCell(tileX + layerDistance.width,  tileY - layerDistance.height) != null){
+            return new Vector2(tileX + layerDistance.width,  tileY - layerDistance.height);
         }
-        if(!upstairs && !facesRight && tileLayer.getCell(tileX - layerDistance,  tileY - layerDistance) != null){
-            return new Vector2(tileX - layerDistance, tileY - layerDistance);
+        if(!upstairs && !facesRight && tileLayer.getCell(tileX - layerDistance.width,  tileY - layerDistance.height) != null){
+            return new Vector2(tileX - layerDistance.width,  tileY - layerDistance.height);
         }
         return null;
     }
-    
+        
     public Rectangle checkCollisionWithStairBoundary(float x, float y, float width, float height){
         MapObjects objects = this.map.getLayers().get("objects").getObjects();
         Rectangle objectToCollide = this.rectanglePool.obtain();
@@ -102,6 +103,10 @@ public class MapHandler {
     
     public String checkStairsDirection(int startX, int startY, int endX, int endY){
         TiledMapTileLayer tileLayer = (TiledMapTileLayer) this.map.getLayers().get("stair");
+//        System.out.println(startX);
+//        System.out.println(startY);
+//        System.out.println(endX);
+//        System.out.println(endY);
         for (int x = startX; x <= endX; x++) {
             for (int y = startY; y <= endY; y++) {
                 if(tileLayer.getCell(x, y) != null){
@@ -123,7 +128,7 @@ public class MapHandler {
         return "Failed";
     }
     
-    public boolean checkValidLayerMove(Layer layer,int tileX, int tileY, boolean facesRight){
+    public boolean checkValidLayerMove(Layer layer, int tileX, int tileY){
         TiledMapTileLayer tileLayer = (TiledMapTileLayer) this.map.getLayers().get(layer.name().toLowerCase());
         return tileLayer.getCell(tileX ,  tileY) != null;
     }
