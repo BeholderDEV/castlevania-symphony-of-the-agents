@@ -22,7 +22,7 @@ import java.awt.Dimension;
 public class PlayerBehavior {
     
     public enum State {
-        STANDING, WALKING, JUMPING, CROUNCHING, ATTACKING, ON_STAIRS, DYING
+        STANDING, WALKING, JUMPING, CROUNCHING, ON_STAIRS, DYING, STAND_ATK, CROUCH_ATK, JUMP_ATK
     }
     
     public static final float DISTANCE_FROM_GROUND_LAYER = 0.4f;
@@ -70,7 +70,7 @@ public class PlayerBehavior {
             return;
         }
         if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) || Gdx.input.isKeyPressed(Input.Keys.F)){
-            this.currentState = State.ATTACKING;
+            this.currentState = State.STAND_ATK;
             this.playerHandler.setStateTime(0);
             return;
         }
@@ -109,6 +109,11 @@ public class PlayerBehavior {
     
     private void defineActionCrounching(float deltaTime){
         this.velocity.set(0, 0);
+        if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) || Gdx.input.isKeyPressed(Input.Keys.F)){
+            this.currentState = State.CROUCH_ATK;
+            this.playerHandler.setStateTime(0);
+            return;
+        }
         if(Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)){
             this.currentState = State.CROUNCHING;
             return;
@@ -180,7 +185,7 @@ public class PlayerBehavior {
     
 //    Used for debug
     public void drawRec(SpriteBatch batch){
-        if(this.currentState == State.ATTACKING){
+        if(this.currentState == State.STAND_ATK && this.playerHandler.getStateTime() >= PlayerAnimation.STANDARD_ATK_FRAME_TIME * 2f){
             float x = (this.facesRight) 
                       ? (this.playerBody.x + this.playerBody.width) - this.playerBody.width * ((this.FOOT_SIZE.width - 30f) / 100f) 
                       : this.playerBody.x - this.playerBody.width * ((this.FOOT_SIZE.width - 30f) / 100f);
@@ -191,21 +196,21 @@ public class PlayerBehavior {
             batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), x, y, w, h);
             
         }
-//        if(this.currentState == State.ON_STAIRS){
-//            int footTileX = 0;
-//            int footTileY = 0;
-//            if((this.facesRight && this.upstairs) || (!this.facesRight && !this.upstairs)){
-//                footTileX = Math.round((this.playerBody.x + this.playerBody.width) - this.playerBody.width * (this.FOOT_SIZE.width / 100f));
-//                footTileY = Math.round(this.playerBody.y + this.FOOT_SIZE.height / 100f);
-//            }
-//            if((!this.facesRight && this.upstairs) || (this.facesRight && !this.upstairs)){
-//                footTileX = Math.round(this.playerBody.x);
-//                footTileY = Math.round(this.playerBody.y + this.FOOT_SIZE.height / 100f);
-//            }
-//            batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), footTileX, footTileY, 1, 1);
-////            batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), footTileX, footTileY - 1, 1, 1);
-//            return;
-//        }
+        if(this.currentState == State.ON_STAIRS){
+            int footTileX = 0;
+            int footTileY = 0;
+            if((this.facesRight && this.stairHandler.isUpstairs()) || (!this.facesRight && !this.stairHandler.isUpstairs())){
+                footTileX = Math.round((this.playerBody.x + this.playerBody.width) - this.playerBody.width * (this.FOOT_SIZE.width / 100f));
+                footTileY = Math.round(this.playerBody.y + this.FOOT_SIZE.height / 100f);
+            }
+            if((!this.facesRight && this.stairHandler.isUpstairs()) || (this.facesRight && !this.stairHandler.isUpstairs())){
+                footTileX = Math.round(this.playerBody.x);
+                footTileY = Math.round(this.playerBody.y + this.FOOT_SIZE.height / 100f);
+            }
+            batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), footTileX, footTileY, 1, 1);
+//            batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), footTileX, footTileY - 1, 1, 1);
+            return;
+        }
 //        float x = (this.facesRight) ? (this.playerBody.x + this.playerBody.width) - this.playerBody.width * (this.FOOT_SIZE.width / 100f): this.playerBody.x + this.playerBody.width * (this.FOOT_SIZE.width / 100f);
 //        batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), x, this.playerBody.y, this.playerBody.width * (this.FOOT_SIZE.width / 8f / 100f), this.playerBody.height * (this.FOOT_SIZE.height / 100f));
 //        batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), 29, 5, 1, 1);

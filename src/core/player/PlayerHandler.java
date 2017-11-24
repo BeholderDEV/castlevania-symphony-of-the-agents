@@ -5,6 +5,7 @@
  */
 package core.player;
 
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
@@ -47,8 +48,10 @@ public class PlayerHandler {
                 }
             case DYING:
                 return this.defineDeathSprite();
-            case ATTACKING:
-                return this.defineAtkSprite();
+            case STAND_ATK:
+                return this.defineAtkSprite(this.animationHandler.getStandAtkAnimation());
+            case CROUCH_ATK:
+                 return this.defineAtkSprite(this.animationHandler.getCrouchAtkAnimation());
             default:
                 return this.animationHandler.getStandImg();
         }
@@ -64,13 +67,22 @@ public class PlayerHandler {
         return deathSprite;
     }
     
-    private TextureRegion defineAtkSprite(){
-        if(this.animationHandler.getStandAtkAnimation().isAnimationFinished(stateTime)){
-            this.behaviorHandler.getPlayerBody().setSize(PlayerBehavior.NORMAL_WIDTH, PlayerBehavior.NORMAL_HEIGHT);
-            this.behaviorHandler.setCurrentState(PlayerBehavior.State.STANDING);
-            return this.animationHandler.getStandImg();
+    private TextureRegion defineAtkSprite(Animation<TextureRegion> atkAnimation){
+        if(atkAnimation.isAnimationFinished(stateTime)){
+            switch(this.getCurrentState()){
+                case CROUCH_ATK:
+                    this.behaviorHandler.getPlayerBody().setSize(PlayerBehavior.NORMAL_WIDTH, Math.round(PlayerBehavior.NORMAL_HEIGHT - PlayerBehavior.NORMAL_HEIGHT * 0.25));
+                    this.behaviorHandler.setCurrentState(PlayerBehavior.State.CROUNCHING);
+                    return this.animationHandler.getCrouchImg();
+                default:
+                    this.behaviorHandler.getPlayerBody().setSize(PlayerBehavior.NORMAL_WIDTH, PlayerBehavior.NORMAL_HEIGHT);
+                    this.behaviorHandler.setCurrentState(PlayerBehavior.State.STANDING);
+                    return this.animationHandler.getStandImg();
+            }
         }
-        return this.animationHandler.getStandAtkAnimation().getKeyFrame(this.stateTime);
+        return atkAnimation.getKeyFrame(this.stateTime);
+//        System.out.println(this.animationHandler.getStandAtkAnimation().getKeyFrames().getClass());
+//        return this.animationHandler.getStandAtkAnimation().getKeyFrame(this.stateTime);
     }
     
     public boolean isDead(){

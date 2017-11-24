@@ -17,7 +17,7 @@ import com.badlogic.gdx.utils.Array;
  */
 public class AnimationManager {
     
-    public static Animation<TextureRegion> generateAnimation(TextureRegion spritesSheet, int spriteWidth, int spriteHeight, PlayMode loopMode){
+    public static Animation<TextureRegion> generateAnimation(TextureRegion spritesSheet, int spriteWidth, int spriteHeight, PlayMode loopMode, float frameTime){
         Array<TextureRegion> spriteArray = new Array<TextureRegion>();
         TextureRegion[][] splitedSprites = spritesSheet.split(spriteWidth, spriteHeight);
         for (int i = 0; i < splitedSprites.length; i++) {
@@ -29,10 +29,11 @@ public class AnimationManager {
             System.out.println("Error generating animation"); // Possible exception
             return null;
         }
-        return new Animation<TextureRegion>(1f / spriteArray.size, spriteArray, loopMode);
+        frameTime = (frameTime == 0) ? 1f / spriteArray.size : frameTime; 
+        return new Animation<TextureRegion>(frameTime, spriteArray, loopMode);
     }
     
-    public static Animation<TextureRegion> generateAnimation (Texture spritesSheet, int[] x, int[] y, int[] width, int[] height, PlayMode loopMode){
+    public static Animation<TextureRegion> generateAnimation (Texture spritesSheet, int[] x, int[] y, int[] width, int[] height, PlayMode loopMode, float frameTime){
         Array<TextureRegion> spriteArray = new Array<TextureRegion>();
         for (int i = 0; i < x.length; i++) {
            spriteArray.add(new TextureRegion(spritesSheet, x[i], y[i], width[i], height[i]));
@@ -41,7 +42,15 @@ public class AnimationManager {
             System.out.println("Error generating animation"); // Possible exception
             return null;
         }
-        return new Animation<TextureRegion>(1f / spriteArray.size, spriteArray, loopMode);
+        frameTime = (frameTime == 0) ? 1f / spriteArray.size : frameTime; 
+        return new Animation<TextureRegion>(frameTime, spriteArray, loopMode);
     }
     
+    public static Animation<TextureRegion> generateAnimation(TextureRegion spritesSheet, int spriteWidth, int spriteHeight, PlayMode loopMode){
+        return generateAnimation(spritesSheet, spriteWidth, spriteHeight, loopMode, 0);
+    }
+    
+    public static Animation<TextureRegion> generateAnimation (Texture spritesSheet, int[] x, int[] y, int[] width, int[] height, PlayMode loopMode){
+        return generateAnimation(spritesSheet, x, y, width, height, loopMode, 0);
+    }
 }
