@@ -29,15 +29,14 @@ public class MapHandler {
         GROUND, STAIR
     }
     
-    private float unitScale;
+    public static final float unitScale = 1 / 8f;
     private TiledMap map;
     private OrthogonalTiledMapRenderer mapRenderer;
     private final Pool<Rectangle> rectanglePool = Pools.get(Rectangle.class);
     
-    public MapHandler(String mapName, float unitScale) {
-        this.unitScale = unitScale;
+    public MapHandler(String mapName) {
         this.map = new TmxMapLoader().load(mapName);
-        this.mapRenderer = new OrthogonalTiledMapRenderer(map, this.unitScale);
+        this.mapRenderer = new OrthogonalTiledMapRenderer(map, unitScale);
         this.prepareMapObjects();
     }
     
@@ -49,10 +48,10 @@ public class MapHandler {
                 continue;
             }
             rectObject = ((RectangleMapObject)object).getRectangle();
-            rectObject.x *= this.unitScale; 
-            rectObject.y *= this.unitScale; 
-            rectObject.width *= this.unitScale; 
-            rectObject.height *= this.unitScale;
+            rectObject.x *= unitScale; 
+            rectObject.y *= unitScale; 
+            rectObject.width *= unitScale; 
+            rectObject.height *= unitScale;
         }
     }
     

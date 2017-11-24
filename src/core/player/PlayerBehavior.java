@@ -19,7 +19,7 @@ import java.awt.Dimension;
 public class PlayerBehavior {
     
     public enum State {
-        STANDING, WALKING, JUMPING, CROUNCHING, ATTACKING, ON_STAIRS
+        STANDING, WALKING, JUMPING, CROUNCHING, ATTACKING, ON_STAIRS, DYING
     }
     
     public static final float DISTANCE_FROM_GROUND_LAYER = 0.4f;
@@ -64,6 +64,15 @@ public class PlayerBehavior {
         this.currentState = State.STANDING;
         this.velocity.set(0, 0);
         if((Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) && (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D))){
+            return;
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) || Gdx.input.isKeyPressed(Input.Keys.F)){
+            this.currentState = State.ATTACKING;
+            return;
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.ALT_LEFT)){
+            this.currentState = State.DYING;
+            this.playerHandler.setStateTime(0);
             return;
         }
         if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {

@@ -5,6 +5,7 @@
  */
 package core;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -25,7 +26,19 @@ public class AnimationManager {
             }
         }
         if(spriteArray.size == 0){
-            System.out.println("Error in generating animation"); // Possible exception
+            System.out.println("Error generating animation"); // Possible exception
+            return null;
+        }
+        return new Animation<TextureRegion>(1f / spriteArray.size, spriteArray, loopMode);
+    }
+    
+    public static Animation<TextureRegion> generateAnimation (Texture spritesSheet, int[] x, int[] y, int[] width, int[] height, PlayMode loopMode){
+        Array<TextureRegion> spriteArray = new Array<TextureRegion>();
+        for (int i = 0; i < x.length; i++) {
+           spriteArray.add(new TextureRegion(spritesSheet, x[i], y[i], width[i], height[i]));
+        }
+        if(spriteArray.size == 0){
+            System.out.println("Error generating animation"); // Possible exception
             return null;
         }
         return new Animation<TextureRegion>(1f / spriteArray.size, spriteArray, loopMode);

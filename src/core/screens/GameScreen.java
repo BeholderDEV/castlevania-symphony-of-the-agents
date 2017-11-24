@@ -7,19 +7,16 @@ package core.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import core.AssetsManager;
 import core.map.MapHandler;
+import core.player.PlayerBehavior;
 import core.player.PlayerHandler;
-import java.awt.Dimension;
 
 /**
  *
@@ -41,7 +38,7 @@ public class GameScreen implements Screen {
         this.camera = new OrthographicCamera();
         this.camera.setToOrtho(false, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-        this.mapHandler = new MapHandler("assets/map/mapadahora.tmx", 1 / 8f);
+        this.mapHandler = new MapHandler("assets/map/mapadahora.tmx");
         
         this.camera.update();
         this.mapHandler.getMapRenderer().setView(camera);
@@ -65,14 +62,14 @@ public class GameScreen implements Screen {
         this.game.batch.begin();
         this.renderPlayer();
 //        this.mapHandler.renderMapObjects(this.game.batch, AssetsManager.assets.get("assets/img/square.png", Texture.class));
-//        this.player.drawRecOnPlayer(this.game.batch);
+        this.player.drawRecOnPlayer(this.game.batch);
         this.game.batch.end();        
         this.verifyPlayerStatus();
         this.verifyMenuInputs();
     }
     
     private void verifyPlayerStatus(){
-        if(this.player.getPlayerBody().y + this.player.getPlayerBody().height < 0){
+        if(this.player.getPlayerBody().y + this.player.getPlayerBody().height < 0 || this.player.isPlayerDead()){
             AssetsManager.assets.load("assets/img/gameover_screen.png", Texture.class);
             AssetsManager.assets.finishLoading();
             this.game.setScreen(new GameOverScreen(game));

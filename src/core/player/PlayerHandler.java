@@ -45,14 +45,32 @@ public class PlayerHandler {
                 }else{
                     return this.animationHandler.getDownstairsAnimation().getKeyFrame(this.stateTime, true);
                 }
+            case DYING:
+                return this.defineDeathSprite();
             default:
                 return this.animationHandler.getStandImg();
         }
     }
     
-//    public void drawRecOnPlayer(SpriteBatch batch){
+    private TextureRegion defineDeathSprite(){
+        if(this.animationHandler.getDeathAnimation().isAnimationFinished(stateTime)){
+            return this.animationHandler.getDeathAnimation().getKeyFrame(this.stateTime);
+        }
+        TextureRegion deathSprite = this.animationHandler.getDeathAnimation().getKeyFrame(this.stateTime);
+        this.behaviorHandler.getPlayerBody().width = deathSprite.getRegionWidth() * MapHandler.unitScale;
+        this.behaviorHandler.getPlayerBody().height = deathSprite.getRegionHeight() * MapHandler.unitScale;
+        return deathSprite;
+    }
+    
+    public boolean isPlayerDead(){
+        return this.behaviorHandler.getCurrentState() == PlayerBehavior.State.DYING && this.animationHandler.getDeathAnimation().isAnimationFinished(stateTime);
+    }
+
+    
+    public void drawRecOnPlayer(SpriteBatch batch){
 //        this.behaviorHandler.drawRec(batch);
-//    }
+//        batch.draw(this.animationHandler.getDeathAnimation().getKeyFrame(this.stateTime, true), 5, 5, 7, 2);
+    }
     
     public Rectangle getPlayerBody(){
         return this.behaviorHandler.getPlayerBody();
@@ -64,6 +82,11 @@ public class PlayerHandler {
 
     public float getStateTime() {
         return stateTime;
+    }
+    
+
+    public void setStateTime(float stateTime) {
+        this.stateTime = stateTime;
     }
     
     public void changeStateTime(float delta){
