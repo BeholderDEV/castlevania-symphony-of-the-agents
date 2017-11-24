@@ -70,12 +70,7 @@ public class PlayerHandler {
             this.behaviorHandler.setCurrentState(PlayerBehavior.State.STANDING);
             return this.animationHandler.getStandImg();
         }
-        TextureRegion atkSprite = this.animationHandler.getStandAtkAnimation().getKeyFrame(this.stateTime);
-//        TextureRegion atkSprite = this.animationHandler.getStandAtkAnimation().getKeyFrame(0);
-//        this.behaviorHandler.getPlayerBody().x
-//        this.behaviorHandler.getPlayerBody().width = atkSprite.getRegionWidth() * MapHandler.unitScale;
-//        this.behaviorHandler.getPlayerBody().height = atkSprite.getRegionHeight() * MapHandler.unitScale;
-        return atkSprite;
+        return this.animationHandler.getStandAtkAnimation().getKeyFrame(this.stateTime);
     }
     
     public boolean isDead(){
@@ -84,14 +79,7 @@ public class PlayerHandler {
 
     
     public void drawRecOnPlayer(SpriteBatch batch){
-//        this.behaviorHandler.drawRec(batch);
-        Rectangle p = this.behaviorHandler.getPlayerBody();
-//        TextureRegion currentFrame = this.animationHandler.getStandAtkAnimation().getKeyFrame(this.stateTime, true);
-//        batch.draw(currentFrame,
-//               (p.x + p.width / 2f) - 5f - (currentFrame.getRegionWidth() * MapHandler.unitScale / 2f),
-//               (p.y + p.height / 2f) - (currentFrame.getRegionHeight() * MapHandler.unitScale / 2f), 
-//                currentFrame.getRegionWidth() * MapHandler.unitScale, 
-//                currentFrame.getRegionHeight() * MapHandler.unitScale);
+        this.behaviorHandler.drawRec(batch);
     }
     
     public Rectangle getPlayerBody(){

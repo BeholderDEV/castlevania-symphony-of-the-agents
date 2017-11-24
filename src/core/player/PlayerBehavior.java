@@ -7,8 +7,11 @@ package core.player;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import core.AssetsManager;
 import core.map.MapHandler;
 import java.awt.Dimension;
 
@@ -176,7 +179,18 @@ public class PlayerBehavior {
     }
     
 //    Used for debug
-//    public void drawRec(SpriteBatch batch){
+    public void drawRec(SpriteBatch batch){
+        if(this.currentState == State.ATTACKING){
+            float x = (this.facesRight) 
+                      ? (this.playerBody.x + this.playerBody.width) - this.playerBody.width * ((this.FOOT_SIZE.width - 30f) / 100f) 
+                      : this.playerBody.x - this.playerBody.width * ((this.FOOT_SIZE.width - 30f) / 100f);
+            float y = (this.playerBody.y + this.playerBody.height) - this.playerBody.height * 0.35f;
+            float w = 6f;
+            w *= (this.facesRight)? 1: -1;
+            float h = 1;
+            batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), x, y, w, h);
+            
+        }
 //        if(this.currentState == State.ON_STAIRS){
 //            int footTileX = 0;
 //            int footTileY = 0;
@@ -198,7 +212,7 @@ public class PlayerBehavior {
 ////        batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), 63, 4, 1, 1);
 ////        batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), 63, 4, 1, 1);
 //        batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), 63, 5, 1, 1);
-//    }
+    }
     
     public Rectangle getPlayerBody() {
         return playerBody;
