@@ -105,15 +105,19 @@ public class GameScreen implements Screen {
         if(!this.player.isFacingRight()){
             x += w;
         }
-        if(this.player.getCurrentState() == PlayerBehavior.State.STAND_ATK || this.player.getCurrentState() == PlayerBehavior.State.CROUCH_ATK ){
+        if(this.player.getCurrentState() == PlayerBehavior.State.STAND_ATK || this.player.getCurrentState() == PlayerBehavior.State.CROUCH_ATK || this.player.getCurrentState() == PlayerBehavior.State.JUMP_ATK || this.player.getCurrentState() == PlayerBehavior.State.STAIRS_ATK){
             this.adjustPlayerRenderCorrections(currentFrame);
             w = currentFrame.getRegionWidth() * MapHandler.unitScale;
             h = currentFrame.getRegionHeight() * MapHandler.unitScale;
             if(this.player.getCurrentState() == PlayerBehavior.State.CROUCH_ATK){
                 h += 1.2f;
             }
-            
+//            if(this.player.getStateTime() <= 0.30){
+//                this.player.setStateTime(1);
+//                return;
+//            }
         }
+
         this.game.batch.draw(currentFrame, 
                 (this.player.isFacingRight()) ? x - this.playerRenderCorrection.x: x + this.playerRenderCorrection.x,
                 y + this.playerRenderCorrection.y, 
@@ -124,27 +128,30 @@ public class GameScreen implements Screen {
     private void adjustPlayerRenderCorrections(TextureRegion currentFrame){
         switch(currentFrame.getRegionX()){
             case 33:
-                if(this.player.getCurrentState() == PlayerBehavior.State.STAND_ATK){
+                if(this.player.getCurrentState() == PlayerBehavior.State.STAND_ATK || this.player.getCurrentState() == PlayerBehavior.State.JUMP_ATK || this.player.getCurrentState() == PlayerBehavior.State.STAIRS_ATK){
                     this.playerRenderCorrection.x = 1.7f;
                     this.playerRenderCorrection.y = -PlayerBehavior.DISTANCE_FROM_GROUND_LAYER;
                 }
                 if(this.player.getCurrentState() == PlayerBehavior.State.CROUCH_ATK){
-//                    this.playerRenderCorrection.x = 1.7f;
-//                    this.playerRenderCorrection.y = -PlayerBehavior.DISTANCE_FROM_GROUND_LAYER;
+                    this.playerRenderCorrection.x = 1.5f;
                 }
             break;
             case 86:
-                if(this.player.getCurrentState() == PlayerBehavior.State.STAND_ATK){
+                if(this.player.getCurrentState() == PlayerBehavior.State.STAND_ATK || this.player.getCurrentState() == PlayerBehavior.State.JUMP_ATK || this.player.getCurrentState() == PlayerBehavior.State.STAIRS_ATK){
                     this.playerRenderCorrection.x = 3.7f;
                 }
                 if(this.player.getCurrentState() == PlayerBehavior.State.CROUCH_ATK){
-//                    this.playerRenderCorrection.x = 1.7f;
-//                    this.playerRenderCorrection.y = -PlayerBehavior.DISTANCE_FROM_GROUND_LAYER;
+                    this.playerRenderCorrection.x = 3.4f;
                 }
             break;
             case 157:
+                if(this.player.getCurrentState() == PlayerBehavior.State.STAND_ATK || this.player.getCurrentState() == PlayerBehavior.State.JUMP_ATK || this.player.getCurrentState() == PlayerBehavior.State.STAND_ATK){
+                    this.playerRenderCorrection.y = -0.2f;
+                }
+                if(this.player.getCurrentState() == PlayerBehavior.State.CROUCH_ATK){
+                    this.playerRenderCorrection.x = -0.4f;
+                }
                 
-                this.playerRenderCorrection.y = -0.2f;
             break;
         }
     }

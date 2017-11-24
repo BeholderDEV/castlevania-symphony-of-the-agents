@@ -52,6 +52,10 @@ public class PlayerHandler {
                 return this.defineAtkSprite(this.animationHandler.getStandAtkAnimation());
             case CROUCH_ATK:
                  return this.defineAtkSprite(this.animationHandler.getCrouchAtkAnimation());
+            case JUMP_ATK:
+                 return this.defineAtkSprite(this.animationHandler.getJumpAtkAnimation());
+            case STAIRS_ATK:
+                 return this.defineAtkSprite(this.animationHandler.getStairsAtkAnimation(this.behaviorHandler.isUpstairs()));
             default:
                 return this.animationHandler.getStandImg();
         }
@@ -74,6 +78,16 @@ public class PlayerHandler {
                     this.behaviorHandler.getPlayerBody().setSize(PlayerBehavior.NORMAL_WIDTH, Math.round(PlayerBehavior.NORMAL_HEIGHT - PlayerBehavior.NORMAL_HEIGHT * 0.25));
                     this.behaviorHandler.setCurrentState(PlayerBehavior.State.CROUNCHING);
                     return this.animationHandler.getCrouchImg();
+                case JUMP_ATK:
+                    this.behaviorHandler.getPlayerBody().setSize(PlayerBehavior.NORMAL_WIDTH, PlayerBehavior.NORMAL_HEIGHT);
+                    this.behaviorHandler.setCurrentState(PlayerBehavior.State.JUMPING);
+                    return this.animationHandler.getJumpImg();
+                case STAIRS_ATK:
+                    this.behaviorHandler.getPlayerBody().setSize(PlayerBehavior.NORMAL_WIDTH, PlayerBehavior.NORMAL_HEIGHT);
+                    this.behaviorHandler.setCurrentState(PlayerBehavior.State.ON_STAIRS);
+                    return (this.behaviorHandler.isUpstairs()) ? 
+                            this.animationHandler.getUpStairsAtkAnimation().getKeyFrame(this.stateTime) :
+                            this.animationHandler.getDownstairsAnimation().getKeyFrame(this.stateTime);
                 default:
                     this.behaviorHandler.getPlayerBody().setSize(PlayerBehavior.NORMAL_WIDTH, PlayerBehavior.NORMAL_HEIGHT);
                     this.behaviorHandler.setCurrentState(PlayerBehavior.State.STANDING);

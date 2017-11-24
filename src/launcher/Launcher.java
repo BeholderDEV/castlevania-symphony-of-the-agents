@@ -25,8 +25,12 @@ public class Launcher {
 //        config.height = 720;
 //        config.width = 1024;
 //        config.height = 768;
-        config.width = 600;
+//        config.width = 1366;
+//        config.width = 1366;
+//        config.height = 600;
+        config.width = 750;
         config.height = 400;
+
         new LwjglApplication(new ScreenHandler(), config);
     }
     

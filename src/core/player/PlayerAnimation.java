@@ -27,6 +27,9 @@ public class PlayerAnimation {
     private Animation<TextureRegion> deathAnimation;
     private Animation<TextureRegion> standAtkAnimation;
     private Animation<TextureRegion> crouchAtkAnimation;
+    private Animation<TextureRegion> jumpAtkAnimation;
+    private Animation<TextureRegion> upStairsAtkAnimation;
+    private Animation<TextureRegion> downStairsAtkAnimation;
     private float deathState = 0;
 
     public PlayerAnimation() {
@@ -44,8 +47,10 @@ public class PlayerAnimation {
         this.deathAnimation = AnimationManager.generateAnimation(AssetsManager.assets.get("assets/img/playerSprites.png", Texture.class), new int[]{537, 570, 624}, new int[]{103, 111, 125}, new int[]{26, 48, 67}, new int[]{34, 27, 13}, Animation.PlayMode.NORMAL);
         this.standAtkAnimation = AnimationManager.generateAnimation(AssetsManager.assets.get("assets/img/playerSprites.png", Texture.class),  new int[]{33, 86, 157}, new int[]{577, 563, 577}, new int[]{45, 55, 80}, new int[]{52, 62, 50}, Animation.PlayMode.NORMAL, STANDARD_ATK_FRAME_TIME);
         this.crouchAtkAnimation = AnimationManager.generateAnimation(AssetsManager.assets.get("assets/img/playerSprites.png", Texture.class),  new int[]{33, 86, 157}, new int[]{633, 633, 633}, new int[]{45, 55, 80}, new int[]{49, 49, 49}, Animation.PlayMode.NORMAL, STANDARD_ATK_FRAME_TIME);
-//        this.crouchAtkAnimation = AnimationManager.generateAnimation(AssetsManager.assets.get("assets/img/playerSprites.png", Texture.class),  new int[]{33, 86, 157}, new int[]{645, 633, 633}, new int[]{45, 55, 80}, new int[]{52, 49, 36}, Animation.PlayMode.NORMAL, STANDARD_ATK_FRAME_TIME);
-
+        this.jumpAtkAnimation = AnimationManager.generateAnimation(AssetsManager.assets.get("assets/img/playerSprites.png", Texture.class),  new int[]{35, 86, 159}, new int[]{834, 824, 834}, new int[]{45, 55, 77}, new int[]{55, 59, 46}, Animation.PlayMode.NORMAL, STANDARD_ATK_FRAME_TIME / 1.5f);
+        this.upStairsAtkAnimation = AnimationManager.generateAnimation(AssetsManager.assets.get("assets/img/playerSprites.png", Texture.class),  new int[]{32, 86, 159}, new int[]{707, 694, 708}, new int[]{47, 55, 77}, new int[]{51, 59, 46}, Animation.PlayMode.NORMAL, STANDARD_ATK_FRAME_TIME / 1.5f);
+        this.downStairsAtkAnimation = AnimationManager.generateAnimation(AssetsManager.assets.get("assets/img/playerSprites.png", Texture.class),  new int[]{32, 86, 159}, new int[]{834, 824, 834}, new int[]{45, 55, 77}, new int[]{55, 59, 46}, Animation.PlayMode.NORMAL, STANDARD_ATK_FRAME_TIME / 1.5f);
+// Fix downstairAtkAnimation
     }
     
     public TextureRegion getStandImg() {
@@ -86,5 +91,21 @@ public class PlayerAnimation {
 
     public Animation<TextureRegion> getCrouchAtkAnimation() {
         return crouchAtkAnimation;
+    }
+
+    public Animation<TextureRegion> getJumpAtkAnimation() {
+        return jumpAtkAnimation;
+    }
+
+    public Animation<TextureRegion> getUpStairsAtkAnimation() {
+        return upStairsAtkAnimation;
+    }
+
+    public Animation<TextureRegion> getDownStairsAtkAnimation() {
+        return downStairsAtkAnimation;
+    }
+    
+    public Animation<TextureRegion> getStairsAtkAnimation(boolean upstairs) {
+        return (upstairs) ? upStairsAtkAnimation: downStairsAtkAnimation;
     }
 }
