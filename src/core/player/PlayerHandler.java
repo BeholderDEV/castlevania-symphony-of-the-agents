@@ -47,6 +47,8 @@ public class PlayerHandler {
                 }
             case DYING:
                 return this.defineDeathSprite();
+            case ATTACKING:
+                return this.defineAtkSprite();
             default:
                 return this.animationHandler.getStandImg();
         }
@@ -62,14 +64,34 @@ public class PlayerHandler {
         return deathSprite;
     }
     
-    public boolean isPlayerDead(){
+    private TextureRegion defineAtkSprite(){
+        if(this.animationHandler.getStandAtkAnimation().isAnimationFinished(stateTime)){
+            this.behaviorHandler.getPlayerBody().setSize(PlayerBehavior.NORMAL_WIDTH, PlayerBehavior.NORMAL_HEIGHT);
+            this.behaviorHandler.setCurrentState(PlayerBehavior.State.STANDING);
+            return this.animationHandler.getStandImg();
+        }
+        TextureRegion atkSprite = this.animationHandler.getStandAtkAnimation().getKeyFrame(this.stateTime);
+//        TextureRegion atkSprite = this.animationHandler.getStandAtkAnimation().getKeyFrame(0);
+//        this.behaviorHandler.getPlayerBody().x
+//        this.behaviorHandler.getPlayerBody().width = atkSprite.getRegionWidth() * MapHandler.unitScale;
+//        this.behaviorHandler.getPlayerBody().height = atkSprite.getRegionHeight() * MapHandler.unitScale;
+        return atkSprite;
+    }
+    
+    public boolean isDead(){
         return this.behaviorHandler.getCurrentState() == PlayerBehavior.State.DYING && this.animationHandler.getDeathAnimation().isAnimationFinished(stateTime);
     }
 
     
     public void drawRecOnPlayer(SpriteBatch batch){
 //        this.behaviorHandler.drawRec(batch);
-//        batch.draw(this.animationHandler.getDeathAnimation().getKeyFrame(this.stateTime, true), 5, 5, 7, 2);
+        Rectangle p = this.behaviorHandler.getPlayerBody();
+//        TextureRegion currentFrame = this.animationHandler.getStandAtkAnimation().getKeyFrame(this.stateTime, true);
+//        batch.draw(currentFrame,
+//               (p.x + p.width / 2f) - 5f - (currentFrame.getRegionWidth() * MapHandler.unitScale / 2f),
+//               (p.y + p.height / 2f) - (currentFrame.getRegionHeight() * MapHandler.unitScale / 2f), 
+//                currentFrame.getRegionWidth() * MapHandler.unitScale, 
+//                currentFrame.getRegionHeight() * MapHandler.unitScale);
     }
     
     public Rectangle getPlayerBody(){
@@ -82,6 +104,10 @@ public class PlayerHandler {
 
     public float getStateTime() {
         return stateTime;
+    }
+    
+    public PlayerBehavior.State getCurrentState(){
+        return this.behaviorHandler.getCurrentState();
     }
     
 

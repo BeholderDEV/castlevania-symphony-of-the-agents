@@ -68,6 +68,7 @@ public class PlayerBehavior {
         }
         if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) || Gdx.input.isKeyPressed(Input.Keys.F)){
             this.currentState = State.ATTACKING;
+            this.playerHandler.setStateTime(0);
             return;
         }
         if(Gdx.input.isKeyPressed(Input.Keys.ALT_LEFT)){
@@ -153,6 +154,7 @@ public class PlayerBehavior {
             if(stairBoundary != null){
                 this.stairHandler.fixPositionForStairClimbing(map, stairBoundary, this.facesRight);
                 this.currentState = PlayerBehavior.State.ON_STAIRS;
+                this.playerHandler.setStateTime(0);
             }
         }
     }

@@ -11,12 +11,15 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import core.AssetsManager;
 import core.map.MapHandler;
 import core.player.PlayerBehavior;
 import core.player.PlayerHandler;
+import java.awt.Dimension;
 
 /**
  *
@@ -27,6 +30,7 @@ public class GameScreen implements Screen {
     public final int SCREEN_HEIGHT = 20;
     private final ScreenHandler game;
     private final PlayerHandler player;
+    private final Vector2 playerRenderCorrection = new Vector2(0, 0);
     private final MapHandler mapHandler;
     private OrthographicCamera camera;
     
@@ -69,7 +73,7 @@ public class GameScreen implements Screen {
     }
     
     private void verifyPlayerStatus(){
-        if(this.player.getPlayerBody().y + this.player.getPlayerBody().height < 0 || this.player.isPlayerDead()){
+        if(this.player.getPlayerBody().y + this.player.getPlayerBody().height < 0 || this.player.isDead()){
             AssetsManager.assets.load("assets/img/gameover_screen.png", Texture.class);
             AssetsManager.assets.finishLoading();
             this.game.setScreen(new GameOverScreen(game));
@@ -91,13 +95,40 @@ public class GameScreen implements Screen {
     }
     
     private void renderPlayer(){
+        float x = this.player.getPlayerBody().x, y = this.player.getPlayerBody().y, w = this.player.getPlayerBody().width, h = this.player.getPlayerBody().height; 
+        this.playerRenderCorrection.set(0, 0);
         Rectangle playerRec = this.player.getPlayerBody();
-        if(playerRec.x < 0) playerRec.setX(0);
-//        if(playerRec.x > this.SCREEN_WIDTH - playerRec.width) playerRec.setX(this.SCREEN_WIDTH - playerRec.width);
-        if(this.player.isFacingRight()){
-            this.game.batch.draw(this.player.getCurrentFrame(), playerRec.x, playerRec.y, playerRec.width, playerRec.height);
-        }else{
-            this.game.batch.draw(this.player.getCurrentFrame(), playerRec.x + playerRec.width, playerRec.y, -playerRec.width, playerRec.height);
+        TextureRegion currentFrame = this.player.getCurrentFrame();
+        if(playerRec.x < 0){
+            playerRec.setX(0);
+        }
+        if(!this.player.isFacingRight()){
+            x += w;
+        }
+        if(this.player.getCurrentState() == PlayerBehavior.State.ATTACKING){
+            this.adjustPlayerRenderCorrections(currentFrame);
+            w = currentFrame.getRegionWidth() * MapHandler.unitScale;
+            h = currentFrame.getRegionHeight() * MapHandler.unitScale;
+        }
+        this.game.batch.draw(currentFrame, 
+                (this.player.isFacingRight()) ? x - this.playerRenderCorrection.x: x + this.playerRenderCorrection.x,
+                y + this.playerRenderCorrection.y, 
+                (this.player.isFacingRight()) ? w: -w,
+                h);
+    }
+    
+    private void adjustPlayerRenderCorrections(TextureRegion currentFrame){
+        switch(currentFrame.getRegionX()){
+            case 33:
+                this.playerRenderCorrection.x = 1.7f;
+                this.playerRenderCorrection.y = -PlayerBehavior.DISTANCE_FROM_GROUND_LAYER;
+            break;
+            case 86:
+                this.playerRenderCorrection.x = 3.7f;
+            break;
+            case 157:
+                this.playerRenderCorrection.y = -0.2f;
+            break;
         }
     }
     

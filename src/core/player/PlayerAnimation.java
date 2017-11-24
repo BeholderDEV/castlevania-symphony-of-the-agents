@@ -8,7 +8,6 @@ package core.player;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.utils.Array;
 import core.AnimationManager;
 import core.AssetsManager;
 
@@ -37,18 +36,13 @@ public class PlayerAnimation {
     }
     
     private void prepareAnimations(){
-        int[] x  = {1,2,3};
         this.walkAnimation = AnimationManager.generateAnimation(new TextureRegion(AssetsManager.assets.get("assets/img/playerSprites.png", Texture.class), 176, 6, 194, 50), 32, 50, Animation.PlayMode.LOOP);
         this.upstairsAnimation = AnimationManager.generateAnimation(new TextureRegion(AssetsManager.assets.get("assets/img/playerSprites.png", Texture.class), 405, 8, 194, 50), 32, 50, Animation.PlayMode.LOOP);
         this.downstairsAnimation = AnimationManager.generateAnimation(new TextureRegion(AssetsManager.assets.get("assets/img/playerSprites.png", Texture.class), 633, 8, 194, 50), 32, 50, Animation.PlayMode.LOOP);
         this.deathAnimation = AnimationManager.generateAnimation(AssetsManager.assets.get("assets/img/playerSprites.png", Texture.class), new int[]{537, 570, 624}, new int[]{103, 111, 125}, new int[]{26, 48, 67}, new int[]{34, 27, 13}, Animation.PlayMode.NORMAL);
-        this.standAtkAnimation = AnimationManager.generateAnimation(new TextureRegion(AssetsManager.assets.get("assets/img/playerSprites.png", Texture.class), 24, 562, 220, 70), 73, 70, Animation.PlayMode.NORMAL);
+        this.standAtkAnimation = AnimationManager.generateAnimation(AssetsManager.assets.get("assets/img/playerSprites.png", Texture.class),  new int[]{33, 86, 157}, new int[]{577, 563, 577}, new int[]{45, 55, 80}, new int[]{52, 62, 50}, Animation.PlayMode.NORMAL);
+//        this.standAtkAnimation = AnimationManager.generateAnimation(new TextureRegion(AssetsManager.assets.get("assets/img/playerSprites.png", Texture.class), 18, 561, 219, 68), 73, 68, Animation.PlayMode.NORMAL);
     }
-
-//    public TextureRegion getDeathFrame(){
-//        this.deathAnimation.
-//        return null;
-//    }   
     
     public TextureRegion getStandImg() {
         return standImg;
