@@ -22,12 +22,12 @@ public class PlayerBehavior {
         STANDING, WALKING, JUMPING, CROUNCHING, ATTACKING, ON_STAIRS
     }
     
-    private final float DISTANCE_FROM_GROUND_LAYER = 0.4f;
-    private final float NORMAL_WIDTH = 4f;
-    private final float NORMAL_HEIGHT = 6f;
-    private final int WALKING_SPEED = 12;
-    private final int JUMPING_SPEED = WALKING_SPEED * 3;
-    private final Dimension FOOT_SIZE = new Dimension(32, 25);
+    public static final float DISTANCE_FROM_GROUND_LAYER = 0.4f;
+    public static final float NORMAL_WIDTH = 4f;
+    public static final float NORMAL_HEIGHT = 6f;
+    public static final int WALKING_SPEED = 12;
+    public static final int JUMPING_SPEED = WALKING_SPEED * 3;
+    public static final Dimension FOOT_SIZE = new Dimension(32, 25);
     private boolean facesRight = true;
     private PlayerHandler playerHandler;
     private StairHandler stairHandler;
@@ -121,7 +121,7 @@ public class PlayerBehavior {
                 this.facesRight = false;
             }
 
-            if(!this.stairHandler.checkValidStairStep(map, this.facesRight, this.FOOT_SIZE, this.DISTANCE_FROM_GROUND_LAYER)){
+            if(!this.stairHandler.checkValidStairStep(map, this.facesRight)){
                 this.currentState = State.WALKING;
                 this.velocity.y = 0;
                 return;
@@ -140,7 +140,7 @@ public class PlayerBehavior {
     public void checkCollisions(MapHandler map){
         this.checkGroundCollision(map);
         if(this.currentState == State.STANDING || this.currentState == State.WALKING){
-            Rectangle stairBoundary = this.stairHandler.checkStairsCollision(map, this.facesRight, this.FOOT_SIZE);
+            Rectangle stairBoundary = this.stairHandler.checkStairsCollision(map, this.facesRight);
             if(stairBoundary != null){
                 this.stairHandler.fixPositionForStairClimbing(map, stairBoundary, this.facesRight);
                 this.currentState = PlayerBehavior.State.ON_STAIRS;

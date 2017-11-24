@@ -17,7 +17,7 @@ import java.awt.Dimension;
  * @author Augustop
  */
 public class StairHandler {
-    private final Dimension STAIR_TO_GROUND_DISTANCE = new Dimension(2, 1);
+    public static final Dimension STAIR_TO_GROUND_DISTANCE = new Dimension(2, 1);
     private Rectangle objectBody;
     private boolean upstairs = false;
     
@@ -43,21 +43,21 @@ public class StairHandler {
         }
     }
     
-    public boolean checkValidStairStep(MapHandler map, boolean facesRight, Dimension footSize, float distanceToGround){
+    public boolean checkValidStairStep(MapHandler map, boolean facesRight){
         int footTileX = 0;
         int footTileY = 0;
         if((facesRight && this.upstairs) || (!facesRight && !this.upstairs)){
-            footTileX = Math.round((this.objectBody.x + this.objectBody.width) - this.objectBody.width * (footSize.width / 100f));
-            footTileY = Math.round(this.objectBody.y + footSize.height / 100f);
+            footTileX = Math.round((this.objectBody.x + this.objectBody.width) - this.objectBody.width * (PlayerBehavior.FOOT_SIZE.width / 100f));
+            footTileY = Math.round(this.objectBody.y + PlayerBehavior.FOOT_SIZE.height / 100f);
         }
         if((!facesRight && this.upstairs) || (facesRight && !this.upstairs)){
             footTileX = Math.round(this.objectBody.x);
-            footTileY = Math.round(this.objectBody.y + footSize.height / 100f);
+            footTileY = Math.round(this.objectBody.y + PlayerBehavior.FOOT_SIZE.height / 100f);
         }
         if(!map.checkValidLayerMove(MapHandler.Layer.STAIR, footTileX, footTileY) && !map.checkValidLayerMove(MapHandler.Layer.STAIR, footTileX, footTileY - 1)){
             return false;
         }
-        if(this.checkIfReachedGroundFromStairs(map, footTileX, footTileY, facesRight, distanceToGround)){
+        if(this.checkIfReachedGroundFromStairs(map, footTileX, footTileY, facesRight)){
             return false;
         }
         return true;
@@ -78,12 +78,12 @@ public class StairHandler {
         }
     }
     
-    private boolean checkIfReachedGroundFromStairs(MapHandler map, int footTileX, int footTileY, boolean facesRight, float distanceToGround){
-        Vector2 ground = map.getCloseTileFromLayer(MapHandler.Layer.GROUND, footTileX, footTileY, this.upstairs, facesRight, this.STAIR_TO_GROUND_DISTANCE);
+    private boolean checkIfReachedGroundFromStairs(MapHandler map, int footTileX, int footTileY, boolean facesRight){
+        Vector2 ground = map.getCloseTileFromLayer(MapHandler.Layer.GROUND, footTileX, footTileY, this.upstairs, facesRight, STAIR_TO_GROUND_DISTANCE);
         if(ground != null){
             this.objectBody.y = (map.checkValidLayerMove(MapHandler.Layer.GROUND, Math.round(ground.x), Math.round(ground.y + 1))) 
-                                ? ground.y + 1 + distanceToGround
-                                : ground.y + distanceToGround;
+                                ? ground.y + 1 + PlayerBehavior.DISTANCE_FROM_GROUND_LAYER
+                                : ground.y + PlayerBehavior.DISTANCE_FROM_GROUND_LAYER;
             if(this.upstairs && facesRight){
                 this.objectBody.x = ground.x - 2f;
             }
@@ -95,10 +95,10 @@ public class StairHandler {
         return false;
     }
 
-    public Rectangle checkStairsCollision(MapHandler map, boolean facesRight, Dimension footSize){
-        float x = (facesRight) ? (this.objectBody.x + this.objectBody.width) - this.objectBody.width * (footSize.width / 100f): 
-                                       this.objectBody.x + this.objectBody.width * (footSize.width / 100f);            
-        Rectangle stairBoundary = map.checkCollisionWithStairBoundary(x, this.objectBody.y, this.objectBody.width * (footSize.width / 8f / 100f), this.objectBody.height * (footSize.height / 100f));
+    public Rectangle checkStairsCollision(MapHandler map, boolean facesRight){
+        float x = (facesRight) ? (this.objectBody.x + this.objectBody.width) - this.objectBody.width * (PlayerBehavior.FOOT_SIZE.width / 100f): 
+                                       this.objectBody.x + this.objectBody.width * (PlayerBehavior.FOOT_SIZE.width / 100f);            
+        Rectangle stairBoundary = map.checkCollisionWithStairBoundary(x, this.objectBody.y, this.objectBody.width * (PlayerBehavior.FOOT_SIZE.width / 8f / 100f), this.objectBody.height * (PlayerBehavior.FOOT_SIZE.height / 100f));
         if(stairBoundary == null){
             return null;
         }
