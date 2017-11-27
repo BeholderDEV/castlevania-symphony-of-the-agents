@@ -22,7 +22,11 @@ import java.awt.Dimension;
 public class PlayerBehavior {
     
     public enum State {
-        STANDING, WALKING, JUMPING, CROUNCHING, ON_STAIRS, DYING, STAND_ATK, CROUCH_ATK, JUMP_ATK, STAIRS_ATK
+        STANDING, WALKING, JUMPING, CROUNCHING, ON_STAIRS, DYING, ATTACKING
+    }
+    
+    public enum Atk_State {
+        STAND_ATK, CROUCH_ATK, JUMP_ATK, STAIRS_ATK
     }
     
     public static final float DISTANCE_FROM_GROUND_LAYER = 0.4f;
@@ -35,6 +39,7 @@ public class PlayerBehavior {
     private PlayerHandler playerHandler;
     private StairHandler stairHandler;
     private State currentState = State.STANDING;
+    private Atk_State atkState = Atk_State.STAND_ATK;
     private Vector2 velocity = new Vector2(); 
     private Rectangle playerBody;
 
@@ -50,7 +55,6 @@ public class PlayerBehavior {
             case STANDING:
                 this.defineActionStanding(deltaTime);
             break;
-            case JUMP_ATK:
             case JUMPING:
                 this.defineActionJumping(deltaTime);
             break;
@@ -59,6 +63,11 @@ public class PlayerBehavior {
             break;
             case ON_STAIRS:
                 this.defineActionOnStairs(deltaTime, map);
+            break;
+            case ATTACKING:
+                if(this.atkState == Atk_State.JUMP_ATK){
+                    this.defineActionJumping(deltaTime);
+                }
             break;
         }
     }
@@ -71,7 +80,8 @@ public class PlayerBehavior {
             return;
         }
         if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) || Gdx.input.isKeyPressed(Input.Keys.F)){
-            this.currentState = State.STAND_ATK;
+            this.currentState = State.ATTACKING;
+            this.atkState = Atk_State.STAND_ATK;
             this.playerHandler.setStateTime(0);
             return;
         }
@@ -106,8 +116,9 @@ public class PlayerBehavior {
         if(this.velocity.x >= WALKING_SPEED){
             this.velocity.x = WALKING_SPEED;
         }
-        if(this.currentState != State.JUMP_ATK && (Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) || Gdx.input.isKeyPressed(Input.Keys.F))){
-            this.currentState = State.JUMP_ATK;
+        if(this.currentState != State.ATTACKING && (Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) || Gdx.input.isKeyPressed(Input.Keys.F))){
+            this.currentState = State.ATTACKING;
+            this.atkState = Atk_State.JUMP_ATK;
             this.playerHandler.setStateTime(0);
         }
     }
@@ -115,7 +126,8 @@ public class PlayerBehavior {
     private void defineActionCrounching(float deltaTime){
         this.velocity.set(0, 0);
         if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) || Gdx.input.isKeyPressed(Input.Keys.F)){
-            this.currentState = State.CROUCH_ATK;
+            this.currentState = State.ATTACKING;
+            this.atkState = atkState.CROUCH_ATK;
             this.playerHandler.setStateTime(0);
             return;
         }
@@ -134,7 +146,8 @@ public class PlayerBehavior {
             return;
         }
         if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) || Gdx.input.isKeyPressed(Input.Keys.F)){
-            this.currentState = State.STAIRS_ATK;
+            this.currentState = State.ATTACKING;
+            this.atkState = Atk_State.STAIRS_ATK;
             this.playerHandler.setStateTime(0);
             return;
         }
@@ -179,11 +192,11 @@ public class PlayerBehavior {
     
     private void checkGroundCollision(MapHandler map){
         if(map.checkLayerCollision(MapHandler.Layer.GROUND, Math.round(this.playerBody.x), Math.round(this.playerBody.y), Math.round(this.playerBody.x + this.playerBody.width), Math.round(this.playerBody.y + this.playerBody.height * 0.01f))){
-            if(this.currentState == State.JUMPING || this.currentState == State.JUMP_ATK){
+            if(this.currentState == State.JUMPING || (this.currentState == State.ATTACKING && this.atkState == Atk_State.JUMP_ATK)){
                 this.currentState = State.STANDING;
                 this.playerBody.y = Math.round(this.playerBody.y) + this.DISTANCE_FROM_GROUND_LAYER;
             }
-        }else if(this.currentState != State.JUMPING && this.currentState != State.ON_STAIRS && this.currentState != State.JUMP_ATK && this.currentState != State.STAIRS_ATK){
+        }else if(this.currentState != State.JUMPING && this.currentState != State.ON_STAIRS && this.currentState != State.ATTACKING){
             this.currentState = State.JUMPING;
         }
     }
@@ -195,7 +208,8 @@ public class PlayerBehavior {
     
 //    Used for debug
     public void drawRec(SpriteBatch batch){
-        if((this.currentState == State.STAND_ATK || this.currentState == State.CROUCH_ATK) && this.playerHandler.getStateTime() >= PlayerAnimation.STANDARD_ATK_FRAME_TIME * 2f){
+        // When Jumping frame is faster and a little lower
+        if((this.currentState == State.ATTACKING) && this.playerHandler.getStateTime() >= PlayerAnimation.STANDARD_ATK_FRAME_TIME * 2f){
             float x = (this.facesRight) 
                       ? (this.playerBody.x + this.playerBody.width) - this.playerBody.width * ((this.FOOT_SIZE.width - 30f) / 100f) 
                       : this.playerBody.x - this.playerBody.width * ((this.FOOT_SIZE.width - 30f) / 100f);
@@ -241,6 +255,10 @@ public class PlayerBehavior {
         return velocity;
     }
     
+    public Atk_State getAtkState() {
+        return atkState;
+    }
+    
     public boolean isUpstairs(){
         return this.stairHandler.isUpstairs();
     }
@@ -256,4 +274,6 @@ public class PlayerBehavior {
     public void setFacesRight(boolean facesRight) {
         this.facesRight = facesRight;
     }
+
+
 }
