@@ -50,7 +50,6 @@ public class PlayerAnimation {
         this.jumpAtkAnimation = AnimationManager.generateAnimation(AssetsManager.assets.get("assets/img/playerSprites.png", Texture.class),  new int[]{35, 86, 157}, new int[]{834, 824, 834}, new int[]{45, 55, 77}, new int[]{55, 59, 46}, Animation.PlayMode.NORMAL, STANDARD_ATK_FRAME_TIME / 1.5f);
         this.upStairsAtkAnimation = AnimationManager.generateAnimation(AssetsManager.assets.get("assets/img/playerSprites.png", Texture.class),  new int[]{33, 86, 157}, new int[]{707, 694, 708}, new int[]{47, 55, 77}, new int[]{51, 59, 46}, Animation.PlayMode.NORMAL, STANDARD_ATK_FRAME_TIME);
         this.downStairsAtkAnimation = AnimationManager.generateAnimation(AssetsManager.assets.get("assets/img/playerSprites.png", Texture.class),  new int[]{33, 86, 157}, new int[]{771, 759, 772}, new int[]{45, 55, 79}, new int[]{52, 59, 46}, Animation.PlayMode.NORMAL, STANDARD_ATK_FRAME_TIME);
-
     }
     
     public Animation<TextureRegion> getCorrectAtkAnimation(PlayerBehavior.Atk_State atkState, boolean upStairs){

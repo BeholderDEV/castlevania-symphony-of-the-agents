@@ -15,11 +15,13 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import core.AssetsManager;
+import core.enemies.Enemy;
+import core.enemies.EnemyFactory;
 import core.map.MapHandler;
 import core.player.PlayerBehavior;
 import core.player.PlayerHandler;
-import java.awt.Dimension;
 
 /**
  *
@@ -30,14 +32,16 @@ public class GameScreen implements Screen {
     public final int SCREEN_HEIGHT = 20;
     private final ScreenHandler game;
     private final PlayerHandler player;
+    private Array<Enemy> enemies = new Array<>();
     private final Vector2 playerRenderCorrection = new Vector2(0, 0);
     private final MapHandler mapHandler;
     private OrthographicCamera camera;
     
-
     public GameScreen(final ScreenHandler game, PlayerHandler player) {
         this.game = game;
         this.player = player;
+        this.enemies.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.SWORD_SKELETON, 12, new Vector2(30, 3.4f), 5f, 6f));
+        
         
         this.camera = new OrthographicCamera();
         this.camera.setToOrtho(false, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -53,9 +57,10 @@ public class GameScreen implements Screen {
     public void render(float delta) {
         Gdx.gl.glClearColor(0.5f, 0.5f, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        
+        for (Enemy enemy : enemies) {
+            enemy.updateBehavior(delta, mapHandler);
+        }
         this.player.updatePlayer(delta, this.mapHandler);
-        
         
         this.updateCameraPosition();
         this.camera.update();
@@ -64,8 +69,14 @@ public class GameScreen implements Screen {
         this.mapHandler.getMapRenderer().render();
         this.game.batch.setProjectionMatrix(camera.combined);
         this.game.batch.begin();
+        for (Enemy enemy : enemies) {
+            this.game.batch.draw(enemy.getCurrentFrame(), 
+                (enemy.isFacesRight()) ? enemy.getBody().x: enemy.getBody().x + enemy.getBody().width,
+                enemy.getBody().y, 
+                (enemy.isFacesRight()) ? enemy.getBody().width: -enemy.getBody().width,
+                enemy.getBody().height);
+        }
         this.renderPlayer();
-//        this.mapHandler.renderMapObjects(this.game.batch, AssetsManager.assets.get("assets/img/square.png", Texture.class));
         this.player.drawRecOnPlayer(this.game.batch);
         this.game.batch.end();        
         this.verifyPlayerStatus();
@@ -129,10 +140,6 @@ public class GameScreen implements Screen {
             if(this.player.getCurrentAtkState() == PlayerBehavior.Atk_State.CROUCH_ATK){
                 h += 1.2f;
             }
-//            if(this.player.getStateTime() <= 0.30){
-//                this.player.setStateTime(1);
-//                return;
-//            }
         }
 
         this.game.batch.draw(currentFrame, 

@@ -45,7 +45,7 @@ public class AnimationManager {
         frameTime = (frameTime == 0) ? 1f / spriteArray.size : frameTime; 
         return new Animation<TextureRegion>(frameTime, spriteArray, loopMode);
     }
-    
+        
     public static Animation<TextureRegion> generateAnimation(TextureRegion spritesSheet, int spriteWidth, int spriteHeight, PlayMode loopMode){
         return generateAnimation(spritesSheet, spriteWidth, spriteHeight, loopMode, 0);
     }

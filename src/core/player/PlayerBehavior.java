@@ -209,6 +209,7 @@ public class PlayerBehavior {
 //    Used for debug
     public void drawRec(SpriteBatch batch){
         // When Jumping frame is faster and a little lower
+        
         if((this.currentState == State.ATTACKING) && this.playerHandler.getStateTime() >= PlayerAnimation.STANDARD_ATK_FRAME_TIME * 2f){
             float x = (this.facesRight) 
                       ? (this.playerBody.x + this.playerBody.width) - this.playerBody.width * ((this.FOOT_SIZE.width - 30f) / 100f) 
