@@ -83,6 +83,11 @@ public class GameScreen implements Screen {
     
     private void updateCameraPosition(){
         TiledMapTileLayer mapFrontLayer = (TiledMapTileLayer) this.mapHandler.getMapRenderer().getMap().getLayers().get("front");
+        this.updateCameraX(mapFrontLayer);
+        this.updateCameraY(mapFrontLayer);
+    }
+    
+    private void updateCameraX(TiledMapTileLayer mapFrontLayer){
         if(this.player.getPlayerBody().x + this.player.getPlayerBody().width / 2 <= this.SCREEN_WIDTH / 2){
             this.camera.position.x = this.SCREEN_WIDTH / 2;
             return;
@@ -92,6 +97,18 @@ public class GameScreen implements Screen {
             return;
         }
         this.camera.position.x = this.player.getPlayerBody().x + this.player.getPlayerBody().width / 2;
+
+    }
+    private void updateCameraY(TiledMapTileLayer mapFrontLayer){
+        if(this.player.getPlayerBody().y + this.player.getPlayerBody().height / 2 <= this.SCREEN_HEIGHT / 2){
+            this.camera.position.y = this.SCREEN_HEIGHT / 2;
+            return;
+        }
+        if(this.player.getPlayerBody().y + this.player.getPlayerBody().height / 2 >= mapFrontLayer.getHeight() - this.SCREEN_HEIGHT / 2){
+            this.camera.position.y = mapFrontLayer.getHeight() - this.SCREEN_HEIGHT / 2;
+            return;
+        }
+        this.camera.position.y = this.player.getPlayerBody().y + this.player.getPlayerBody().height / 2;
     }
     
     private void renderPlayer(){
@@ -129,7 +146,6 @@ public class GameScreen implements Screen {
         switch(currentFrame.getRegionX()){
             case 33:
                 if(this.player.getCurrentAtkState() != PlayerBehavior.Atk_State.CROUCH_ATK){
-                    System.out.println(this.player.getCurrentAtkState().name());
                     this.playerRenderCorrection.x = 1.7f;
                     this.playerRenderCorrection.y = -PlayerBehavior.DISTANCE_FROM_GROUND_LAYER;
                 }else{
