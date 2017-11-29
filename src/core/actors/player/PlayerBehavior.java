@@ -170,7 +170,7 @@ public class PlayerBehavior {
         
         if(this.playerHandler.getCurrentState() != GameActor.State.HURTED && this.playerHandler.getCurrentState() != GameActor.State.DYING){
             for (int i = 1; i < stageActors.size; i++) {
-                if(stageActors.get(i).getBody().overlaps(this.playerHandler.getBody())){
+                if(this.playerHandler.checkCollisionBetweenTwoActors(stageActors.get(i), this.playerHandler)){
                     System.out.println("Collision with enemy");
                 }
             }

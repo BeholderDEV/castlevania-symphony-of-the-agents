@@ -5,11 +5,12 @@
  */
 package core.actors;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import core.actors.player.PlayerBehavior;
+import core.AssetsManager;
 import core.map.MapHandler;
 
 /**
@@ -26,6 +27,8 @@ public abstract class GameActor {
     protected Vector2 velocity = new Vector2(); 
     protected State currentState = State.STANDING;
     protected Atk_State atkState = Atk_State.STAND_ATK;
+    private final static Rectangle collisionBody1 = new Rectangle();
+    private final static Rectangle collisionBody2 = new Rectangle();
     
     public enum State {
         STANDING, WALKING, JUMPING, CROUNCHING, ON_STAIRS, DYING, ATTACKING, HURTED
@@ -62,6 +65,26 @@ public abstract class GameActor {
         }else if(this.currentState != State.JUMPING && this.currentState != State.ON_STAIRS){
             this.currentState = State.JUMPING;
         }
+    }
+    
+    public void drawRecOverBody(SpriteBatch batch){
+        float ad = 1.6f;
+        batch.draw(AssetsManager.assets.get("assets/img/squarer.png", Texture.class), (this.facingRight) ? this.body.x + 0.4f: this.body.x + this.body.width - 1.2f, 
+                this.body.y, 
+                (this.facingRight) ? this.body.width - ad: -this.body.width + ad, 
+                this.body.height - 0.5f);
+    }
+    
+    public boolean checkCollisionBetweenTwoActors(GameActor actor1, GameActor actor2){
+        float xAdjust = 0.4f, widthAdjust = 1.6f, heigthAdjust = 0.5f;
+//        collisionBody1.set((actor1.facingRight) ? actor1.body.x + xAdjust : actor1.body.x + actor1.body.width - xAdjust * 3,
+//                actor1.body.y, (actor1.facingRight) ? actor1.body.width - widthAdjust: -actor1.body.width + widthAdjust, 
+//                actor1.body.height - heigthAdjust);
+//        collisionBody2.set((actor2.facingRight) ? actor2.body.x + xAdjust : actor2.body.x + actor2.body.width - xAdjust * 3,
+//                actor2.body.y, (actor2.facingRight) ? actor2.body.width - widthAdjust: -actor2.body.width + widthAdjust, 
+//                actor2.body.height - heigthAdjust);
+//        return collisionBody1.overlaps(collisionBody2);
+        return false;
     }
 
     public Rectangle getBody() {

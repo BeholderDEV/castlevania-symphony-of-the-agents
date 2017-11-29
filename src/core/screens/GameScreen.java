@@ -69,6 +69,7 @@ public class GameScreen implements Screen {
         this.game.batch.begin();
         for (GameActor actor : actors) {
             actor.renderActor(this.game.batch);
+            actor.drawRecOverBody(this.game.batch);
         }
         this.game.batch.end();        
         this.verifyPlayerStatus();
