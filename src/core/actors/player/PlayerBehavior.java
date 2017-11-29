@@ -10,8 +10,10 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Array;
 import core.AssetsManager;
 import core.actors.GameActor;
+import core.actors.enemies.Enemy;
 import core.map.MapHandler;
 import java.awt.Dimension;
 
@@ -163,8 +165,17 @@ public class PlayerBehavior {
         this.playerHandler.changeStateTime(-deltaTime);
     }
         
-    public void checkCollisions(MapHandler map){
+    public void checkCollisions(MapHandler map, Array<GameActor> stageActors){
         this.playerHandler.checkGroundCollision(map);
+        
+        if(this.playerHandler.getCurrentState() != GameActor.State.HURTED && this.playerHandler.getCurrentState() != GameActor.State.DYING){
+            for (int i = 1; i < stageActors.size; i++) {
+                if(stageActors.get(i).getBody().overlaps(this.playerHandler.getBody())){
+                    System.out.println("Collision with enemy");
+                }
+            }
+        }
+        
         if(this.playerHandler.getCurrentState() == GameActor.State.STANDING || this.playerHandler.getCurrentState() == GameActor.State.WALKING){
             Rectangle stairBoundary = this.stairHandler.checkStairsCollision(map, this.playerHandler.isFacingRight());
             if(stairBoundary != null){

@@ -5,11 +5,9 @@
  */
 package core.actors.enemies;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
-import core.AssetsManager;
 import core.actors.GameActor;
 
 /**

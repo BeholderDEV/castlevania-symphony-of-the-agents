@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import core.actors.GameActor;
 import core.map.MapHandler;
 
@@ -29,11 +30,11 @@ public class PlayerHandler extends GameActor{
     }
     
     @Override
-    public void updateActor(float deltaTime, MapHandler map){
+    public void updateActor(float deltaTime, MapHandler map, Array<GameActor> stageActors){
         super.stateTime += deltaTime;
         this.behaviorHandler.defineAction(deltaTime, map);
         super.updatePosition(deltaTime);
-        this.behaviorHandler.checkCollisions(map);
+        this.behaviorHandler.checkCollisions(map, stageActors);
     }
     
     @Override
@@ -159,10 +160,6 @@ public class PlayerHandler extends GameActor{
         this.behaviorHandler.drawRec(batch);
     }
     
-    public Rectangle getPlayerBody(){
-        return super.body;
-    }
-
     public float getStateTime() {
         return stateTime;
     }

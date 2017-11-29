@@ -8,6 +8,7 @@ package core.actors;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import core.actors.player.PlayerBehavior;
 import core.map.MapHandler;
 
@@ -27,7 +28,7 @@ public abstract class GameActor {
     protected Atk_State atkState = Atk_State.STAND_ATK;
     
     public enum State {
-        STANDING, WALKING, JUMPING, CROUNCHING, ON_STAIRS, DYING, ATTACKING
+        STANDING, WALKING, JUMPING, CROUNCHING, ON_STAIRS, DYING, ATTACKING, HURTED
     }
     
     public enum Atk_State {
@@ -43,7 +44,7 @@ public abstract class GameActor {
         this.body = body;
     }
     
-    public abstract void updateActor(float deltaTime, MapHandler map);
+    public abstract void updateActor(float deltaTime, MapHandler map, Array<GameActor> stageActors);
     
     public abstract void renderActor(SpriteBatch batch);
     

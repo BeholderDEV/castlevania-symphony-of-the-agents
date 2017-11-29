@@ -76,4 +76,8 @@ public class AgentCreator {
             Logger.getLogger(AgentCreator.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    public void createAgent(String agentName, String classPath, Object[] args){
+        this.createAgent("Main-Container", agentName, classPath, args);
+    }
 }

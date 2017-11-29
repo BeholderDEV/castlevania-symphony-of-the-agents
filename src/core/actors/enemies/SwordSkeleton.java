@@ -9,7 +9,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Array;
 import core.AssetsManager;
+import core.actors.GameActor;
 import core.map.MapHandler;
 
 /**
@@ -24,7 +26,7 @@ public class SwordSkeleton extends Enemy{
     }
 
     @Override
-    public void updateActor(float deltaTime, MapHandler map) {
+    public void updateActor(float deltaTime, MapHandler map, Array<GameActor> stageActors) {
         
     }
 

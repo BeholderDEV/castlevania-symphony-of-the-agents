@@ -11,17 +11,13 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import core.AssetsManager;
 import core.actors.GameActor;
-import core.actors.enemies.Enemy;
 import core.actors.enemies.EnemyFactory;
 import core.map.MapHandler;
-import core.actors.player.PlayerBehavior;
 import core.actors.player.PlayerHandler;
 
 /**
@@ -32,8 +28,6 @@ public class GameScreen implements Screen {
     public final int SCREEN_WIDTH = 50;
     public final int SCREEN_HEIGHT = 20;
     private final ScreenHandler game;
-//    private final PlayerHandler player;
-//    private Array<Enemy> enemies = new Array<>();
     private Array<GameActor> actors = new Array<>();
     
     private final MapHandler mapHandler;
@@ -41,8 +35,6 @@ public class GameScreen implements Screen {
     
     public GameScreen(final ScreenHandler game, PlayerHandler player) {
         this.game = game;
-//        this.actors.get(0) = player;
-//        this.enemies.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.SWORD_SKELETON, 12, new Vector2(30, 3.4f), 5f, 6f));
         
         this.camera = new OrthographicCamera();
         this.camera.setToOrtho(false, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -51,7 +43,6 @@ public class GameScreen implements Screen {
         
         this.camera.update();
         this.mapHandler.getMapRenderer().setView(camera);
-//        this.actors.get(0).getBody().setPosition(23, 3.4f);
         this.createActors();
     }
     
@@ -67,7 +58,7 @@ public class GameScreen implements Screen {
         Gdx.gl.glClearColor(0.5f, 0.5f, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         for (GameActor actor : actors) {
-            actor.updateActor(delta, mapHandler);
+            actor.updateActor(delta, mapHandler, this.actors);
         }
         this.updateCameraPosition();
         this.camera.update();
