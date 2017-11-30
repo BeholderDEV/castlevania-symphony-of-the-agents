@@ -10,7 +10,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import core.AssetsManager;
+import core.util.ResourcesManager;
 import core.actors.player.PlayerHandler;
 
 /**
@@ -27,7 +27,7 @@ public class MainMenuScreen extends ImageScreen{
     public void render(float delta) {
         super.render(delta);
         if(Gdx.input.isKeyPressed(Input.Keys.ENTER) || Gdx.input.isTouched()){
-            AssetsManager.loadFirstFaseAssets();
+            ResourcesManager.loadFirstFaseAssets();
             super.game.setScreen(new GameScreen(super.game, new PlayerHandler()));
             this.dispose();
         }

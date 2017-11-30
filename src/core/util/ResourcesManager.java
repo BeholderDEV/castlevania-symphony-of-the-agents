@@ -3,18 +3,21 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package core;
+package core.util;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Pool;
+import com.badlogic.gdx.utils.Pools;
 
 /**
  *
  * @author Augustop
  */
-public class AssetsManager {
-    public static AssetManager assets = new AssetManager();
-    
+public class ResourcesManager {
+    public static final AssetManager assets = new AssetManager();
+    public static final Pool<Rectangle> rectanglePool = Pools.get(Rectangle.class);
     
     // Possible an loading screen
     public static void loadFirstFaseAssets(){

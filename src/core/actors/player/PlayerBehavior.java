@@ -11,9 +11,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
-import core.AssetsManager;
+import core.util.ResourcesManager;
 import core.actors.GameActor;
-import core.actors.enemies.Enemy;
 import core.map.MapHandler;
 import java.awt.Dimension;
 
@@ -54,6 +53,7 @@ public class PlayerBehavior {
                 if(this.playerHandler.getCurrentAtkState() == GameActor.Atk_State.JUMP_ATK){
                     this.defineActionJumping(deltaTime);
                 }
+            break;
             case HURTED:
                 this.defineActionHurted(deltaTime);
             break;
@@ -61,7 +61,7 @@ public class PlayerBehavior {
     }
     
     private void defineActionHurted(float deltaTime){
-        if(this.playerHandler.getStateTime() >= 0.3f){
+        if(this.playerHandler.getStateTime() >= 0.2f){
             this.playerHandler.setCurrentState(GameActor.State.STANDING);
         }
     }
@@ -175,8 +175,6 @@ public class PlayerBehavior {
     public void checkCollisions(MapHandler map, Array<GameActor> stageActors){
         this.playerHandler.checkGroundCollision(map);
         
-        
-        // TO DO: Check side of the collision
         if(this.playerHandler.getCurrentState() != GameActor.State.HURTED && this.playerHandler.getCurrentState() != GameActor.State.DYING){
             for (int i = 1; i < stageActors.size; i++) {
                 if(this.playerHandler.checkCollisionBetweenTwoActors(stageActors.get(i), this.playerHandler)){
@@ -184,6 +182,7 @@ public class PlayerBehavior {
                     this.playerHandler.getVelocity().x = -this.playerHandler.getWalkingSpeed() * 2;
                     this.playerHandler.getVelocity().y = 0;
                     this.playerHandler.setStateTime(0);
+                    this.playerHandler.setFacingRight(stageActors.get(i).getBody().x > this.playerHandler.getBody().x);
                     break;
                 }
             }
@@ -211,7 +210,7 @@ public class PlayerBehavior {
             float w = 6f;
             w *= (this.playerHandler.isFacingRight())? 1: -1;
             float h = 1;
-            batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), x, y, w, h);
+            batch.draw(ResourcesManager.assets.get("assets/img/square.png", Texture.class), x, y, w, h);
             
         }
 //        if(this.playerHandler.getCurrentState() == State.ON_STAIRS){

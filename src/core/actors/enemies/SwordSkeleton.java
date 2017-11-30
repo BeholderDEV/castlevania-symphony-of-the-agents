@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
-import core.AssetsManager;
+import core.util.ResourcesManager;
 import core.actors.GameActor;
 import core.map.MapHandler;
 
@@ -22,7 +22,7 @@ public class SwordSkeleton extends Enemy{
     
     public SwordSkeleton(int walkingSpeed, Rectangle body) {
         super(walkingSpeed, body);
-        super.standImg = standImg = new TextureRegion(AssetsManager.assets.get("assets/img/superIV_Enemies.png", Texture.class), 312, 143, 30, 49);
+        super.standImg = standImg = new TextureRegion(ResourcesManager.assets.get("assets/img/superIV_Enemies.png", Texture.class), 312, 143, 30, 49);
     }
 
     @Override

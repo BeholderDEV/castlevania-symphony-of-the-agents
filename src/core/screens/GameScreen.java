@@ -14,7 +14,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import core.AssetsManager;
+import core.util.ResourcesManager;
 import core.actors.GameActor;
 import core.actors.enemies.EnemyFactory;
 import core.map.MapHandler;
@@ -78,8 +78,8 @@ public class GameScreen implements Screen {
     
     private void verifyPlayerDeath(){
         if(this.actors.get(0).getBody().y + this.actors.get(0).getBody().height < 0 || this.actors.get(0).isDead()){
-            AssetsManager.assets.load("assets/img/gameover_screen.png", Texture.class);
-            AssetsManager.assets.finishLoading();
+            ResourcesManager.assets.load("assets/img/gameover_screen.png", Texture.class);
+            ResourcesManager.assets.finishLoading();
             this.game.setScreen(new GameOverScreen(game));
             this.mapHandler.disposeMap();
         }
@@ -146,7 +146,7 @@ public class GameScreen implements Screen {
     @Override
     public void dispose() {
         this.mapHandler.disposeMap();
-        AssetsManager.assets.clear();
+        ResourcesManager.assets.clear();
     }
 
 }

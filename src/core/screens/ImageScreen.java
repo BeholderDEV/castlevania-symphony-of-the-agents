@@ -12,7 +12,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.FileTextureData;
-import core.AssetsManager;
+import core.util.ResourcesManager;
 import core.actors.player.PlayerHandler;
 
 /**
@@ -28,7 +28,7 @@ public abstract class ImageScreen implements Screen{
         this.game = game;
         this.camera = new OrthographicCamera();
         this.camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        this.screenImage = AssetsManager.assets.get(imgPath, Texture.class);
+        this.screenImage = ResourcesManager.assets.get(imgPath, Texture.class);
     }
     
     @Override
@@ -48,7 +48,7 @@ public abstract class ImageScreen implements Screen{
         this.game.batch.end();
         if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE)){
             this.dispose();
-            AssetsManager.assets.clear();
+            ResourcesManager.assets.clear();
             Gdx.app.exit();
         }
     }
@@ -71,7 +71,7 @@ public abstract class ImageScreen implements Screen{
 
     @Override
     public void dispose() {
-        AssetsManager.assets.unload(((FileTextureData)this.screenImage.getTextureData()).getFileHandle().path());
+        ResourcesManager.assets.unload(((FileTextureData)this.screenImage.getTextureData()).getFileHandle().path());
     }
     
 }

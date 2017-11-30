@@ -7,22 +7,21 @@ package core.actors.enemies;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Pool;
-import com.badlogic.gdx.utils.Pools;
+import core.util.ResourcesManager;
 
 /**
  *
  * @author Augustop
  */
 public class EnemyFactory {
-    private static final Pool<Rectangle> rectanglePool = Pools.get(Rectangle.class);
+    
     
     public enum enemyType{
         SWORD_SKELETON
     }
     
     public static Enemy createEnemy(enemyType type, int walkingSpeed, Vector2 position, float width, float height){
-        Rectangle enemyBody = rectanglePool.obtain();
+        Rectangle enemyBody = ResourcesManager.rectanglePool.obtain();
         enemyBody.setPosition(position);
         enemyBody.setSize(width, height);
         switch(type){
@@ -31,9 +30,4 @@ public class EnemyFactory {
         }
         return null;
     }
-    
-    public static void disposeEnemy(Enemy enemy){
-        rectanglePool.free(enemy.getBody());
-    }
-    
 }
