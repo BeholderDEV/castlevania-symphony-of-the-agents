@@ -7,6 +7,7 @@ package core.actors;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -58,33 +59,36 @@ public abstract class GameActor {
     
     public void checkGroundCollision(MapHandler map){
         if(map.checkLayerCollision(MapHandler.Layer.GROUND, Math.round(this.body.x), Math.round(this.body.y), Math.round(this.body.x + this.body.width), Math.round(this.body.y + this.body.height * 0.01f))){
-            if(this.currentState == State.JUMPING|| (this.currentState == State.ATTACKING && this.atkState == Atk_State.JUMP_ATK)){
-                this.currentState = State.STANDING;
+            if(this.currentState == State.JUMPING || (this.currentState == State.ATTACKING && this.atkState == Atk_State.JUMP_ATK)){
+                if(this.currentState != State.HURTED){
+                    this.currentState = State.STANDING;
+                }
                 this.body.y = Math.round(this.body.y) + GameActor.DISTANCE_FROM_GROUND_LAYER;
             }
-        }else if(this.currentState != State.JUMPING && this.currentState != State.ON_STAIRS){
+        }else if(this.currentState != State.JUMPING && this.currentState != State.ON_STAIRS && this.currentState != State.ATTACKING && this.currentState != State.HURTED){
             this.currentState = State.JUMPING;
         }
     }
     
     public void drawRecOverBody(SpriteBatch batch){
         float ad = 1.6f;
-        batch.draw(AssetsManager.assets.get("assets/img/squarer.png", Texture.class), (this.facingRight) ? this.body.x + 0.4f: this.body.x + this.body.width - 1.2f, 
-                this.body.y, 
-                (this.facingRight) ? this.body.width - ad: -this.body.width + ad, 
+        batch.draw(AssetsManager.assets.get("assets/img/squarer.png", Texture.class),(this.facingRight) ?this.body.x + 0.4f: this.body.x + 0.4f, 
+                (this.getCurrentState() == State.ON_STAIRS) ? this.body.y + 0.4f: this.body.y, 
+                this.body.width - ad, 
                 this.body.height - 0.5f);
     }
     
     public boolean checkCollisionBetweenTwoActors(GameActor actor1, GameActor actor2){
         float xAdjust = 0.4f, widthAdjust = 1.6f, heigthAdjust = 0.5f;
-//        collisionBody1.set((actor1.facingRight) ? actor1.body.x + xAdjust : actor1.body.x + actor1.body.width - xAdjust * 3,
-//                actor1.body.y, (actor1.facingRight) ? actor1.body.width - widthAdjust: -actor1.body.width + widthAdjust, 
-//                actor1.body.height - heigthAdjust);
-//        collisionBody2.set((actor2.facingRight) ? actor2.body.x + xAdjust : actor2.body.x + actor2.body.width - xAdjust * 3,
-//                actor2.body.y, (actor2.facingRight) ? actor2.body.width - widthAdjust: -actor2.body.width + widthAdjust, 
-//                actor2.body.height - heigthAdjust);
-//        return collisionBody1.overlaps(collisionBody2);
-        return false;
+        collisionBody1.set(actor1.body.x + xAdjust,
+                (actor1.getCurrentState() == State.ON_STAIRS) ? actor1.body.y + 0.4f: actor1.body.y, 
+                actor1.body.width - widthAdjust, 
+                actor1.body.height - heigthAdjust);
+        collisionBody2.set(actor2.body.x + xAdjust, 
+                (actor2.getCurrentState() == State.ON_STAIRS) ? actor2.body.y + 0.4f: actor2.body.y, 
+                actor2.body.width - widthAdjust, 
+                actor2.body.height - heigthAdjust);
+        return collisionBody1.overlaps(collisionBody2);
     }
 
     public Rectangle getBody() {

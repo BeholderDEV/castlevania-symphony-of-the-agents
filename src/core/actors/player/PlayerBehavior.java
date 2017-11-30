@@ -54,10 +54,17 @@ public class PlayerBehavior {
                 if(this.playerHandler.getCurrentAtkState() == GameActor.Atk_State.JUMP_ATK){
                     this.defineActionJumping(deltaTime);
                 }
+            case HURTED:
+                this.defineActionHurted(deltaTime);
             break;
         }
     }
     
+    private void defineActionHurted(float deltaTime){
+        if(this.playerHandler.getStateTime() >= 0.3f){
+            this.playerHandler.setCurrentState(GameActor.State.STANDING);
+        }
+    }
     
     private void defineActionStanding(float deltaTime){
         this.playerHandler.setCurrentState(GameActor.State.STANDING);
@@ -168,10 +175,16 @@ public class PlayerBehavior {
     public void checkCollisions(MapHandler map, Array<GameActor> stageActors){
         this.playerHandler.checkGroundCollision(map);
         
+        
+        // TO DO: Check side of the collision
         if(this.playerHandler.getCurrentState() != GameActor.State.HURTED && this.playerHandler.getCurrentState() != GameActor.State.DYING){
             for (int i = 1; i < stageActors.size; i++) {
                 if(this.playerHandler.checkCollisionBetweenTwoActors(stageActors.get(i), this.playerHandler)){
-                    System.out.println("Collision with enemy");
+                    this.playerHandler.setCurrentState(GameActor.State.HURTED);
+                    this.playerHandler.getVelocity().x = -this.playerHandler.getWalkingSpeed() * 2;
+                    this.playerHandler.getVelocity().y = 0;
+                    this.playerHandler.setStateTime(0);
+                    break;
                 }
             }
         }

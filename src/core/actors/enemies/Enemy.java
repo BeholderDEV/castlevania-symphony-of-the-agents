@@ -15,10 +15,10 @@ import core.actors.GameActor;
  * @author Augustop
  */
 public abstract class Enemy extends GameActor{
-    public final static float PLAYER_COLLISION_ADJUSTMENT = 1f;
     protected TextureRegion standImg;
     protected Animation<TextureRegion> movingAnimation;
     protected Animation<TextureRegion> atkAnimation;
+    protected Animation<TextureRegion> deathAnimation;
 //    protected Agent enemyBehavior  ----- integration with JADE
 
     public Enemy(int walkingSpeed, Rectangle body) {

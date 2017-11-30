@@ -50,7 +50,7 @@ public class GameScreen implements Screen {
         PlayerHandler player = new PlayerHandler();
         player.getBody().setPosition(23, 3.4f);
         this.actors.add(player);
-        this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.SWORD_SKELETON, 12, new Vector2(30, 3.4f), 5f, 6f));
+        this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.SWORD_SKELETON, 12, new Vector2(33, 3.4f), 5f, 6f));
     }
 
     @Override
@@ -72,11 +72,11 @@ public class GameScreen implements Screen {
             actor.drawRecOverBody(this.game.batch);
         }
         this.game.batch.end();        
-        this.verifyPlayerStatus();
+        this.verifyPlayerDeath();
         this.verifyMenuInputs();
     }
     
-    private void verifyPlayerStatus(){
+    private void verifyPlayerDeath(){
         if(this.actors.get(0).getBody().y + this.actors.get(0).getBody().height < 0 || this.actors.get(0).isDead()){
             AssetsManager.assets.load("assets/img/gameover_screen.png", Texture.class);
             AssetsManager.assets.finishLoading();

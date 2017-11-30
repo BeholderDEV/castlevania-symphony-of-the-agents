@@ -110,6 +110,8 @@ public class PlayerHandler extends GameActor{
                 return this.defineDeathSprite();
             case ATTACKING:
                 return this.defineAtkSprite(this.animationHandler.getCorrectAtkAnimation(this.atkState, this.behaviorHandler.isUpstairs()));
+            case HURTED:
+                return this.animationHandler.getHurtedImg();
             default:
                 return this.animationHandler.getStandImg();
         }
