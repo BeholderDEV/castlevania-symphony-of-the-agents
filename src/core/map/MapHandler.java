@@ -102,10 +102,6 @@ public class MapHandler {
     
     public String checkStairsDirection(int startX, int startY, int endX, int endY){
         TiledMapTileLayer tileLayer = (TiledMapTileLayer) this.map.getLayers().get("stair");
-//        System.out.println(startX);
-//        System.out.println(startY);
-//        System.out.println(endX);
-//        System.out.println(endY);
         for (int x = startX; x <= endX; x++) {
             for (int y = startY; y <= endY; y++) {
                 if(tileLayer.getCell(x, y) != null){
@@ -125,6 +121,17 @@ public class MapHandler {
             }
         }
         return "Failed";
+    }
+    
+    public int getUpermostGroundTile(int tileX, int tileY){
+        TiledMapTileLayer tileLayer = (TiledMapTileLayer) this.map.getLayers().get("ground");
+        int i = 1;
+        while(true){
+            if(tileLayer.getCell(tileX, tileY + i) == null){
+                return tileY + i - 1;
+            }
+            i++;
+        }
     }
     
     public boolean checkValidLayerMove(Layer layer, int tileX, int tileY){
