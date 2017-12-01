@@ -36,7 +36,7 @@ public class PlayerHandler extends GameActor{
         this.behaviorHandler.defineAction(deltaTime, map);
         super.updatePosition(deltaTime);
         this.behaviorHandler.checkCollisions(map, stageActors);
-        if(this.currentState == State.STANDING && this.lifePoints == 0){
+        if(this.currentState == State.STANDING && this.lifePoints <= 0){
             this.velocity.set(0, 0);
             this.currentState = State.DYING;
         }

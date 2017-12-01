@@ -5,6 +5,8 @@
  */
 package ai;
 
+import ai.sword.SwordAgentCore;
+import jade.core.Agent;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.wrapper.ContainerController;
@@ -27,18 +29,12 @@ import jade.core.Runtime;
 //  a.createContainer("localhost", "1099", "Container2");
 //  a.createAgent("Container2", "Aegis3", "launcher.ShieldAgent", null);
 
-//  public class ShieldAgent extends Agent{
-//
-//    @Override
-//    protected void setup() {
-//        System.out.println("My name is " + getLocalName());
-//        System.out.println("Nya");
-//        super.setup();
-//    }
-//    
-//  }
-
 public class AgentCreator {
+    
+    public enum AgentType{
+        SKELETON_SWORD
+    }
+    
     private static AgentCreator instance = null;
     private final HashMap<String, ContainerController> containerMap = new HashMap<>();
     
@@ -48,7 +44,7 @@ public class AgentCreator {
 	p.setParameter(Profile.MAIN_HOST, "localhost");
 	p.setParameter(Profile.MAIN_PORT, "1099");
 	p.setParameter(Profile.CONTAINER_NAME, "Main-Container");
-        p.setParameter(Profile.GUI, "true");
+//        p.setParameter(Profile.GUI, "true");
         this.containerMap.put("Main-Container", rt.createMainContainer(p));
     }
     
@@ -68,16 +64,20 @@ public class AgentCreator {
         this.containerMap.put(name, rt.createAgentContainer(p));
     }
     
-    public void createAgent(String containerName, String agentName, String classPath, Object[] args){
+    public void createAgent(String containerName, AgentType agentType, Object[] args){
         ContainerController cc = this.containerMap.get(containerName);
         try {
-            cc.createNewAgent(agentName, classPath, args).start();
+            switch(agentType){
+                case SKELETON_SWORD:
+                    cc.createNewAgent("Skeleton_Sword_" + SwordAgentCore.agentNameCount++, "ai.sword.SwordAgentCore", args).start();
+                break;
+            }
         } catch (StaleProxyException ex) {
             Logger.getLogger(AgentCreator.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
-    public void createAgent(String agentName, String classPath, Object[] args){
-        this.createAgent("Main-Container", agentName, classPath, args);
+    public void createAgent(AgentType agentType, Object[] args){
+        this.createAgent("Main-Container", agentType, args);
     }
 }

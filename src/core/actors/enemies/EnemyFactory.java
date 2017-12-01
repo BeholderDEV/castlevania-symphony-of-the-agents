@@ -7,8 +7,10 @@ package core.actors.enemies;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import core.actors.CollisionHandler;
-import core.util.AssetsManager;
+import core.actors.GameActor;
+import core.map.MapHandler;
 
 /**
  *
@@ -21,13 +23,13 @@ public class EnemyFactory {
         SWORD_SKELETON
     }
     
-    public static Enemy createEnemy(enemyType type, int walkingSpeed, Vector2 position, float width, float height){
+    public static Enemy createEnemy(MapHandler map, Array<GameActor> actors, enemyType type, int walkingSpeed, Vector2 position, float width, float height){
         Rectangle enemyBody = CollisionHandler.rectanglePool.obtain();
         enemyBody.setPosition(position);
         enemyBody.setSize(width, height);
         switch(type){
             case SWORD_SKELETON:
-                return new SwordSkeleton(walkingSpeed, enemyBody);
+                return new SwordSkeleton(walkingSpeed, enemyBody, map, actors);
         }
         return null;
     }

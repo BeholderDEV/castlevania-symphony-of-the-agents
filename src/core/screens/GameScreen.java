@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.Array;
 import core.actors.CollisionHandler;
 import core.util.AssetsManager;
 import core.actors.GameActor;
+import core.actors.enemies.Enemy;
 import core.actors.enemies.EnemyFactory;
 import core.map.MapHandler;
 import core.actors.player.PlayerHandler;
@@ -33,6 +34,7 @@ public class GameScreen implements Screen {
     
     private final MapHandler mapHandler;
     private OrthographicCamera camera;
+    public static float lastDelta;
     
     public GameScreen(final ScreenHandler game, PlayerHandler player) {
         this.game = game;
@@ -51,19 +53,22 @@ public class GameScreen implements Screen {
         PlayerHandler player = new PlayerHandler();
         player.getBody().setPosition(23, 3.4f);
         this.actors.add(player);
-        this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.SWORD_SKELETON, 12, new Vector2(33, 3.4f), 5f, 6f));
+        this.actors.add(EnemyFactory.createEnemy(this.mapHandler, this.actors,EnemyFactory.enemyType.SWORD_SKELETON, 12, new Vector2(53, 3.4f), 5f, 6f));
     }
 
     @Override
     public void render(float delta) {
+        lastDelta = delta;       
         Gdx.gl.glClearColor(0.5f, 0.5f, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         for (GameActor actor : actors) {
+            actor.setPossibleToRender(true);
             actor.updateActor(delta, mapHandler, this.actors);
+            System.out.println(actor.getLifePoints());
         }
         this.updateCameraPosition();
         this.camera.update();
-        
+                
         this.mapHandler.getMapRenderer().setView(camera);
         this.mapHandler.getMapRenderer().render();
         this.game.batch.setProjectionMatrix(camera.combined);
@@ -83,6 +88,11 @@ public class GameScreen implements Screen {
     private void verifyPlayerDeath(){
         if(this.actors.get(0).getBody().y + this.actors.get(0).getBody().height < 0 || this.actors.get(0).isDead()){
             AssetsManager.assets.load("assets/img/gameover_screen.png", Texture.class);
+            for (GameActor actor : actors) {
+                if(actor instanceof Enemy){
+                    ((Enemy)actor).setForDelete();
+                }
+            }
             AssetsManager.assets.finishLoading();
             this.game.setScreen(new GameOverScreen(game));
             this.mapHandler.disposeMap();

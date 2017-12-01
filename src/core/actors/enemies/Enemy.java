@@ -8,7 +8,9 @@ package core.actors.enemies;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Array;
 import core.actors.GameActor;
+import core.map.MapHandler;
 import jade.core.Agent;
 
 /**
@@ -23,11 +25,15 @@ public abstract class Enemy extends GameActor{
     protected Animation<TextureRegion> movingAnimation;
     protected Animation<TextureRegion> atkAnimation;
     protected Animation<TextureRegion> deathAnimation;
-    protected Agent enemyBehavior;
-
-    public Enemy(int walkingSpeed, Rectangle body) {
+    protected MapHandler mapView;
+    protected Array<GameActor> actors = new Array<>();
+    protected boolean canDelete = false;
+    
+    public Enemy(int walkingSpeed, Rectangle body, MapHandler map, Array<GameActor> actors) {
         super(walkingSpeed, body);
         super.facingRight = false;
+        this.mapView = map;
+        this.actors = actors;
     }
     
     @Override
@@ -52,6 +58,12 @@ public abstract class Enemy extends GameActor{
     public boolean isDead() {
         return super.currentState == GameActor.State.DYING;
     }
+
+    public boolean canDelete() {
+        return canDelete;
+    }
     
-    
+    public void setForDelete(){
+        this.canDelete = true;
+    }
 }

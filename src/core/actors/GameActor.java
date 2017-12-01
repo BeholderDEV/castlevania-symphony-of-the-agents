@@ -30,6 +30,7 @@ public abstract class GameActor {
     protected Array<Rectangle> collidableObject = new Array<>();
     protected float spriteAdjustmentForCollision[] = {0, 0, 0, 0};
     protected int lifePoints = 3;
+    protected boolean possibleToRender = false;
     
     public enum State {
         STANDING, WALKING, JUMPING, CROUNCHING, ON_STAIRS, DYING, ATTACKING, HURTED
@@ -100,13 +101,21 @@ public abstract class GameActor {
     public int getWalkingSpeed() {
         return walkingSpeed;
     }
-
+    
     public int getJumpingSpeed() {
         return jumpingSpeed;
     }
 
     public float[] getSpriteAdjustmentForCollision() {
         return spriteAdjustmentForCollision;
+    }
+
+    public float getStateTime() {
+        return stateTime;
+    }
+
+    public boolean isPossibleToRender() {
+        return possibleToRender;
     }
     
     public void loseLifePoints(int points){
@@ -128,6 +137,10 @@ public abstract class GameActor {
 
     public void setCurrentState(State currentState) {
         this.currentState = currentState;
+    }
+
+    public void setPossibleToRender(boolean possibleToRender) {
+        this.possibleToRender = possibleToRender;
     }
 
     public void setAtkState(Atk_State atkState) {
