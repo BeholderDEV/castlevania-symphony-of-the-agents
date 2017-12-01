@@ -206,11 +206,11 @@ public class PlayerBehavior {
     // Fix weapon area when jumping and on stairs
     private void updateWeaponHit(Array<GameActor> stageActors){
         Rectangle weaponArea = CollisionHandler.rectanglePool.obtain();
+        float w = 6f;
         float x = (this.playerHandler.isFacingRight()) 
                   ? (this.playerHandler.getBody().x + this.playerHandler.getBody().width) - this.playerHandler.getBody().width * ((this.FOOT_SIZE.width - 30f) / 100f) 
-                  : this.playerHandler.getBody().x - this.playerHandler.getBody().width * ((this.FOOT_SIZE.width - 30f) / 100f);
+                  : this.playerHandler.getBody().x - w;
         float y = (this.playerHandler.getBody().y + this.playerHandler.getBody().height) - this.playerHandler.getBody().height * 0.35f;
-        float w = (this.playerHandler.isFacingRight()) ? 6f: -6f;
         float h = 1;
         weaponArea.set(x, y, w, h);
         for (int i = 1; i < stageActors.size; i++) {
@@ -239,11 +239,11 @@ public class PlayerBehavior {
         // When Jumping frame is faster and a little lower
         if((this.playerHandler.getCurrentState() == GameActor.State.ATTACKING && this.playerHandler.getAtkState() != GameActor.Atk_State.JUMP_ATK) && this.playerHandler.getStateTime() >= PlayerAnimation.STANDARD_ATK_FRAME_TIME * 2f 
         || (this.playerHandler.getCurrentState() == GameActor.State.ATTACKING && this.playerHandler.getAtkState() == GameActor.Atk_State.JUMP_ATK) && this.playerHandler.getStateTime() >= 0.2){
+            float w = 6f;
             float x = (this.playerHandler.isFacingRight()) 
                       ? (this.playerHandler.getBody().x + this.playerHandler.getBody().width) - this.playerHandler.getBody().width * ((this.FOOT_SIZE.width - 30f) / 100f) 
-                      : this.playerHandler.getBody().x - this.playerHandler.getBody().width * ((this.FOOT_SIZE.width - 30f) / 100f);
+                      : this.playerHandler.getBody().x - w;
             float y = (this.playerHandler.getBody().y + this.playerHandler.getBody().height) - this.playerHandler.getBody().height * 0.35f;
-            float w = (this.playerHandler.isFacingRight()) ? 6f: -6f;
             float h = 1;
             batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), x, y, w, h);
         }
