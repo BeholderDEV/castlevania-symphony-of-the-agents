@@ -27,6 +27,7 @@ public class PlayerHandler extends GameActor{
         super(new Rectangle(0, 0, PlayerBehavior.NORMAL_WIDTH, PlayerBehavior.NORMAL_HEIGHT));
         this.animationHandler = new PlayerAnimation();
         this.behaviorHandler = new PlayerBehavior(this);
+        this.spriteAdjustmentForCollision = new float[]{0.4f, 0.4f, 1.6f, 0.9f};
     }
     
     @Override
@@ -35,6 +36,10 @@ public class PlayerHandler extends GameActor{
         this.behaviorHandler.defineAction(deltaTime, map);
         super.updatePosition(deltaTime);
         this.behaviorHandler.checkCollisions(map, stageActors);
+        if(this.currentState == State.STANDING && this.lifePoints == 0){
+            this.velocity.set(0, 0);
+            this.currentState = State.DYING;
+        }
     }
     
     @Override
@@ -152,6 +157,11 @@ public class PlayerHandler extends GameActor{
         }
         return atkAnimation.getKeyFrame(super.stateTime);
     }
+
+    @Override
+    public void receiveDamage(Rectangle dmgReason, int dmgPoints) {
+        this.behaviorHandler.receiveDamage(dmgReason, dmgPoints);
+    }
     
     public boolean isDead(){
         return super.currentState == GameActor.State.DYING && this.animationHandler.getDeathAnimation().isAnimationFinished(stateTime);
@@ -168,18 +178,6 @@ public class PlayerHandler extends GameActor{
         
     public Atk_State getCurrentAtkState(){
         return this.atkState;
-    }
-    
-    public void setStateTime(float stateTime) {
-        super.stateTime = stateTime;
-    }
-
-    public void setCurrentState(State currentState) {
-        this.currentState = currentState;
-    }
-
-    public void setAtkState(Atk_State atkState) {
-        this.atkState = atkState;
     }
     
     public void changeStateTime(float delta){

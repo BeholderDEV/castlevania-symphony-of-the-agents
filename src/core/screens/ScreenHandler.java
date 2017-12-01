@@ -8,7 +8,7 @@ package core.screens;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import core.util.ResourcesManager;
+import core.util.AssetsManager;
 import core.actors.player.PlayerHandler;
 
 /**
@@ -25,7 +25,7 @@ public class ScreenHandler extends Game{
 //        AssetsManager.assets.load("assets/img/titlescreen.jpg", Texture.class);
 //        AssetsManager.assets.finishLoading();
 //        this.setScreen(new MainMenuScreen(this));
-        ResourcesManager.loadFirstFaseAssets();
+        AssetsManager.loadFirstFaseAssets();
         this.setScreen(new GameScreen(this, new PlayerHandler()));
     }
 

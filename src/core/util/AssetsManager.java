@@ -15,9 +15,8 @@ import com.badlogic.gdx.utils.Pools;
  *
  * @author Augustop
  */
-public class ResourcesManager {
+public class AssetsManager {
     public static final AssetManager assets = new AssetManager();
-    public static final Pool<Rectangle> rectanglePool = Pools.get(Rectangle.class);
     
     // Possible an loading screen
     public static void loadFirstFaseAssets(){

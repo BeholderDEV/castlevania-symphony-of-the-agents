@@ -3,13 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package core.actors.player;
+package core.actors;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import core.actors.GameActor;
+import core.actors.player.PlayerBehavior;
 import core.map.MapHandler;
 import java.awt.Dimension;
 

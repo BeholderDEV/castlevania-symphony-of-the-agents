@@ -14,7 +14,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import core.util.ResourcesManager;
+import core.actors.CollisionHandler;
+import core.util.AssetsManager;
 import core.actors.GameActor;
 import core.actors.enemies.EnemyFactory;
 import core.map.MapHandler;
@@ -71,17 +72,30 @@ public class GameScreen implements Screen {
             actor.renderActor(this.game.batch);
             actor.drawRecOverBody(this.game.batch);
         }
+        PlayerHandler p = (PlayerHandler) this.actors.get(0);
+        p.drawRecOnPlayer(this.game.batch);
         this.game.batch.end();        
         this.verifyPlayerDeath();
+        this.verifyEnemyDeath();
         this.verifyMenuInputs();
     }
     
     private void verifyPlayerDeath(){
         if(this.actors.get(0).getBody().y + this.actors.get(0).getBody().height < 0 || this.actors.get(0).isDead()){
-            ResourcesManager.assets.load("assets/img/gameover_screen.png", Texture.class);
-            ResourcesManager.assets.finishLoading();
+            AssetsManager.assets.load("assets/img/gameover_screen.png", Texture.class);
+            AssetsManager.assets.finishLoading();
             this.game.setScreen(new GameOverScreen(game));
             this.mapHandler.disposeMap();
+        }
+    }
+    
+    private void verifyEnemyDeath(){
+        for (int i = 1; i < this.actors.size; i++) {
+            if(this.actors.get(i).isDead()){
+                CollisionHandler.rectanglePool.free(this.actors.get(i).getBody());
+                this.actors.removeIndex(i);
+                i--;
+            }
         }
     }
     
@@ -146,7 +160,7 @@ public class GameScreen implements Screen {
     @Override
     public void dispose() {
         this.mapHandler.disposeMap();
-        ResourcesManager.assets.clear();
+        AssetsManager.assets.clear();
     }
 
 }

@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
-import core.util.ResourcesManager;
+import core.util.AssetsManager;
 import core.actors.GameActor;
 import core.map.MapHandler;
 
@@ -22,16 +22,26 @@ public class SwordSkeleton extends Enemy{
     
     public SwordSkeleton(int walkingSpeed, Rectangle body) {
         super(walkingSpeed, body);
-        super.standImg = standImg = new TextureRegion(ResourcesManager.assets.get("assets/img/superIV_Enemies.png", Texture.class), 312, 143, 30, 49);
+        super.standImg = standImg = new TextureRegion(AssetsManager.assets.get("assets/img/superIV_Enemies.png", Texture.class), 312, 143, 30, 49);
+        this.spriteAdjustmentForCollision = new float[]{0.4f, 0.4f, 1.6f, 0.9f};
     }
 
     @Override
     public void updateActor(float deltaTime, MapHandler map, Array<GameActor> stageActors) {
-        
+        super.stateTime += deltaTime;
+        if(super.currentState == State.HURTED){
+            super.updateHurtedStatus(deltaTime);
+        }
     }
+
+
 
     @Override
     public void renderActor(SpriteBatch batch) {
+        if(this.currentState == State.HURTED && super.blinkPeriod >= Enemy.BLINK_INTERVAL){
+            super.blinkPeriod = 0;
+            return;
+        }
         batch.draw(super.standImg, (super.facingRight) ? super.body.x: super.body.x + super.body.width, 
                 super.body.y, 
                 (super.facingRight) ? super.body.width: -super.body.width, 

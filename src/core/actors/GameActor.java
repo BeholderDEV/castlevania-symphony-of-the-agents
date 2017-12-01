@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import core.util.ResourcesManager;
+import core.util.AssetsManager;
 import core.map.MapHandler;
 
 /**
@@ -27,9 +27,9 @@ public abstract class GameActor {
     protected Vector2 velocity = new Vector2(); 
     protected State currentState = State.STANDING;
     protected Atk_State atkState = Atk_State.STAND_ATK;
-    protected Array<Rectangle> collidableObject = new Array<>(); 
-    private final static Rectangle collisionBody1 = new Rectangle();
-    private final static Rectangle collisionBody2 = new Rectangle();
+    protected Array<Rectangle> collidableObject = new Array<>();
+    protected float spriteAdjustmentForCollision[] = {0, 0, 0, 0};
+    protected int lifePoints = 3;
     
     public enum State {
         STANDING, WALKING, JUMPING, CROUNCHING, ON_STAIRS, DYING, ATTACKING, HURTED
@@ -52,47 +52,27 @@ public abstract class GameActor {
     
     public abstract void renderActor(SpriteBatch batch);
     
+    public abstract void receiveDamage(Rectangle dmgReason, int dmgPoints);
+    
     public void updatePosition(float delta){
         this.body.x += this.velocity.x * delta * ((this.facingRight) ? 1: -1);
         this.body.y += this.velocity.y * delta;
     }
     
-    public void checkGroundCollision(MapHandler map){
-        if(map.checkLayerCollision(MapHandler.Layer.GROUND, Math.round(this.body.x), Math.round(this.body.y), Math.round(this.body.x + this.body.width), Math.round(this.body.y + this.body.height * 0.01f))){
-            if(this.currentState == State.JUMPING || (this.currentState == State.ATTACKING && this.atkState == Atk_State.JUMP_ATK)){
-                if(this.currentState != State.HURTED){
-                    this.currentState = State.STANDING;
-                }
-                this.body.y = Math.round(this.body.y) + GameActor.DISTANCE_FROM_GROUND_LAYER;
-            }
-        }else if(this.currentState != State.JUMPING && this.currentState != State.ON_STAIRS && this.currentState != State.ATTACKING && this.currentState != State.HURTED){
-            this.currentState = State.JUMPING;
-        }
-    }
-    
     public void drawRecOverBody(SpriteBatch batch){
         float ad = 1.6f;
-        batch.draw(ResourcesManager.assets.get("assets/img/squarer.png", Texture.class),(this.facingRight) ?this.body.x + 0.4f: this.body.x + 0.4f, 
+        batch.draw(AssetsManager.assets.get("assets/img/squarer.png", Texture.class),(this.facingRight) ?this.body.x + 0.4f: this.body.x + 0.4f, 
                 (this.getCurrentState() == State.ON_STAIRS) ? this.body.y + 0.4f: this.body.y, 
                 this.body.width - ad, 
                 this.body.height - 0.9f);
     }
-    
-    public boolean checkCollisionBetweenTwoActors(GameActor actor1, GameActor actor2){
-        float xAdjust = 0.4f, yAdjust = 0.4f, widthAdjust = 1.6f, heigthAdjust = 0.9f;
-        collisionBody1.set(actor1.body.x + xAdjust,
-                actor1.body.y + yAdjust, 
-                actor1.body.width - widthAdjust, 
-                actor1.body.height - heigthAdjust);
-        collisionBody2.set(actor2.body.x + xAdjust, 
-                actor2.body.y + yAdjust, 
-                actor2.body.width - widthAdjust, 
-                actor2.body.height - heigthAdjust);
-        return collisionBody1.overlaps(collisionBody2);
-    }
-
+        
     public Rectangle getBody() {
         return body;
+    }
+
+    public int getLifePoints() {
+        return lifePoints;
     }
 
     public boolean isFacingRight() {
@@ -103,6 +83,10 @@ public abstract class GameActor {
 
     public State getCurrentState() {
         return currentState;
+    }
+
+    public Atk_State getAtkState() {
+        return atkState;
     }
 
     public Array<Rectangle> getCollidableObject() {
@@ -121,8 +105,32 @@ public abstract class GameActor {
         return jumpingSpeed;
     }
 
+    public float[] getSpriteAdjustmentForCollision() {
+        return spriteAdjustmentForCollision;
+    }
+    
+    public void loseLifePoints(int points){
+        this.lifePoints -= points;
+    }
+    
+    public void gainLifePoints(int points){
+        this.lifePoints += points;
+    }
+
     public void setFacingRight(boolean facingRight) {
         this.facingRight = facingRight;
     }
     
+    
+    public void setStateTime(float stateTime) {
+        this.stateTime = stateTime;
+    }
+
+    public void setCurrentState(State currentState) {
+        this.currentState = currentState;
+    }
+
+    public void setAtkState(Atk_State atkState) {
+        this.atkState = atkState;
+    }
 }

@@ -5,13 +5,15 @@
  */
 package core.actors.player;
 
+import core.actors.StairHandler;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
-import core.util.ResourcesManager;
+import core.actors.CollisionHandler;
+import core.util.AssetsManager;
 import core.actors.GameActor;
 import core.map.MapHandler;
 import java.awt.Dimension;
@@ -171,23 +173,56 @@ public class PlayerBehavior {
 
         this.playerHandler.changeStateTime(-deltaTime);
     }
+    
+    public void receiveDamage(Rectangle dmgReason, int dmgPoints){
+        this.playerHandler.loseLifePoints(dmgPoints);
+        this.playerHandler.setCurrentState(GameActor.State.HURTED);
+        this.playerHandler.getVelocity().x = -this.playerHandler.getWalkingSpeed() * 2;
+        this.playerHandler.getVelocity().y = 0;
+        this.playerHandler.setStateTime(0);
+        this.playerHandler.setFacingRight(dmgReason.x > this.playerHandler.getBody().x);
+    }
         
     public void checkCollisions(MapHandler map, Array<GameActor> stageActors){
-        this.playerHandler.checkGroundCollision(map);
-        
+        CollisionHandler.checkGroundCollision(map, this.playerHandler);
+        this.updateCollisionWithEnemy(stageActors);
+        this.updateCollisionWithStairs(map, stageActors);
+    }
+    
+    private void updateCollisionWithEnemy(Array<GameActor> stageActors){
         if(this.playerHandler.getCurrentState() != GameActor.State.HURTED && this.playerHandler.getCurrentState() != GameActor.State.DYING){
             for (int i = 1; i < stageActors.size; i++) {
-                if(this.playerHandler.checkCollisionBetweenTwoActors(stageActors.get(i), this.playerHandler)){
-                    this.playerHandler.setCurrentState(GameActor.State.HURTED);
-                    this.playerHandler.getVelocity().x = -this.playerHandler.getWalkingSpeed() * 2;
-                    this.playerHandler.getVelocity().y = 0;
-                    this.playerHandler.setStateTime(0);
-                    this.playerHandler.setFacingRight(stageActors.get(i).getBody().x > this.playerHandler.getBody().x);
+                if(CollisionHandler.checkCollisionBetweenTwoActorsBodies(this.playerHandler, stageActors.get(i))){
+                    this.receiveDamage(stageActors.get(i).getBody(), 1);
                     break;
                 }
             }
         }
-        
+        if(this.playerHandler.getCurrentState() == GameActor.State.ATTACKING && this.playerHandler.getStateTime() >= PlayerAnimation.STANDARD_ATK_FRAME_TIME * 2f){
+            this.updateWeaponHit(stageActors);
+        }
+    }
+    
+    // Fix weapon area when jumping and on stairs
+    private void updateWeaponHit(Array<GameActor> stageActors){
+        Rectangle weaponArea = CollisionHandler.rectanglePool.obtain();
+        float x = (this.playerHandler.isFacingRight()) 
+                  ? (this.playerHandler.getBody().x + this.playerHandler.getBody().width) - this.playerHandler.getBody().width * ((this.FOOT_SIZE.width - 30f) / 100f) 
+                  : this.playerHandler.getBody().x - this.playerHandler.getBody().width * ((this.FOOT_SIZE.width - 30f) / 100f);
+        float y = (this.playerHandler.getBody().y + this.playerHandler.getBody().height) - this.playerHandler.getBody().height * 0.35f;
+        float w = (this.playerHandler.isFacingRight()) ? 6f: -6f;
+        float h = 1;
+        weaponArea.set(x, y, w, h);
+        for (int i = 1; i < stageActors.size; i++) {
+            if(CollisionHandler.checkCollisionBetweenBodyAndObject(stageActors.get(i), weaponArea)){
+                stageActors.get(i).receiveDamage(weaponArea, 1);
+                break;
+            }
+        }
+        CollisionHandler.rectanglePool.free(weaponArea);
+    }
+    
+    private void updateCollisionWithStairs(MapHandler map, Array<GameActor> stageActors){
         if(this.playerHandler.getCurrentState() == GameActor.State.STANDING || this.playerHandler.getCurrentState() == GameActor.State.WALKING){
             Rectangle stairBoundary = this.stairHandler.checkStairsCollision(map, this.playerHandler.isFacingRight());
             if(stairBoundary != null){
@@ -202,16 +237,15 @@ public class PlayerBehavior {
     public void drawRec(SpriteBatch batch){
 
         // When Jumping frame is faster and a little lower
-        if((this.playerHandler.getCurrentState() == GameActor.State.ATTACKING) && this.playerHandler.getStateTime() >= PlayerAnimation.STANDARD_ATK_FRAME_TIME * 2f){
+        if((this.playerHandler.getCurrentState() == GameActor.State.ATTACKING && this.playerHandler.getAtkState() != GameActor.Atk_State.JUMP_ATK) && this.playerHandler.getStateTime() >= PlayerAnimation.STANDARD_ATK_FRAME_TIME * 2f 
+        || (this.playerHandler.getCurrentState() == GameActor.State.ATTACKING && this.playerHandler.getAtkState() == GameActor.Atk_State.JUMP_ATK) && this.playerHandler.getStateTime() >= 0.2){
             float x = (this.playerHandler.isFacingRight()) 
                       ? (this.playerHandler.getBody().x + this.playerHandler.getBody().width) - this.playerHandler.getBody().width * ((this.FOOT_SIZE.width - 30f) / 100f) 
                       : this.playerHandler.getBody().x - this.playerHandler.getBody().width * ((this.FOOT_SIZE.width - 30f) / 100f);
             float y = (this.playerHandler.getBody().y + this.playerHandler.getBody().height) - this.playerHandler.getBody().height * 0.35f;
-            float w = 6f;
-            w *= (this.playerHandler.isFacingRight())? 1: -1;
+            float w = (this.playerHandler.isFacingRight()) ? 6f: -6f;
             float h = 1;
-            batch.draw(ResourcesManager.assets.get("assets/img/square.png", Texture.class), x, y, w, h);
-            
+            batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), x, y, w, h);
         }
 //        if(this.playerHandler.getCurrentState() == State.ON_STAIRS){
 //            int footTileX = 0;

@@ -7,7 +7,8 @@ package core.actors.enemies;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import core.util.ResourcesManager;
+import core.actors.CollisionHandler;
+import core.util.AssetsManager;
 
 /**
  *
@@ -21,7 +22,7 @@ public class EnemyFactory {
     }
     
     public static Enemy createEnemy(enemyType type, int walkingSpeed, Vector2 position, float width, float height){
-        Rectangle enemyBody = ResourcesManager.rectanglePool.obtain();
+        Rectangle enemyBody = CollisionHandler.rectanglePool.obtain();
         enemyBody.setPosition(position);
         enemyBody.setSize(width, height);
         switch(type){
