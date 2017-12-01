@@ -30,7 +30,6 @@ public class PlayerBehavior {
     private PlayerHandler playerHandler;
     private StairHandler stairHandler;
     
-
     public PlayerBehavior(PlayerHandler handler) {
         this.playerHandler = handler;
         this.stairHandler = new StairHandler(this.playerHandler.getBody());
@@ -247,20 +246,25 @@ public class PlayerBehavior {
             float h = 1;
             batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), x, y, w, h);
         }
-//        if(this.playerHandler.getCurrentState() == State.ON_STAIRS){
-//            int footTileX = 0;
-//            int footTileY = 0;
-//            if((this.facesRight && this.stairHandler.isUpstairs()) || (!this.facesRight && !this.stairHandler.isUpstairs())){
-//                footTileX = Math.round((this.playerHandler.getBody().x + this.playerHandler.getBody().width) - this.playerHandler.getBody().width * (this.FOOT_SIZE.width / 100f));
-//                footTileY = Math.round(this.playerHandler.getBody().y + this.FOOT_SIZE.height / 100f);
-//            }
-//            if((!this.facesRight && this.stairHandler.isUpstairs()) || (this.facesRight && !this.stairHandler.isUpstairs())){
-//                footTileX = Math.round(this.playerHandler.getBody().x);
-//                footTileY = Math.round(this.playerHandler.getBody().y + this.FOOT_SIZE.height / 100f);
-//            }
-//            batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), footTileX, footTileY, 1, 1);
-////            batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), footTileX, footTileY - 1, 1, 1);
-//        }
+//        batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class),
+//                Math.round(this.playerHandler.getBody().x), 
+//                Math.round(this.playerHandler.getBody().y), 
+//                this.playerHandler.getBody().width, 
+//                this.playerHandler.getBody().height * 0.01f);
+        if(this.playerHandler.getCurrentState() == GameActor.State.ON_STAIRS){
+            int footTileX = 0;
+            int footTileY = 0;
+            if((this.playerHandler.isFacingRight() && this.stairHandler.isUpstairs()) || (!this.playerHandler.isFacingRight() && !this.stairHandler.isUpstairs())){
+                footTileX = Math.round((this.playerHandler.getBody().x + this.playerHandler.getBody().width) - this.playerHandler.getBody().width * (this.FOOT_SIZE.width / 100f));
+                footTileY = Math.round(this.playerHandler.getBody().y + this.FOOT_SIZE.height / 100f);
+            }
+            if((!this.playerHandler.isFacingRight() && this.stairHandler.isUpstairs()) || (this.playerHandler.isFacingRight() && !this.stairHandler.isUpstairs())){
+                footTileX = Math.round(this.playerHandler.getBody().x);
+                footTileY = Math.round(this.playerHandler.getBody().y + this.FOOT_SIZE.height / 100f);
+            }
+            batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), footTileX, footTileY, 1, 1);
+//            batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), footTileX, footTileY - 1, 1, 1);
+        }
 //        batch.draw(AssetsManager.assets.get("assets/img/squarer.png", Texture.class), this.playerHandler.getBody().x, this.playerHandler.getBody().y, this.playerHandler.getBody().width + 0.3f, this.playerHandler.getBody().height + 0.2f);
 //        float x = (this.facesRight) ? (this.playerHandler.getBody().x + this.playerHandler.getBody().width) - this.playerHandler.getBody().width * (this.FOOT_SIZE.width / 100f): this.playerHandler.getBody().x + this.playerHandler.getBody().width * (this.FOOT_SIZE.width / 100f);
 //        batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), x, this.playerHandler.getBody().y, this.playerHandler.getBody().width * (this.FOOT_SIZE.width / 8f / 100f), this.playerHandler.getBody().height * (this.FOOT_SIZE.height / 100f));

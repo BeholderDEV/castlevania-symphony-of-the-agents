@@ -19,7 +19,7 @@ import java.awt.Dimension;
  * @author Augustop
  */
 public class StairHandler {
-    public static final Dimension STAIR_TO_GROUND_DISTANCE = new Dimension(2, 1);
+    public static final Dimension STAIR_TO_GROUND_DISTANCE = new Dimension(1, 1);
     private Rectangle objectBody;
     private boolean upstairs = false;
     

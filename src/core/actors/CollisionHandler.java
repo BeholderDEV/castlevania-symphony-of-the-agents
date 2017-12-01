@@ -42,18 +42,16 @@ public class CollisionHandler {
     }
     
     public static void checkGroundCollision(MapHandler map, GameActor actor){
-        if(map.checkLayerCollision(MapHandler.Layer.GROUND, Math.round(actor.getBody().x), Math.round(actor.getBody().y), Math.round(actor.getBody().x + actor.getBody().width), Math.round(actor.getBody().y + actor.getBody().height * 0.01f))){
+        int startX = Math.round(actor.getBody().x), 
+            startY = Math.round(actor.getBody().y), 
+            endX = Math.round(actor.getBody().x + actor.getBody().width), 
+            endY = Math.round(actor.getBody().y + actor.getBody().height * 0.01f);
+        if(map.checkLayerCollision(MapHandler.Layer.GROUND, startX, startY, endX, endY)){
             if(actor.getCurrentState() == GameActor.State.JUMPING || (actor.getCurrentState() == GameActor.State.ATTACKING && actor.getAtkState() == GameActor.Atk_State.JUMP_ATK)){
                 if(actor.getCurrentState() != GameActor.State.HURTED){
                     actor.setCurrentState(GameActor.State.STANDING);
                 }
-                float newTileY = map.getUpermostGroundTile(Math.round(actor.getBody().x + actor.getBody().width), Math.round(actor.getBody().y + actor.getBody().height * 0.01f));
-                if(newTileY != Math.round(actor.getBody().y)){
-                    System.out.println("hm");
-                    System.out.println(newTileY);
-                    System.out.println(actor.getBody().y);
-                    
-                }
+                float newTileY = map.getUpermostGroundTile((actor.facingRight) ? endX: startX, startY);
                 actor.getBody().y = newTileY + GameActor.DISTANCE_FROM_GROUND_LAYER;
             }
         }else if(actor.getCurrentState() != GameActor.State.JUMPING && actor.getCurrentState() != GameActor.State.ON_STAIRS && actor.getCurrentState() != GameActor.State.ATTACKING && actor.getCurrentState() != GameActor.State.HURTED){

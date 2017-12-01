@@ -33,9 +33,7 @@ public class SwordSkeleton extends Enemy{
             super.updateHurtedStatus(deltaTime);
         }
     }
-
-
-
+    
     @Override
     public void renderActor(SpriteBatch batch) {
         if(this.currentState == State.HURTED && super.blinkPeriod >= Enemy.BLINK_INTERVAL){

@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import core.actors.GameActor;
+import jade.core.Agent;
 
 /**
  *
@@ -22,7 +23,7 @@ public abstract class Enemy extends GameActor{
     protected Animation<TextureRegion> movingAnimation;
     protected Animation<TextureRegion> atkAnimation;
     protected Animation<TextureRegion> deathAnimation;
-//    protected Agent enemyBehavior  ----- integration with JADE
+    protected Agent enemyBehavior;
 
     public Enemy(int walkingSpeed, Rectangle body) {
         super(walkingSpeed, body);
