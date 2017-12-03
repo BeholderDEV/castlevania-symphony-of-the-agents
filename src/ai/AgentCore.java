@@ -3,24 +3,26 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ai.sword;
+package ai;
 
+import ai.behavior.SwordAgentBehavior;
 import core.actors.enemies.SwordSkeleton;
 import jade.core.Agent;
 
 /**
  *
- * @author 5674867
+ * @author Augustop
  */
-public class SwordAgentCore extends Agent{
-    public static int agentNameCount = 1;
+public class AgentCore extends Agent{
     
     @Override
     protected void setup() {
-        System.out.println("Iniating sword agent name: " + getAID().getName());
+        System.out.println("Iniating agent: " + getAID().getName());
         Object [] args = getArguments();
         if(args != null && args.length > 0){
-            addBehaviour(new SwordAgentBehavior(this, (SwordSkeleton) args[0]));
+            if(getAID().getName().startsWith("Skeleton_Sword")){
+                addBehaviour(new SwordAgentBehavior((SwordSkeleton) args[0], this, AgentCreator.BEHAVIOR_DELAY));
+            }
         }
     }
     
@@ -28,4 +30,5 @@ public class SwordAgentCore extends Agent{
     protected void takeDown() {
         System.out.println("Ending agent " + getAID().getName());
     }
+    
 }

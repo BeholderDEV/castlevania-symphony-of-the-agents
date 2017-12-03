@@ -5,8 +5,6 @@
  */
 package ai;
 
-import ai.sword.SwordAgentCore;
-import jade.core.Agent;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.wrapper.ContainerController;
@@ -22,6 +20,7 @@ import jade.core.Runtime;
  */
 
 public class AgentCreator {
+    public static int swordNameCount = 1;
     
     public enum AgentType{
         SKELETON_SWORD
@@ -62,7 +61,7 @@ public class AgentCreator {
         try {
             switch(agentType){
                 case SKELETON_SWORD:
-                    cc.createNewAgent("Skeleton_Sword_" + SwordAgentCore.agentNameCount++, "ai.sword.SwordAgentCore", args).start();
+                    cc.createNewAgent("Skeleton_Sword_" + swordNameCount++, "ai.AgentCore", args).start();
                 break;
             }
         } catch (StaleProxyException ex) {
