@@ -11,6 +11,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import core.actors.GameActor;
 import core.map.MapHandler;
+import core.screens.GameScreen;
 import jade.core.Agent;
 
 /**
@@ -25,15 +26,14 @@ public abstract class Enemy extends GameActor{
     protected Animation<TextureRegion> movingAnimation;
     protected Animation<TextureRegion> atkAnimation;
     protected Animation<TextureRegion> deathAnimation;
-    protected MapHandler mapView;
-    protected Array<GameActor> actors = new Array<>();
+    protected GameScreen gameScreen;
     protected boolean canDelete = false;
     
-    public Enemy(int walkingSpeed, Rectangle body, MapHandler map, Array<GameActor> actors) {
+    
+    public Enemy(int walkingSpeed, Rectangle body, GameScreen gameScreen) {
         super(walkingSpeed, body);
         super.facingRight = false;
-        this.mapView = map;
-        this.actors = actors;
+        this.gameScreen = gameScreen;
     }
     
     @Override
@@ -52,6 +52,10 @@ public abstract class Enemy extends GameActor{
         if(super.stateTime >= Enemy.HURTED_DURATION){
             super.currentState = State.STANDING;
         }
+    }
+
+    public GameScreen getGameScreen() {
+        return gameScreen;
     }
     
     @Override

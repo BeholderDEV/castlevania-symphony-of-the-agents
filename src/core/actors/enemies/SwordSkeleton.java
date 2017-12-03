@@ -14,7 +14,7 @@ import com.badlogic.gdx.utils.Array;
 import core.util.AssetsManager;
 import core.actors.GameActor;
 import core.map.MapHandler;
-import jade.core.Agent;
+import core.screens.GameScreen;
 
 /**
  *
@@ -22,8 +22,8 @@ import jade.core.Agent;
  */
 public class SwordSkeleton extends Enemy{
         
-    public SwordSkeleton(int walkingSpeed, Rectangle body, MapHandler map, Array<GameActor> actors) {
-        super(walkingSpeed, body, map, actors);
+    public SwordSkeleton(int walkingSpeed, Rectangle body, GameScreen gameScreen) {
+        super(walkingSpeed, body, gameScreen);
         super.standImg = standImg = new TextureRegion(AssetsManager.assets.get("assets/img/superIV_Enemies.png", Texture.class), 312, 143, 30, 49);
         this.spriteAdjustmentForCollision = new float[]{0.4f, 0.4f, 1.6f, 0.9f};
         AgentCreator.getInstance().createAgent(AgentCreator.AgentType.SKELETON_SWORD, new Object[]{this});

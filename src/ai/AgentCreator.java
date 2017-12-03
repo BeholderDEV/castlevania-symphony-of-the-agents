@@ -21,14 +21,6 @@ import jade.core.Runtime;
  * @author Augustop
  */
 
-//Example
-//  AgentCreator a = AgentCreator.getInstance();
-//  a.createAgent("Main-Container", "Durandal", "launcher.SwordAgent", null);
-//  a.createAgent("Main-Container", "Aegis", "launcher.ShieldAgent", null);
-//  a.createAgent("Main-Container", "Aegis2", "launcher.ShieldAgent", null);
-//  a.createContainer("localhost", "1099", "Container2");
-//  a.createAgent("Container2", "Aegis3", "launcher.ShieldAgent", null);
-
 public class AgentCreator {
     
     public enum AgentType{
@@ -37,6 +29,7 @@ public class AgentCreator {
     
     private static AgentCreator instance = null;
     private final HashMap<String, ContainerController> containerMap = new HashMap<>();
+    public static final long BEHAVIOR_DELAY = 17; // milliseconds
     
     private AgentCreator(){
         Runtime rt = Runtime.instance();

@@ -31,10 +31,9 @@ public class GameScreen implements Screen {
     public final int SCREEN_HEIGHT = 20;
     private final ScreenHandler game;
     private Array<GameActor> actors = new Array<>();
-    
     private final MapHandler mapHandler;
     private OrthographicCamera camera;
-    public static float lastDelta;
+    private float lastDelta;
     
     public GameScreen(final ScreenHandler game, PlayerHandler player) {
         this.game = game;
@@ -53,18 +52,17 @@ public class GameScreen implements Screen {
         PlayerHandler player = new PlayerHandler();
         player.getBody().setPosition(23, 3.4f);
         this.actors.add(player);
-        this.actors.add(EnemyFactory.createEnemy(this.mapHandler, this.actors,EnemyFactory.enemyType.SWORD_SKELETON, 12, new Vector2(53, 3.4f), 5f, 6f));
+        this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.SWORD_SKELETON, 12, new Vector2(53, 3.4f), 5f, 6f, this));
     }
 
     @Override
     public void render(float delta) {
-        lastDelta = delta;       
+        lastDelta = delta;
         Gdx.gl.glClearColor(0.5f, 0.5f, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         for (GameActor actor : actors) {
             actor.setPossibleToRender(true);
             actor.updateActor(delta, mapHandler, this.actors);
-            System.out.println(actor.getLifePoints());
         }
         this.updateCameraPosition();
         this.camera.update();
@@ -173,4 +171,19 @@ public class GameScreen implements Screen {
         AssetsManager.assets.clear();
     }
 
+    public Array<GameActor> getActors() {
+        return actors;
+    }
+
+    public OrthographicCamera getCamera() {
+        return camera;
+    }
+
+    public float getLastDelta() {
+        return lastDelta;
+    }
+
+    public MapHandler getMapHandler() {
+        return mapHandler;
+    }
 }

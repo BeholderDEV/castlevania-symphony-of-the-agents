@@ -5,9 +5,10 @@
  */
 package ai.sword;
 
+import ai.AgentCreator;
 import core.actors.GameActor;
 import core.actors.enemies.SwordSkeleton;
-import core.screens.GameScreen;
+import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 
 /**
@@ -16,7 +17,8 @@ import jade.core.behaviours.CyclicBehaviour;
  */
 public class SwordAgentBehavior extends CyclicBehaviour{
     private SwordAgentCore core;
-    private SwordSkeleton container;    
+    private SwordSkeleton container;   
+    
     public SwordAgentBehavior(SwordAgentCore core, SwordSkeleton container) {
         this.core = core;
         this.container = container;
@@ -24,6 +26,7 @@ public class SwordAgentBehavior extends CyclicBehaviour{
     
     @Override
     public void action(){
+        block(AgentCreator.BEHAVIOR_DELAY);
         if(this.container.canDelete()){
             this.core.doDelete();
             return;
@@ -31,15 +34,28 @@ public class SwordAgentBehavior extends CyclicBehaviour{
         if(!this.container.isPossibleToRender()){
             return;
         }
-        if((int) this.container.getStateTime() % 2 == 1){
-            this.container.getVelocity().x = this.container.getWalkingSpeed();
-        }else{
-//            this.container.getVelocity().x = 0;
-        }
-        this.container.updatePosition(GameScreen.lastDelta);
-        System.out.println(this.container.getBody());
+        this.defineAction();
+        this.container.updatePosition(this.container.getGameScreen().getLastDelta());
+        this.checkCollisions();
+        this.checkStatus();
         this.container.setPossibleToRender(false);
-//        System.out.println("Result " + (int) container.getStateTime() % 2);
     }
+    
+    private void defineAction(){
+        this.container.getVelocity().x = this.container.getWalkingSpeed();
+        this.container.setFacingRight((int) this.container.getStateTime() % 2 == 1);   
+    }
+    
+    private void checkCollisions(){
+        
+    }
+    
+    private void checkStatus(){
+        if(this.container.getLifePoints() <= 0){
+            this.container.getVelocity().set(0, 0);
+            this.container.setCurrentState(GameActor.State.DYING);
+        }
+    }
+    
     
 }
