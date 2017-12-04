@@ -5,12 +5,9 @@
  */
 package ai.behavior;
 
-import ai.AgentCreator;
 import core.actors.GameActor;
 import core.actors.enemies.Enemy;
-import core.actors.enemies.SwordSkeleton;
 import jade.core.Agent;
-import jade.core.behaviours.TickerBehaviour;
 
 /**
  *
@@ -24,10 +21,22 @@ public class SwordAgentBehavior extends AgentBehavior{
     
     @Override
     public void defineAction(){
-        this.container.getVelocity().x = this.container.getWalkingSpeed();
-        this.container.setFacingRight((int) this.container.getStateTime() % 2 == 1);   
+        super.container.getVelocity().x = super.container.getWalkingSpeed();
+        super.container.setFacingRight((int) super.container.getStateTime() % 2 == 1);
+        switch(super.container.getCurrentState()){
+            case STANDING:
+//                System.out.println("Hm");
+            break;
+            case HURTED:
+                super.updateHurtedStatus();
+            break;
+            case DYING:
+                super.myAgent.doDelete();
+            break;
+        }
     }
-    
+        
+
     @Override
     public void checkCollisions(){
         
@@ -35,9 +44,9 @@ public class SwordAgentBehavior extends AgentBehavior{
     
     @Override
     public void checkStatus(){
-        if(this.container.getLifePoints() <= 0){
-            this.container.getVelocity().set(0, 0);
-            this.container.setCurrentState(GameActor.State.DYING);
+        if(super.container.getLifePoints() <= 0){
+            super.container.getVelocity().set(0, 0);
+            super.container.setCurrentState(GameActor.State.DYING);
         }
     }
 

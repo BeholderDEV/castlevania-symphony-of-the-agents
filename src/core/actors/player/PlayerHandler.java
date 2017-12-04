@@ -19,8 +19,8 @@ import core.map.MapHandler;
  * @author Augustop
  */
 public class PlayerHandler extends GameActor{
-    private PlayerAnimation animationHandler;
-    private PlayerBehavior behaviorHandler;
+    private final PlayerAnimation animationHandler;
+    private final PlayerBehavior behaviorHandler;
     private final Vector2 playerRenderCorrection = new Vector2(0, 0);
     
     public PlayerHandler() {

@@ -32,7 +32,6 @@ public class SwordSkeleton extends Enemy{
     @Override
     public void updateActor(float deltaTime, MapHandler map, Array<GameActor> stageActors) {
         super.stateTime += deltaTime;
-//        System.out.println("Vel " + super.velocity.x);
 //        if(super.currentState == State.HURTED){
 //            super.updateHurtedStatus(deltaTime);
 //        }

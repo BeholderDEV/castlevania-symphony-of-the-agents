@@ -5,6 +5,7 @@
  */
 package ai.behavior;
 
+import core.actors.GameActor;
 import core.actors.enemies.Enemy;
 import jade.core.Agent;
 import jade.core.behaviours.TickerBehaviour;
@@ -37,10 +38,16 @@ public abstract class AgentBehavior extends TickerBehaviour{
         this.container.setPossibleToRender(false);
     }
     
+    protected void updateHurtedStatus(){
+        this.container.setBlinkPeriod(this.container.getBlinkPeriod() + this.container.getGameScreen().getLastDelta());
+        if(this.container.getStateTime() >= Enemy.HURTED_DURATION){
+            this.container.setCurrentState(GameActor.State.STANDING);
+        }
+    }
+    
     public abstract void defineAction();
     
     public abstract void checkCollisions();
     
-    public abstract void checkStatus();
-    
+    public abstract void checkStatus();    
 }

@@ -20,15 +20,14 @@ import jade.core.Runtime;
  */
 
 public class AgentCreator {
-    public static int swordNameCount = 1;
-    
     public enum AgentType{
         SKELETON_SWORD
     }
     
     private static AgentCreator instance = null;
     private final HashMap<String, ContainerController> containerMap = new HashMap<>();
-    public static final long BEHAVIOR_DELAY = 17; // milliseconds
+    public static final long BEHAVIOR_DELAY = 18; // milliseconds
+    public static int swordNameCount = 1;
     
     private AgentCreator(){
         Runtime rt = Runtime.instance();

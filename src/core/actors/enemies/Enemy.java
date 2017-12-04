@@ -46,13 +46,6 @@ public abstract class Enemy extends GameActor{
         this.blinkPeriod = 0;
         super.currentState = (super.lifePoints > 0) ? State.HURTED: State.DYING;
     }
-    
-    protected void updateHurtedStatus(float deltaTime){
-        this.blinkPeriod += deltaTime;
-        if(super.stateTime >= Enemy.HURTED_DURATION){
-            super.currentState = State.STANDING;
-        }
-    }
 
     public GameScreen getGameScreen() {
         return gameScreen;
@@ -65,6 +58,14 @@ public abstract class Enemy extends GameActor{
 
     public boolean canDelete() {
         return canDelete;
+    }
+
+    public float getBlinkPeriod() {
+        return blinkPeriod;
+    }
+
+    public void setBlinkPeriod(float blinkPeriod) {
+        this.blinkPeriod = blinkPeriod;
     }
     
     public void setForDelete(){
