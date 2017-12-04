@@ -8,12 +8,8 @@ package core.actors.enemies;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.utils.Array;
 import core.actors.GameActor;
-import core.map.MapHandler;
 import core.screens.GameScreen;
-import jade.core.Agent;
-
 /**
  *
  * @author Augustop
@@ -27,8 +23,8 @@ public abstract class Enemy extends GameActor{
     protected Animation<TextureRegion> atkAnimation;
     protected Animation<TextureRegion> deathAnimation;
     protected GameScreen gameScreen;
+    protected boolean blinking = false;
     protected boolean canDelete = false;
-    
     
     public Enemy(int walkingSpeed, Rectangle body, GameScreen gameScreen) {
         super(walkingSpeed, body);
@@ -38,22 +34,46 @@ public abstract class Enemy extends GameActor{
     
     @Override
     public void receiveDamage(Rectangle dmgReason, int dmgPoints) {
-        if(super.currentState == State.HURTED || super.currentState == State.DYING){
+        if(this.blinking || super.currentState == State.DYING){
             return;
         }
         super.stateTime = 0;
         super.loseLifePoints(dmgPoints);
         this.blinkPeriod = 0;
-        super.currentState = (super.lifePoints > 0) ? State.HURTED: State.DYING;
+        this.blinking = true;
+        if(super.lifePoints <= 0){
+            super.currentState = State.DYING;
+        }
+    }
+    
+    @Override
+    public TextureRegion getCurrentFrame(){
+        switch(super.currentState){
+            case WALKING:
+                return this.movingAnimation.getKeyFrame(super.stateTime);
+            case ATTACKING:
+                return this.atkAnimation.getKeyFrame(super.stateTime);
+//                return this.atkAnimation.getKeyFrame(0.10f);
+            default:
+                return this.standImg;
+        }
     }
 
     public GameScreen getGameScreen() {
         return gameScreen;
     }
+
+    public Animation<TextureRegion> getAtkAnimation() {
+        return atkAnimation;
+    }
     
     @Override
     public boolean isDead() {
         return super.currentState == GameActor.State.DYING;
+    }
+
+    public boolean isIsBlinking() {
+        return blinking;
     }
 
     public boolean canDelete() {
@@ -66,6 +86,10 @@ public abstract class Enemy extends GameActor{
 
     public void setBlinkPeriod(float blinkPeriod) {
         this.blinkPeriod = blinkPeriod;
+    }
+
+    public void setIsBlinking(boolean isBlinking) {
+        this.blinking = isBlinking;
     }
     
     public void setForDelete(){

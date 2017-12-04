@@ -7,6 +7,7 @@ package core.actors;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -29,8 +30,10 @@ public abstract class GameActor {
     protected Atk_State atkState = Atk_State.STAND_ATK;
     protected Array<Rectangle> collidableObject = new Array<>();
     protected float spriteAdjustmentForCollision[] = {0, 0, 0, 0};
+    protected final Vector2 renderCorrection = new Vector2(0, 0);
     protected int lifePoints = 3;
     protected boolean possibleToRender = false;
+    
     
     public enum State {
         STANDING, WALKING, JUMPING, CROUNCHING, ON_STAIRS, DYING, ATTACKING, HURTED
@@ -49,16 +52,37 @@ public abstract class GameActor {
         this.body = body;
     }
     
-    public abstract void updateActor(float deltaTime, MapHandler map, Array<GameActor> stageActors);
-    
-    public abstract void renderActor(SpriteBatch batch);
-    
-    public abstract void receiveDamage(Rectangle dmgReason, int dmgPoints);
-    
     public void updatePosition(float delta){
         this.body.x += this.velocity.x * delta * ((this.facingRight) ? 1: -1);
         this.body.y += this.velocity.y * delta;
     }
+    
+    public float[] getSpriteRenderValues(TextureRegion currentFrame){
+        float x = this.body.x, y = this.body.y, w = this.body.width, h = this.body.height; 
+        this.renderCorrection.set(0, 0);
+        if(!this.facingRight){
+            x += w;
+        }
+        if(this.currentState == State.ATTACKING){
+            this.adjustRenderCorrections(currentFrame);
+            w = currentFrame.getRegionWidth() * MapHandler.unitScale;
+            h = currentFrame.getRegionHeight() * MapHandler.unitScale;
+            if(this.atkState == GameActor.Atk_State.CROUCH_ATK){
+                h += 1.2f;
+            }
+        }
+        if(this.facingRight){
+            x -= this.renderCorrection.x;
+        }else{
+            x += this.renderCorrection.x;
+            w *= -1;
+        }
+        y += this.renderCorrection.y;
+//        x = (this.facingRight) ? x - this.renderCorrection.x: x + this.renderCorrection.x;
+        return new float[]{x, y, w, h};
+    }
+    
+    
     
     public void drawRecOverBody(SpriteBatch batch){
         float ad = 1.6f;
@@ -67,7 +91,18 @@ public abstract class GameActor {
                 this.body.width - ad, 
                 this.body.height - 0.9f);
     }
-        
+    
+    public abstract void updateActor(float deltaTime, MapHandler map, Array<GameActor> stageActors);
+    
+    public abstract void renderActor(SpriteBatch batch);
+    
+    public abstract void receiveDamage(Rectangle dmgReason, int dmgPoints);
+    
+    public abstract TextureRegion getCurrentFrame();
+    
+    protected abstract void adjustRenderCorrections(TextureRegion currentFrame);
+    
+    
     public Rectangle getBody() {
         return body;
     }

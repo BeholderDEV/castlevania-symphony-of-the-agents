@@ -63,6 +63,7 @@ public class GameScreen implements Screen {
         for (GameActor actor : actors) {
             actor.setPossibleToRender(true);
             actor.updateActor(delta, mapHandler, this.actors);
+//            System.out.println(actor.getLifePoints());;
         }
         this.updateCameraPosition();
         this.camera.update();

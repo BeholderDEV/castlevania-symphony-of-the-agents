@@ -31,6 +31,7 @@ public abstract class AgentBehavior extends TickerBehaviour{
         if(!this.container.isPossibleToRender()){
             return;
         }
+//        this.container.setStateTime(this.container);;
         this.defineAction();
         this.container.updatePosition(this.container.getGameScreen().getLastDelta());
         this.checkCollisions();
@@ -38,9 +39,15 @@ public abstract class AgentBehavior extends TickerBehaviour{
         this.container.setPossibleToRender(false);
     }
     
-    protected void updateHurtedStatus(){
+    protected void updateHurted(){
         this.container.setBlinkPeriod(this.container.getBlinkPeriod() + this.container.getGameScreen().getLastDelta());
         if(this.container.getStateTime() >= Enemy.HURTED_DURATION){
+            this.container.setIsBlinking(false);
+        }
+    }
+    
+    protected void updateAtk(){
+        if(this.container.getAtkAnimation().isAnimationFinished(this.container.getStateTime())){
             this.container.setCurrentState(GameActor.State.STANDING);
         }
     }

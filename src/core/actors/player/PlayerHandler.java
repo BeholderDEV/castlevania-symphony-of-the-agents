@@ -21,7 +21,7 @@ import core.map.MapHandler;
 public class PlayerHandler extends GameActor{
     private final PlayerAnimation animationHandler;
     private final PlayerBehavior behaviorHandler;
-    private final Vector2 playerRenderCorrection = new Vector2(0, 0);
+    
     
     public PlayerHandler() {
         super(new Rectangle(0, 0, PlayerBehavior.NORMAL_WIDTH, PlayerBehavior.NORMAL_HEIGHT));
@@ -44,59 +44,43 @@ public class PlayerHandler extends GameActor{
     
     @Override
     public void renderActor(SpriteBatch batch) {
-        float x = super.body.x, y = super.body.y, w = super.body.width, h = super.body.height; 
-        this.playerRenderCorrection.set(0, 0);
-        Rectangle playerRec = super.body;
+        if(super.body.x < 0){
+            super.body.setX(0);
+        }
         TextureRegion currentFrame = this.getCurrentFrame();
-        if(playerRec.x < 0){
-            playerRec.setX(0);
-        }
-        if(!super.facingRight){
-            x += w;
-        }
-        if(super.currentState == GameActor.State.ATTACKING){
-            this.adjustPlayerRenderCorrections(currentFrame);
-            w = currentFrame.getRegionWidth() * MapHandler.unitScale;
-            h = currentFrame.getRegionHeight() * MapHandler.unitScale;
-            if(this.atkState == GameActor.Atk_State.CROUCH_ATK){
-                h += 1.2f;
-            }
-        }
-
-        batch.draw(currentFrame, 
-                (super.facingRight) ? x - this.playerRenderCorrection.x: x + this.playerRenderCorrection.x,
-                y + this.playerRenderCorrection.y, 
-                (super.facingRight) ? w: -w,
-                h);
+        float[] renderValues = super.getSpriteRenderValues(currentFrame);
+        batch.draw(currentFrame, renderValues[0], renderValues[1], renderValues[2], renderValues[3]);
     }
     
-    private void adjustPlayerRenderCorrections(TextureRegion currentFrame){
+    @Override
+    protected void adjustRenderCorrections(TextureRegion currentFrame){
         switch(currentFrame.getRegionX()){
             case 33:
                 if(this.atkState != GameActor.Atk_State.CROUCH_ATK){
-                    this.playerRenderCorrection.x = 1.7f;
-                    this.playerRenderCorrection.y = -GameActor.DISTANCE_FROM_GROUND_LAYER;
+                    super.renderCorrection.x = 1.7f;
+                    super.renderCorrection.y = -GameActor.DISTANCE_FROM_GROUND_LAYER;
                 }else{
-                    this.playerRenderCorrection.x = 1.5f;
+                    super.renderCorrection.x = 1.5f;
                 }
             break;
             case 86:
                 if(this.atkState != GameActor.Atk_State.CROUCH_ATK){
-                    this.playerRenderCorrection.x = 3.7f;
+                    super.renderCorrection.x = 3.7f;
                 }else{
-                    this.playerRenderCorrection.x = 3.4f;
+                    super.renderCorrection.x = 3.4f;
                 }
             break;
             case 157:
                 if(this.atkState != GameActor.Atk_State.CROUCH_ATK){
-                    this.playerRenderCorrection.y = -0.2f;
+                    super.renderCorrection.y = -0.2f;
                 }else{
-                    this.playerRenderCorrection.x = -0.4f;
+                    super.renderCorrection.x = -0.4f;
                 }                
             break;
         }
     }
     
+    @Override
     public TextureRegion getCurrentFrame(){
         switch(super.currentState){
             case WALKING:
