@@ -14,7 +14,6 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import core.util.AssetsManager;
 import core.actors.GameActor;
-import core.actors.player.PlayerAnimation;
 import core.map.MapHandler;
 import core.screens.GameScreen;
 import core.util.AnimationManager;
@@ -29,7 +28,7 @@ public class SwordSkeleton extends Enemy{
         super(walkingSpeed, body, gameScreen);
         super.standImg = standImg = new TextureRegion(AssetsManager.assets.get("assets/img/superIV_Enemies.png", Texture.class), 312, 143, 30, 49);
         super.movingAnimation = AnimationManager.generateAnimation(new TextureRegion(AssetsManager.assets.get("assets/img/superIV_Enemies.png", Texture.class), 312, 143, 58, 51), 29, 51, Animation.PlayMode.LOOP, 0.40f);
-        super.atkAnimation = AnimationManager.generateAnimation(AssetsManager.assets.get("assets/img/superIV_Enemies.png", Texture.class),  new int[]{276, 250, 188}, new int[]{143, 124, 143}, new int[]{30, 26, 62}, new int[]{51, 69, 50}, Animation.PlayMode.NORMAL, PlayerAnimation.STANDARD_ATK_FRAME_TIME);
+        super.atkAnimation = AnimationManager.generateAnimation(AssetsManager.assets.get("assets/img/superIV_Enemies.png", Texture.class),  new int[]{276, 250, 188}, new int[]{143, 124, 143}, new int[]{30, 26, 62}, new int[]{51, 69, 50}, Animation.PlayMode.NORMAL, GameActor.STANDARD_ATK_FRAME_TIME);
         this.spriteAdjustmentForCollision = new float[]{0.4f, 0.4f, 1.6f, 0.9f};
         AgentCreator.getInstance().createAgent(AgentCreator.AgentType.SKELETON_SWORD, new Object[]{this});
     }
@@ -57,4 +56,18 @@ public class SwordSkeleton extends Enemy{
     protected void adjustRenderCorrections(TextureRegion currentFrame) {
         super.renderCorrection.x = -1f;
     }
+
+    @Override
+    public void drawDebugRec(SpriteBatch batch) {
+        if(super.currentState == GameActor.State.ATTACKING && super.stateTime >= GameActor.STANDARD_ATK_FRAME_TIME * 2){
+            float w = 3.5f;
+            float x = (super.facingRight) 
+                      ? super.body.x + super.body.width
+                      : super.body.x - w;
+            float y = (super.body.y + super.body.height) - super.body.height * 0.35f;
+            float h = 1;
+            batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), x, y, w, h);
+        }
+    }
+    
 }

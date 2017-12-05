@@ -31,7 +31,7 @@ public abstract class AgentBehavior extends TickerBehaviour{
         if(!this.container.isPossibleToRender()){
             return;
         }
-//        this.container.setStateTime(this.container);;
+//        this.container.setStateTime(this.container);
         this.defineAction();
         this.container.updatePosition(this.container.getGameScreen().getLastDelta());
         this.checkCollisions();

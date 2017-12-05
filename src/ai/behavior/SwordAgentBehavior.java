@@ -5,6 +5,8 @@
  */
 package ai.behavior;
 
+import com.badlogic.gdx.math.Rectangle;
+import core.actors.CollisionHandler;
 import core.actors.GameActor;
 import core.actors.enemies.Enemy;
 import jade.core.Agent;
@@ -14,8 +16,8 @@ import jade.core.Agent;
  * @author 5674867
  */
 public class SwordAgentBehavior extends AgentBehavior{
-    private GameActor player;
-    public static final float DISTANCE_TO_ATK_PLAYER = 7f;
+    private final GameActor player;
+    public static final float DISTANCE_TO_ATK_PLAYER = 6f;
     
     public SwordAgentBehavior(Enemy container, Agent a, long period) {
         super(container, a, period);
@@ -70,7 +72,9 @@ public class SwordAgentBehavior extends AgentBehavior{
     
     @Override
     public void checkCollisions(){
-        
+        if(this.container.getCurrentState() == GameActor.State.ATTACKING && this.container.getStateTime() >= GameActor.STANDARD_ATK_FRAME_TIME * 2){
+            this.updateWeaponHit();
+        }
     }
     
     @Override
@@ -81,7 +85,18 @@ public class SwordAgentBehavior extends AgentBehavior{
         }
     }
 
-
-    
-    
+    private void updateWeaponHit(){
+        Rectangle weaponArea = CollisionHandler.rectanglePool.obtain();
+        float w = 3.5f;
+        float x = (this.container.isFacingRight()) 
+                  ? this.container.getBody().x + this.container.getBody().width
+                  : this.container.getBody().x - w;
+        float y = (this.container.getBody().y + this.container.getBody().height) - this.container.getBody().height * 0.35f;
+        float h = 1;
+        weaponArea.set(x, y, w, h);
+        if(CollisionHandler.checkCollisionBetweenBodyAndObject(this.player, weaponArea)){
+            this.player.receiveDamage(this.container.getBody(), 1);
+        }
+        CollisionHandler.rectanglePool.free(weaponArea);
+    }
 }

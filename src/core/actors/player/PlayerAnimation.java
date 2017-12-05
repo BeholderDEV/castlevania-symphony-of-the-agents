@@ -17,7 +17,7 @@ import core.actors.GameActor;
  * @author Alisson
  */
 public class PlayerAnimation {
-    public static final float STANDARD_ATK_FRAME_TIME = 0.15f;
+    
     private final TextureRegion standImg;
     private final TextureRegion jumpImg;
     private final TextureRegion crouchImg;
@@ -46,11 +46,11 @@ public class PlayerAnimation {
         this.upstairsAnimation = AnimationManager.generateAnimation(new TextureRegion(AssetsManager.assets.get("assets/img/playerSprites.png", Texture.class), 405, 8, 194, 50), 32, 50, Animation.PlayMode.LOOP);
         this.downstairsAnimation = AnimationManager.generateAnimation(new TextureRegion(AssetsManager.assets.get("assets/img/playerSprites.png", Texture.class), 633, 8, 194, 50), 32, 50, Animation.PlayMode.LOOP);
         this.deathAnimation = AnimationManager.generateAnimation(AssetsManager.assets.get("assets/img/playerSprites.png", Texture.class), new int[]{537, 570, 624}, new int[]{103, 111, 125}, new int[]{26, 48, 67}, new int[]{34, 27, 13}, Animation.PlayMode.NORMAL);
-        this.standAtkAnimation = AnimationManager.generateAnimation(AssetsManager.assets.get("assets/img/playerSprites.png", Texture.class),  new int[]{33, 86, 157}, new int[]{577, 563, 577}, new int[]{45, 55, 80}, new int[]{52, 62, 50}, Animation.PlayMode.NORMAL, STANDARD_ATK_FRAME_TIME);
-        this.crouchAtkAnimation = AnimationManager.generateAnimation(AssetsManager.assets.get("assets/img/playerSprites.png", Texture.class),  new int[]{33, 86, 157}, new int[]{633, 633, 633}, new int[]{45, 55, 80}, new int[]{49, 49, 49}, Animation.PlayMode.NORMAL, STANDARD_ATK_FRAME_TIME);
-        this.jumpAtkAnimation = AnimationManager.generateAnimation(AssetsManager.assets.get("assets/img/playerSprites.png", Texture.class),  new int[]{35, 86, 157}, new int[]{834, 824, 834}, new int[]{45, 55, 77}, new int[]{55, 59, 46}, Animation.PlayMode.NORMAL, STANDARD_ATK_FRAME_TIME / 1.5f);
-        this.upStairsAtkAnimation = AnimationManager.generateAnimation(AssetsManager.assets.get("assets/img/playerSprites.png", Texture.class),  new int[]{33, 86, 157}, new int[]{707, 694, 708}, new int[]{47, 55, 77}, new int[]{51, 59, 46}, Animation.PlayMode.NORMAL, STANDARD_ATK_FRAME_TIME);
-        this.downStairsAtkAnimation = AnimationManager.generateAnimation(AssetsManager.assets.get("assets/img/playerSprites.png", Texture.class),  new int[]{33, 86, 157}, new int[]{771, 759, 772}, new int[]{45, 55, 79}, new int[]{52, 59, 46}, Animation.PlayMode.NORMAL, STANDARD_ATK_FRAME_TIME);
+        this.standAtkAnimation = AnimationManager.generateAnimation(AssetsManager.assets.get("assets/img/playerSprites.png", Texture.class),  new int[]{33, 86, 157}, new int[]{577, 563, 577}, new int[]{45, 55, 80}, new int[]{52, 62, 50}, Animation.PlayMode.NORMAL, GameActor.STANDARD_ATK_FRAME_TIME);
+        this.crouchAtkAnimation = AnimationManager.generateAnimation(AssetsManager.assets.get("assets/img/playerSprites.png", Texture.class),  new int[]{33, 86, 157}, new int[]{633, 633, 633}, new int[]{45, 55, 80}, new int[]{49, 49, 49}, Animation.PlayMode.NORMAL, GameActor.STANDARD_ATK_FRAME_TIME);
+        this.jumpAtkAnimation = AnimationManager.generateAnimation(AssetsManager.assets.get("assets/img/playerSprites.png", Texture.class),  new int[]{35, 86, 157}, new int[]{834, 824, 834}, new int[]{45, 55, 77}, new int[]{55, 59, 46}, Animation.PlayMode.NORMAL, GameActor.STANDARD_ATK_FRAME_TIME / 1.5f);
+        this.upStairsAtkAnimation = AnimationManager.generateAnimation(AssetsManager.assets.get("assets/img/playerSprites.png", Texture.class),  new int[]{33, 86, 157}, new int[]{707, 694, 708}, new int[]{47, 55, 77}, new int[]{51, 59, 46}, Animation.PlayMode.NORMAL, GameActor.STANDARD_ATK_FRAME_TIME);
+        this.downStairsAtkAnimation = AnimationManager.generateAnimation(AssetsManager.assets.get("assets/img/playerSprites.png", Texture.class),  new int[]{33, 86, 157}, new int[]{771, 759, 772}, new int[]{45, 55, 79}, new int[]{52, 59, 46}, Animation.PlayMode.NORMAL, GameActor.STANDARD_ATK_FRAME_TIME);
     }
     
     public Animation<TextureRegion> getCorrectAtkAnimation(GameActor.Atk_State atkState, boolean upStairs){

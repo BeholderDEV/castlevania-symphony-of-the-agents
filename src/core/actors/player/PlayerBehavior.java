@@ -197,7 +197,7 @@ public class PlayerBehavior {
                 }
             }
         }
-        if(this.playerHandler.getCurrentState() == GameActor.State.ATTACKING && this.playerHandler.getStateTime() >= PlayerAnimation.STANDARD_ATK_FRAME_TIME * 2f){
+        if(this.playerHandler.getCurrentState() == GameActor.State.ATTACKING && this.playerHandler.getStateTime() >= GameActor.STANDARD_ATK_FRAME_TIME * 2f){
             this.updateWeaponHit(stageActors);
         }
     }
@@ -231,12 +231,11 @@ public class PlayerBehavior {
             }
         }
     }
-                    
+
 //    Used for debug
     public void drawRec(SpriteBatch batch){
-
         // When Jumping frame is faster and a little lower
-        if((this.playerHandler.getCurrentState() == GameActor.State.ATTACKING && this.playerHandler.getAtkState() != GameActor.Atk_State.JUMP_ATK) && this.playerHandler.getStateTime() >= PlayerAnimation.STANDARD_ATK_FRAME_TIME * 2f 
+        if((this.playerHandler.getCurrentState() == GameActor.State.ATTACKING && this.playerHandler.getAtkState() != GameActor.Atk_State.JUMP_ATK) && this.playerHandler.getStateTime() >= GameActor.STANDARD_ATK_FRAME_TIME * 2f 
         || (this.playerHandler.getCurrentState() == GameActor.State.ATTACKING && this.playerHandler.getAtkState() == GameActor.Atk_State.JUMP_ATK) && this.playerHandler.getStateTime() >= 0.2){
             float w = 6f;
             float x = (this.playerHandler.isFacingRight()) 
@@ -246,11 +245,6 @@ public class PlayerBehavior {
             float h = 1;
             batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), x, y, w, h);
         }
-//        batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class),
-//                Math.round(this.playerHandler.getBody().x), 
-//                Math.round(this.playerHandler.getBody().y), 
-//                this.playerHandler.getBody().width, 
-//                this.playerHandler.getBody().height * 0.01f);
         if(this.playerHandler.getCurrentState() == GameActor.State.ON_STAIRS){
             int footTileX = 0;
             int footTileY = 0;
@@ -265,13 +259,6 @@ public class PlayerBehavior {
             batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), footTileX, footTileY, 1, 1);
 //            batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), footTileX, footTileY - 1, 1, 1);
         }
-//        batch.draw(AssetsManager.assets.get("assets/img/squarer.png", Texture.class), this.playerHandler.getBody().x, this.playerHandler.getBody().y, this.playerHandler.getBody().width + 0.3f, this.playerHandler.getBody().height + 0.2f);
-//        float x = (this.facesRight) ? (this.playerHandler.getBody().x + this.playerHandler.getBody().width) - this.playerHandler.getBody().width * (this.FOOT_SIZE.width / 100f): this.playerHandler.getBody().x + this.playerHandler.getBody().width * (this.FOOT_SIZE.width / 100f);
-//        batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), x, this.playerHandler.getBody().y, this.playerHandler.getBody().width * (this.FOOT_SIZE.width / 8f / 100f), this.playerHandler.getBody().height * (this.FOOT_SIZE.height / 100f));
-//        batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), 29, 5, 1, 1);
-////        batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), 63, 4, 1, 1);
-////        batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), 63, 4, 1, 1);
-//        batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), 63, 5, 1, 1);
     }
         
     public boolean isUpstairs(){

@@ -19,6 +19,7 @@ import core.map.MapHandler;
  * @author Augustop
  */
 public abstract class GameActor {
+    public static final float STANDARD_ATK_FRAME_TIME = 0.15f;
     public static final float DISTANCE_FROM_GROUND_LAYER = 0.4f;
     protected float stateTime = 0;
     protected Rectangle body;
@@ -78,7 +79,6 @@ public abstract class GameActor {
             w *= -1;
         }
         y += this.renderCorrection.y;
-//        x = (this.facingRight) ? x - this.renderCorrection.x: x + this.renderCorrection.x;
         return new float[]{x, y, w, h};
     }
     
@@ -99,6 +99,8 @@ public abstract class GameActor {
     public abstract void receiveDamage(Rectangle dmgReason, int dmgPoints);
     
     public abstract TextureRegion getCurrentFrame();
+    
+    public abstract void drawDebugRec(SpriteBatch batch);
     
     protected abstract void adjustRenderCorrections(TextureRegion currentFrame);
     

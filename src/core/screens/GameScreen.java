@@ -63,7 +63,6 @@ public class GameScreen implements Screen {
         for (GameActor actor : actors) {
             actor.setPossibleToRender(true);
             actor.updateActor(delta, mapHandler, this.actors);
-//            System.out.println(actor.getLifePoints());;
         }
         this.updateCameraPosition();
         this.camera.update();
@@ -75,9 +74,8 @@ public class GameScreen implements Screen {
         for (GameActor actor : actors) {
             actor.renderActor(this.game.batch);
             actor.drawRecOverBody(this.game.batch);
+            actor.drawDebugRec(this.game.batch);
         }
-        PlayerHandler p = (PlayerHandler) this.actors.get(0);
-        p.drawRecOnPlayer(this.game.batch);
         this.game.batch.end();        
         this.verifyPlayerDeath();
         this.verifyEnemyDeath();
