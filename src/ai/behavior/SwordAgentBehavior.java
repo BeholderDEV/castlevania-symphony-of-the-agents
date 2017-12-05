@@ -39,6 +39,9 @@ public class SwordAgentBehavior extends AgentBehavior{
             case ATTACKING:
                 super.updateAtk();
             break;
+            case JUMPING:
+                this.container.fallFromJump();
+            break;
             case DYING:
                 super.myAgent.doDelete();
             break;
@@ -75,6 +78,14 @@ public class SwordAgentBehavior extends AgentBehavior{
     
     @Override
     public void checkCollisions(){
+        CollisionHandler.checkGroundCollision(this.container.getGameScreen().getMapHandler(), this.container);
+        if(this.container.getCurrentState() == GameActor.State.JUMPING){
+            if(this.container.getVelocity().y == 0){
+                this.container.getVelocity().y = this.container.getJumpingSpeed();
+            }
+        }else{
+            this.container.getVelocity().y = 0;
+        }
         if(this.container.getCurrentState() == GameActor.State.ATTACKING && this.container.getStateTime() >= GameActor.STANDARD_ATK_FRAME_TIME * 2){
             this.updateWeaponHit();
         }
@@ -82,7 +93,7 @@ public class SwordAgentBehavior extends AgentBehavior{
     
     @Override
     public void checkStatus(){
-        if(super.container.getLifePoints() <= 0){
+        if(super.container.getLifePoints() <= 0 || super.container.getBody().y < 0){
             super.container.getVelocity().set(0, 0);
             super.container.setCurrentState(GameActor.State.DYING);
         }
