@@ -6,9 +6,11 @@
 package core.actors.enemies;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import core.actors.GameActor;
+import core.map.MapHandler;
 import core.screens.GameScreen;
 /**
  *
@@ -45,6 +47,15 @@ public abstract class Enemy extends GameActor{
         if(super.lifePoints <= 0){
             super.currentState = State.DYING;
         }
+    }
+
+    @Override
+    public void renderActor(SpriteBatch batch) {
+        if(this.blinking && this.blinkPeriod >= Enemy.BLINK_INTERVAL){
+            this.blinkPeriod = 0;
+            return;
+        }
+        super.renderActor(batch);
     }
     
     @Override

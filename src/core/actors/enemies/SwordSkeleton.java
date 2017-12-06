@@ -29,7 +29,8 @@ public class SwordSkeleton extends Enemy{
         super.standImg = standImg = new TextureRegion(AssetsManager.assets.get("assets/img/superIV_Enemies.png", Texture.class), 312, 143, 30, 49);
         super.movingAnimation = AnimationManager.generateAnimation(new TextureRegion(AssetsManager.assets.get("assets/img/superIV_Enemies.png", Texture.class), 312, 143, 58, 51), 29, 49, Animation.PlayMode.LOOP, 0.40f);
         super.atkAnimation = AnimationManager.generateAnimation(AssetsManager.assets.get("assets/img/superIV_Enemies.png", Texture.class),  new int[]{276, 250, 188}, new int[]{143, 124, 143}, new int[]{30, 26, 62}, new int[]{51, 69, 50}, Animation.PlayMode.NORMAL, GameActor.STANDARD_ATK_FRAME_TIME);
-        this.spriteAdjustmentForCollision = new float[]{0.4f, 0.4f, 1.6f, 0.9f};
+        this.spriteAdjustmentForCollision = new float[]{0.8f, 0.4f, -1.6f, -0.9f};
+        this.body.setSize(super.standImg.getRegionWidth() * MapHandler.unitScale, super .standImg.getRegionHeight()* MapHandler.unitScale);
         AgentCreator.getInstance().createAgent(EnemyFactory.enemyType.SWORD_SKELETON, new Object[]{this});
     }
 
@@ -40,16 +41,7 @@ public class SwordSkeleton extends Enemy{
     
     @Override
     public void renderActor(SpriteBatch batch) {
-        if(super.blinking && super.blinkPeriod >= Enemy.BLINK_INTERVAL){
-            super.blinkPeriod = 0;
-            return;
-        }
-        if(super.body.x < 0){
-            super.body.setX(0);
-        }
-        TextureRegion currentFrame = this.getCurrentFrame();
-        float[] renderValues = super.getSpriteRenderValues(currentFrame);
-        batch.draw(currentFrame, renderValues[0], renderValues[1], renderValues[2], renderValues[3]);
+        super.renderActor(batch);
     }
 
     @Override
@@ -60,7 +52,7 @@ public class SwordSkeleton extends Enemy{
     @Override
     public void drawDebugRec(SpriteBatch batch) {
         if(super.currentState == GameActor.State.ATTACKING && super.stateTime >= GameActor.STANDARD_ATK_FRAME_TIME * 2){
-            float w = 3.5f;
+            float w = 5f;
             float x = (super.facingRight) 
                       ? super.body.x + super.body.width
                       : super.body.x - w;

@@ -5,10 +5,13 @@
  */
 package core.actors;
 
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pools;
 import core.map.MapHandler;
+import core.util.AssetsManager;
 
 /**
  *
@@ -16,29 +19,38 @@ import core.map.MapHandler;
  */
 public class CollisionHandler {
     public static final Pool<Rectangle> rectanglePool = Pools.get(Rectangle.class);
-    private final static Rectangle collisionBody1 = new Rectangle();
-    private final static Rectangle collisionBody2 = new Rectangle();
+    private static final Rectangle collisionBodies[] = new Rectangle[2];
     
-    public static boolean checkCollisionBetweenTwoActorsBodies(GameActor actor1, GameActor actor2){
-        Rectangle body1 = actor1.getBody(), body2 = actor2.getBody();
-        collisionBody1.set(body1.x + actor1.getSpriteAdjustmentForCollision()[0],
-                body1.y + actor1.getSpriteAdjustmentForCollision()[1], 
-                body1.width - actor1.getSpriteAdjustmentForCollision()[2], 
-                body1.height - actor1.getSpriteAdjustmentForCollision()[3]);
-        collisionBody2.set(body2.x + actor2.getSpriteAdjustmentForCollision()[0], 
-                body2.y + actor2.getSpriteAdjustmentForCollision()[1], 
-                body2.width - actor2.getSpriteAdjustmentForCollision()[2], 
-                body2.height - actor2.getSpriteAdjustmentForCollision()[3]);
-        return collisionBody1.overlaps(collisionBody2);
+    public static Rectangle checkCollisionBetweenTwoActorsBodies(GameActor actor1, GameActor actor2){
+        GameActor actor;
+        Rectangle body;
+        float x, w;
+        for (int i = 0; i < collisionBodies.length; i++) {
+            actor = (i % 2 == 0) ? actor1: actor2;
+            body = actor.getBody();
+            x = (actor.isFacingRight()) ? body.x + actor.getSpriteAdjustmentForCollision()[0]:
+                   body.x + body.width - actor.getSpriteAdjustmentForCollision()[0];
+            w = (actor.isFacingRight()) ? body.width + actor.getSpriteAdjustmentForCollision()[2]:
+                   -body.width - actor.getSpriteAdjustmentForCollision()[2];
+            collisionBodies[i].set(x, body.y + actor.getSpriteAdjustmentForCollision()[1], w, body.height + actor.getSpriteAdjustmentForCollision()[3]);
+        }        
+        if(collisionBodies[0].overlaps(collisionBodies[1])){
+            return collisionBodies[1];
+        }
+        return null;
     }
     
     public static boolean checkCollisionBetweenBodyAndObject(GameActor actor, Rectangle object){
         Rectangle body = actor.getBody();
-        collisionBody1.set(body.x + actor.getSpriteAdjustmentForCollision()[0],
+        float x = (actor.isFacingRight()) ? body.x + actor.getSpriteAdjustmentForCollision()[0]:
+                   body.x + body.width - actor.getSpriteAdjustmentForCollision()[0];
+        float w = (actor.isFacingRight()) ? body.width + actor.getSpriteAdjustmentForCollision()[2]:
+                  -body.width - actor.getSpriteAdjustmentForCollision()[2];
+        collisionBodies[0].set(x,
                 body.y + actor.getSpriteAdjustmentForCollision()[1], 
-                body.width - actor.getSpriteAdjustmentForCollision()[2], 
-                body.height - actor.getSpriteAdjustmentForCollision()[3]);
-        return collisionBody1.overlaps(object);
+                w, 
+                body.height + actor.getSpriteAdjustmentForCollision()[3]);
+        return collisionBodies[0].overlaps(object);
     }
     
     public static void checkGroundCollision(MapHandler map, GameActor actor){
@@ -76,4 +88,15 @@ public class CollisionHandler {
         return false;
     }
     
+    
+    public static void iniatilizeRectangles(){
+        for (int i = 0; i < 2; i++) {
+            collisionBodies[i] = new Rectangle(){
+                @Override
+                public boolean overlaps (Rectangle r) {
+                    return Math.min(x, x + width) < Math.max(r.x, r.x + r.width) && Math.max(x, x + width) > Math.min(r.x, r.x + r.width) && Math.min(y, y + height) < Math.max(r.y, r.y + r.height) && Math.max(y, y + height) > Math.min(r.y, r.y + r.height);
+                }
+            };
+        }
+    }
 }

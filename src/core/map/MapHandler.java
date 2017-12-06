@@ -33,9 +33,14 @@ public class MapHandler {
     private TiledMap map;
     private OrthogonalTiledMapRenderer mapRenderer;
     private final Pool<Rectangle> rectanglePool = Pools.get(Rectangle.class);
+    private int mapWidth;
+    private int mapHeight;
     
     public MapHandler(String mapName) {
+        
         this.map = new TmxMapLoader().load(mapName);
+        this.mapWidth = this.map.getProperties().get("width", Integer.class);
+        this.mapHeight = this.map.getProperties().get("height", Integer.class);
         this.mapRenderer = new OrthogonalTiledMapRenderer(map, unitScale);
         this.prepareMapObjects();
     }
@@ -155,8 +160,16 @@ public class MapHandler {
         return mapRenderer;
     }
     
+    public int getMapHeight() {
+        return mapHeight;
+    }
+
+    public int getMapWidth() {
+        return mapWidth;
+    }
+    
     public void disposeMap(){
         this.map.dispose();
     }
-    
+
 }

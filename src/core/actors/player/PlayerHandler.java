@@ -26,7 +26,7 @@ public class PlayerHandler extends GameActor{
         super(new Rectangle(0, 0, PlayerBehavior.NORMAL_WIDTH, PlayerBehavior.NORMAL_HEIGHT));
         this.animationHandler = new PlayerAnimation();
         this.behaviorHandler = new PlayerBehavior(this);
-        this.spriteAdjustmentForCollision = new float[]{0.4f, 0.4f, 1.6f, 0.9f};
+        this.spriteAdjustmentForCollision = new float[]{0.4f, 0.4f, -1.6f, -0.9f};
     }
     
     @Override
@@ -39,16 +39,6 @@ public class PlayerHandler extends GameActor{
             this.velocity.set(0, 0);
             this.currentState = State.DYING;
         }
-    }
-    
-    @Override
-    public void renderActor(SpriteBatch batch) {
-        if(super.body.x < 0){
-            super.body.setX(0);
-        }
-        TextureRegion currentFrame = this.getCurrentFrame();
-        float[] renderValues = super.getSpriteRenderValues(currentFrame);
-        batch.draw(currentFrame, renderValues[0], renderValues[1], renderValues[2], renderValues[3]);
     }
     
     @Override

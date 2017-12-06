@@ -188,8 +188,9 @@ public class PlayerBehavior {
     private void updateCollisionWithEnemy(Array<GameActor> stageActors){
         if(this.playerHandler.getCurrentState() != GameActor.State.HURTED && this.playerHandler.getCurrentState() != GameActor.State.DYING){
             for (int i = 1; i < stageActors.size; i++) {
-                if(CollisionHandler.checkCollisionBetweenTwoActorsBodies(this.playerHandler, stageActors.get(i))){
-                    this.receiveDamage(stageActors.get(i).getBody(), 1);
+                Rectangle dmgReasonCulprit = CollisionHandler.checkCollisionBetweenTwoActorsBodies(this.playerHandler, stageActors.get(i));
+                if(dmgReasonCulprit != null){
+                    this.receiveDamage(dmgReasonCulprit, 1);
                     break;
                 }
             }

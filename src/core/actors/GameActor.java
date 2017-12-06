@@ -55,8 +55,6 @@ public abstract class GameActor {
     
     public abstract void updateActor(float deltaTime, MapHandler map, Array<GameActor> stageActors);
     
-    public abstract void renderActor(SpriteBatch batch);
-    
     public abstract void receiveDamage(Rectangle dmgReason, int dmgPoints);
     
     public abstract TextureRegion getCurrentFrame();
@@ -64,6 +62,15 @@ public abstract class GameActor {
     public abstract void drawDebugRec(SpriteBatch batch);
     
     protected abstract void adjustRenderCorrections(TextureRegion currentFrame);
+    
+    public void renderActor(SpriteBatch batch){
+        if(this.body.x < 0){
+            this.body.setX(0);
+        }
+        TextureRegion currentFrame = this.getCurrentFrame();
+        float[] renderValues = this.getSpriteRenderValues(currentFrame);
+        batch.draw(currentFrame, renderValues[0], renderValues[1], renderValues[2], renderValues[3]);        
+    }
     
     public void updatePosition(float delta){
         this.body.x += this.velocity.x * delta * ((this.facingRight) ? 1: -1);
@@ -76,14 +83,14 @@ public abstract class GameActor {
         if(!this.facingRight){
             x += w;
         }
-//        if(this.currentState == State.ATTACKING){
+        if(this.currentState == State.ATTACKING){
             this.adjustRenderCorrections(currentFrame);
             w = currentFrame.getRegionWidth() * MapHandler.unitScale;
             h = currentFrame.getRegionHeight() * MapHandler.unitScale;
             if(this.atkState == GameActor.Atk_State.CROUCH_ATK){
                 h += 1.2f;
             }
-//        }
+        }
         if(this.facingRight){
             x -= this.renderCorrection.x;
         }else{
@@ -95,11 +102,14 @@ public abstract class GameActor {
     }
     
     public void drawRecOverBody(SpriteBatch batch){
-        float ad = 1.6f;
-        batch.draw(AssetsManager.assets.get("assets/img/squarer.png", Texture.class),(this.facingRight) ?this.body.x + 0.4f: this.body.x + 0.4f, 
-                (this.getCurrentState() == State.ON_STAIRS) ? this.body.y + 0.4f: this.body.y, 
-                this.body.width - ad, 
-                this.body.height - 0.9f);
+        float x = (this.facingRight) ? this.body.x + this.spriteAdjustmentForCollision[0]: 
+                   (this.body.x + this.body.width) - this.spriteAdjustmentForCollision[0];
+        float w = (this.facingRight) ? this.body.width + this.spriteAdjustmentForCollision[2]:
+                   -this.body.width - this.spriteAdjustmentForCollision[2];
+        batch.draw(AssetsManager.assets.get("assets/img/squarer.png", Texture.class), x, 
+                (this.getCurrentState() == State.ON_STAIRS) ? this.body.y + this.spriteAdjustmentForCollision[1]: this.body.y, 
+                w, 
+                this.body.height + this.spriteAdjustmentForCollision[3]);
     }
     
     public void fallFromJump(){

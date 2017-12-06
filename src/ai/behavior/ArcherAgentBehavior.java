@@ -6,6 +6,7 @@
 package ai.behavior;
 
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Array;
 import core.actors.CollisionHandler;
 import core.actors.GameActor;
 import core.actors.enemies.ArcherSkeleton;
@@ -19,14 +20,11 @@ import jade.core.Agent;
  */
 public class ArcherAgentBehavior extends AgentBehavior{
     
-    private GameActor player;
-    private long last_attack_time = System.currentTimeMillis();
-    private long attack_cooldown = 2000;
-    public static final float DISTANCE_TO_ATK_PLAYER = 30f;
+    private float attack_cooldown = 2f;
+    private boolean arrowCreatedOnAtk = false;
     
     public ArcherAgentBehavior(Enemy container, Agent a, long period) {
-        super(container, a, period);
-        this.player = super.container.getGameScreen().getActors().get(0);
+        super(container, a, period, 30);
     }
     
     @Override
@@ -42,7 +40,7 @@ public class ArcherAgentBehavior extends AgentBehavior{
                 this.defineActionWalking();
             break;
             case ATTACKING:
-                super.updateAtk();
+                this.defineActionAtk();
             break;
             case DYING:
                 super.myAgent.doDelete();
@@ -51,7 +49,7 @@ public class ArcherAgentBehavior extends AgentBehavior{
     }
     
     private void defineActionStanding(){
-        if(!this.isPlayerOnRange())
+        if(!super.isPlayerOnRange())
         {            
             super.container.setCurrentState(GameActor.State.WALKING);
             super.container.getVelocity().x = super.container.getWalkingSpeed();
@@ -59,40 +57,43 @@ public class ArcherAgentBehavior extends AgentBehavior{
         }
         else
         {
-            if((System.currentTimeMillis()-last_attack_time>attack_cooldown))
+            if(super.container.getStateTime() >= attack_cooldown)
             {
                 super.container.setCurrentState(GameActor.State.ATTACKING);
                 super.container.setStateTime(0);
                 super.container.getVelocity().set(0, 0);
-                last_attack_time = System.currentTimeMillis();
-                ((ArcherSkeleton)super.container).getArrows().add(new Arrow(this.container.getBody().x, this.container.getBody().y, super.container.isFacingRight()));
             }
         }
     }
         
     private void defineActionWalking(){
         this.defineActionStanding();
-        if(this.isPlayerOnRange()){
-            super.container.setStateTime(0);
+        if(super.isPlayerOnRange()){
             super.container.getVelocity().set(0, 0);
             super.container.setCurrentState(GameActor.State.STANDING);            
         }
     }
-
-    //Later check weapon range instead of distance
-    private boolean isPlayerOnRange(){
-        float currentDistance = this.container.getBody().x - this.player.getBody().x;
-        if(Math.abs(currentDistance) <= DISTANCE_TO_ATK_PLAYER && this.container.getBody().y == this.player.getBody().y){
-            this.container.setFacingRight(currentDistance < 0);
-            return true;
+    
+    private void defineActionAtk(){
+        if(!arrowCreatedOnAtk && super.container.getStateTime() >= GameActor.STANDARD_ATK_FRAME_TIME * 3){
+            ((ArcherSkeleton)super.container).getArrows().add(new Arrow((
+            this.container.isFacingRight()) ? this.container.getBody().x + this.container.getBody().width : this.container.getBody().x, 
+            this.container.getBody().y,
+            super.container.isFacingRight()));
+            this.arrowCreatedOnAtk = true;
         }
-        return false;
+        super.updateAtk();
+        if(super.container.getCurrentState() == GameActor.State.STANDING){
+            this.arrowCreatedOnAtk = false;
+        }
     }
     
     @Override
     public void checkCollisions(){
-        if(!((ArcherSkeleton)super.container).getArrows().isEmpty())        
-        this.updateWeaponHit();
+        if(((ArcherSkeleton)super.container).getArrows().size != 0){
+            this.updateWeaponHit();
+        }        
+        
     }
     
     @Override
@@ -104,14 +105,18 @@ public class ArcherAgentBehavior extends AgentBehavior{
     }
     
     private void updateWeaponHit(){
-        Rectangle weaponArea = CollisionHandler.rectanglePool.obtain();
-        for (Arrow arrow : ((ArcherSkeleton)super.container).getArrows()) {
-            weaponArea.set(arrow.positionX, arrow.positionY+3f, arrow.width, arrow.height-5f);
-            if(CollisionHandler.checkCollisionBetweenBodyAndObject(this.player, weaponArea)){
-                this.player.receiveDamage(this.container.getBody(), 1);
-                arrow.positionX = -1;
-            }            
+        Array<Arrow> arrows = ((ArcherSkeleton)super.container).getArrows();
+        Rectangle arrow;
+        for (int i = 0; i < arrows.size; i++) {
+            arrow = arrows.get(i).getCollisionBody();
+            Rectangle weaponArea = CollisionHandler.rectanglePool.obtain();
+            weaponArea.set(arrow.x, arrow.y + Arrow.DISTANCE_FROM_GROUND, (arrows.get(i).isFaceToRight()) ? arrow.width: -arrow.width, arrow.height);
+            if(CollisionHandler.checkCollisionBetweenBodyAndObject(super.player, weaponArea)){
+                super.player.receiveDamage(this.container.getBody(), 1);
+                arrows.removeIndex(i);
+                i--;
+            }
+            CollisionHandler.rectanglePool.free(weaponArea);
         }
-        CollisionHandler.rectanglePool.free(weaponArea);
     }
 }

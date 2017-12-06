@@ -16,11 +16,15 @@ import jade.core.behaviours.TickerBehaviour;
  * @author Augustop
  */
 public abstract class AgentBehavior extends TickerBehaviour{
+    protected float distanceToAtkPlayer;
     protected Enemy container;
+    protected GameActor player;
     
-    public AgentBehavior(Enemy container, Agent a, long period) {
+    public AgentBehavior(Enemy container, Agent a, long period, float distanceToAtkPlayer) {
         super(a, period);
         this.container = container;
+        this.player = this.container.getGameScreen().getActors().get(0);
+        this.distanceToAtkPlayer = distanceToAtkPlayer;
     }
     
     @Override
@@ -53,6 +57,7 @@ public abstract class AgentBehavior extends TickerBehaviour{
     protected void updateAtk(){
         if(this.container.getAtkAnimation().isAnimationFinished(this.container.getStateTime())){
             this.container.setCurrentState(GameActor.State.STANDING);
+            this.container.setStateTime(0);
         }
     }
     
@@ -65,6 +70,15 @@ public abstract class AgentBehavior extends TickerBehaviour{
             this.container.setFoundPlayer(true);
             this.container.getVelocity().x = this.container.getWalkingSpeed();
         }
+    }
+    
+    protected boolean isPlayerOnRange(){
+        float currentDistance = this.container.getBody().x - this.player.getBody().x;
+        if(Math.abs(currentDistance) <= this.distanceToAtkPlayer && (this.container.getBody().y + this.container.getBody().height) > this.player.getBody().y){
+            this.container.setFacingRight(this.container.getBody().x - this.player.getBody().x < 0);
+            return true;
+        }
+        return false;
     }
     
     public abstract void defineAction();

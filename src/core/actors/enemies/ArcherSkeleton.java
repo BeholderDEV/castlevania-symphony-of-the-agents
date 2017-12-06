@@ -6,6 +6,7 @@
 package core.actors.enemies;
 
 import ai.AgentCreator;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -19,10 +20,7 @@ import core.objects.Arrow;
 import core.screens.GameScreen;
 import core.util.AnimationManager;
 import core.util.AssetsManager;
-import java.awt.Point;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 /**
  *
@@ -30,59 +28,30 @@ import java.util.List;
  */
 public class ArcherSkeleton extends Enemy{
     
-    List<Arrow> arrows = new ArrayList<>();
-    TextureRegion arrowImg;
+    private Array<Arrow> arrows = new Array<>();
+    private TextureRegion arrowImg;
     
-
     public ArcherSkeleton(int walkingSpeed, Rectangle body, GameScreen gameScreen) {
         super(walkingSpeed, body, gameScreen);
-        super.standImg = standImg = new TextureRegion(AssetsManager.assets.get("assets/img/bone-archer.png", Texture.class), 0, 52*2, 57, 52);
-        super.movingAnimation = AnimationManager.generateAnimation(AssetsManager.assets.get("assets/img/bone-archer.png", Texture.class),  new int[]{57*0, 57*1, 57*2}, new int[]{52*2, 52*2, 52*2}, new int[]{57, 57, 57}, new int[]{52, 52, 52}, Animation.PlayMode.LOOP, 0.40f);
-        super.atkAnimation = AnimationManager.generateAnimation(AssetsManager.assets.get("assets/img/bone-archer.png", Texture.class),  new int[]{57*0, 57*1, 57*2, 57*3, 57*4, 57*5, 57*6}, new int[]{0, 0, 0, 0, 0, 0, 0}, new int[]{57, 57, 57, 57, 57, 57, 57}, new int[]{52, 52, 52, 52, 52, 52, 52}, Animation.PlayMode.NORMAL, PlayerAnimation.STANDARD_ATK_FRAME_TIME);
-        this.spriteAdjustmentForCollision = new float[]{0.4f, 0.4f, 1.6f, 0.9f};
-        this.arrowImg = new TextureRegion(AssetsManager.assets.get("assets/img/bone-archer.png", Texture.class), 57*3, 52*2, 57, 52);
+        super.standImg = standImg = new TextureRegion(AssetsManager.assets.get("assets/img/bone-archer.png", Texture.class), 48, 114, 65, 44);
+        super.movingAnimation = AnimationManager.generateAnimation(AssetsManager.assets.get("assets/img/bone-archer.png", Texture.class),  new int[]{48, 151, 249}, new int[]{114, 114, 114}, new int[]{65, 65, 65}, new int[]{44, 44, 44}, Animation.PlayMode.LOOP, 0.40f);
+        super.atkAnimation = AnimationManager.generateAnimation(new TextureRegion(AssetsManager.assets.get("assets/img/bone-archer.png", Texture.class), 56, 1, 398, 51), 57, 51, Animation.PlayMode.NORMAL, GameActor.STANDARD_ATK_FRAME_TIME);
+        super.spriteAdjustmentForCollision = new float[]{2.5f, 0.4f, -6f, -0.4f};
+        this.arrowImg = new TextureRegion(AssetsManager.assets.get("assets/img/bone-archer.png", Texture.class), 332, 119, 33, 8);
+        this.body.setSize(super.standImg.getRegionWidth() * MapHandler.unitScale, super .standImg.getRegionHeight()* MapHandler.unitScale);
         AgentCreator.getInstance().createAgent(EnemyFactory.enemyType.ARCHER_SKELETON, new Object[]{this});
     }
-
+        
     @Override
     public void updateActor(float deltaTime, MapHandler map, Array<GameActor> stageActors) {
         super.stateTime += deltaTime;
+        this.updateArrows();
     }
     
     @Override
     public void renderActor(SpriteBatch batch) {
-        if(super.blinking && super.blinkPeriod >= Enemy.BLINK_INTERVAL){
-            super.blinkPeriod = 0;
-            return;
-        }
-        if(super.body.x < 0){
-            super.body.setX(0);
-        }
-        TextureRegion currentFrame = this.getCurrentFrame();
-        float[] renderValues = super.getSpriteRenderValues(currentFrame);
-        batch.draw(currentFrame, renderValues[0], renderValues[1], renderValues[2], renderValues[3]);
-        
-        Iterator<Arrow> ai = arrows.iterator();
-        while (ai.hasNext())
-        {
-            Arrow arrow = ai.next();
-            float w = arrow.width;
-            if(arrow.positionX<0)
-            {
-                ai.remove();
-                continue;
-            }
-            if(arrow.isFaceToRight())
-            {
-                arrow.positionX += 0.3f;
-            }
-            else
-            {
-                arrow.positionX -= 0.3f;
-                w *= -1;
-            }
-            batch.draw(arrowImg, arrow.positionX, arrow.positionY, w, arrow.height);
-        }
+        super.renderActor(batch);
+        this.renderArrows(batch);
     }
 
     @Override
@@ -92,34 +61,56 @@ public class ArcherSkeleton extends Enemy{
 
     @Override
     public void drawDebugRec(SpriteBatch batch) {
-        Iterator<Arrow> ai = arrows.iterator();
-        while (ai.hasNext())
-        {
-            Arrow arrow = ai.next();
-            float w = arrow.width;
-            if(arrow.positionX<0)
-            {
-                ai.remove();
-                continue;
-            }
-            if(arrow.isFaceToRight())
-            {
-                arrow.positionX += 0.1f;
-            }
-            else
-            {
-                arrow.positionX -= 0.1f;
-                w *= -1;
-            }
-            batch.draw(AssetsManager.assets.get("assets/img/squarer.png", Texture.class), arrow.positionX, arrow.positionY+3f, w, arrow.height-5f);
+        Rectangle arrowBody;
+        for (int i = 0; i < this.arrows.size; i++) {
+            arrowBody = this.arrows.get(i).getCollisionBody();
+            batch.draw(AssetsManager.assets.get("assets/img/squarer.png", Texture.class), arrowBody.x, arrowBody.y + Arrow.DISTANCE_FROM_GROUND, (this.arrows.get(i).isFaceToRight()) ? arrowBody.width: -arrowBody.width, arrowBody.height);
         }
     }
+    
+    private void updateArrows(){
+        Rectangle arrowBody;
+        for (int i = 0; i < this.arrows.size; i++) {
+            arrowBody = this.arrows.get(i).getCollisionBody();
+            if(this.shouldArrowDisappear(arrowBody)){
+                this.arrows.removeIndex(i);
+                i--;
+                continue;
+            }
+            arrowBody.x = (this.arrows.get(i).isFaceToRight()) ? arrowBody.x + Arrow.ARROW_SPEED: arrowBody.x - Arrow.ARROW_SPEED;
+        }
+    }
+    
+    private void renderArrows(SpriteBatch batch){
+        Rectangle arrowBody;
+        for (int i = 0; i < this.arrows.size; i++) {
+            arrowBody = this.arrows.get(i).getCollisionBody();
+            batch.draw(this.arrowImg, arrowBody.x, arrowBody.y + 3f, (this.arrows.get(i).isFaceToRight()) ? arrowBody.width: -arrowBody.width, arrowBody.height);
+        }
+    }
+    
+    private boolean shouldArrowDisappear(Rectangle arrow){
+        OrthographicCamera camera = super.gameScreen.getCamera();
+        if(arrow.x + arrow.width > (camera.position.x + camera.viewportWidth / 2f  + camera.viewportWidth * 0.2f)){
+            return true;
+        }
+        if(arrow.x + arrow.width < camera.position.x - camera.viewportWidth / 2f - camera.viewportWidth * 0.2f){
+            return true;
+        }
+        if(arrow.y + arrow.height > (camera.position.y + camera.viewportHeight / 2f  + camera.viewportHeight * 0.2f)){
+            return true;
+        }
+        if(arrow.y + arrow.height < camera.position.y - camera.viewportHeight / 2f - camera.viewportHeight * 0.2f){
+            return true;
+        }
+        return false;
+    }
 
-    public List<Arrow> getArrows() {
+    public Array<Arrow> getArrows() {
         return arrows;
     }
 
-    public void setArrows(List<Arrow> arrows) {
+    public void setArrows(Array<Arrow> arrows) {
         this.arrows = arrows;
     }
     

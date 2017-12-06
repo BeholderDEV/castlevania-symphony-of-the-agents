@@ -5,9 +5,11 @@
  */
 package core.actors.enemies;
 
+import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import core.actors.CollisionHandler;
+import core.map.MapHandler;
 import core.screens.GameScreen;
 
 /**
@@ -23,10 +25,9 @@ public class EnemyFactory {
         BAT
     }
     
-    public static Enemy createEnemy(enemyType type, int walkingSpeed, Vector2 position, float width, float height, GameScreen gameScreen){
+    public static Enemy createEnemy(enemyType type, int walkingSpeed, Vector2 position, GameScreen gameScreen){
         Rectangle enemyBody = CollisionHandler.rectanglePool.obtain();
         enemyBody.setPosition(position);
-        enemyBody.setSize(width, height);
         switch(type){
             case SWORD_SKELETON:
                 return new SwordSkeleton(walkingSpeed, enemyBody, gameScreen);

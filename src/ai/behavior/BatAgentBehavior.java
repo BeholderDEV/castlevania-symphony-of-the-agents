@@ -15,7 +15,7 @@ import jade.core.Agent;
 public class BatAgentBehavior extends AgentBehavior{
 
     public BatAgentBehavior(Enemy container, Agent a, long period) {
-        super(container, a, period);
+        super(container, a, period, 4);
     }
     
     @Override

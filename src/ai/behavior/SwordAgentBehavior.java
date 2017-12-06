@@ -16,12 +16,9 @@ import jade.core.Agent;
  * @author 5674867
  */
 public class SwordAgentBehavior extends AgentBehavior{
-    private final GameActor player;
-    public static final float DISTANCE_TO_ATK_PLAYER = 6f;
     
     public SwordAgentBehavior(Enemy container, Agent a, long period) {
-        super(container, a, period);
-        this.player = super.container.getGameScreen().getActors().get(0);
+        super(container, a, period, 6);
     }
     
     @Override
@@ -51,31 +48,21 @@ public class SwordAgentBehavior extends AgentBehavior{
     private void defineActionStanding(){
         super.container.setCurrentState(GameActor.State.WALKING);
         super.container.getVelocity().x = (super.container.foundPlayer()) ? super.container.getWalkingSpeed(): super.container.getWalkingSpeed() / 2f;
-        super.container.setFacingRight(super.container.getBody().x - this.player.getBody().x < 0);
+        super.container.setFacingRight(super.container.getBody().x - super.player.getBody().x < 0);
     }
         
     private void defineActionWalking(){
         if(super.container.getStateTime() >= 1f){
             super.container.setStateTime(0);
-            super.container.setFacingRight(super.container.getBody().x - this.player.getBody().x < 0);
+            super.container.setFacingRight(super.container.getBody().x - super.player.getBody().x < 0);
         }
-        if(super.container.foundPlayer() && this.isPlayerOnRange()){
+        if(super.container.foundPlayer() && super.isPlayerOnRange()){
             super.container.setStateTime(0);
             super.container.getVelocity().set(0, 0);
             super.container.setCurrentState(GameActor.State.ATTACKING);
         }
     }
 
-    //Later check weapon range instead of distance
-    private boolean isPlayerOnRange(){
-        float currentDistance = super.container.getBody().x - this.player.getBody().x;
-        if(Math.abs(currentDistance) <= DISTANCE_TO_ATK_PLAYER && (super.container.getBody().y + super.container.getBody().height) > this.player.getBody().y){
-            super.container.setFacingRight(super.container.getBody().x - this.player.getBody().x < 0);
-            return true;
-        }
-        return false;
-    }
-    
     @Override
     public void checkCollisions(){
         this.groundBehavior();
@@ -116,15 +103,15 @@ public class SwordAgentBehavior extends AgentBehavior{
 
     private void updateWeaponHit(){
         Rectangle weaponArea = CollisionHandler.rectanglePool.obtain();
-        float w = 3.5f;
+        float w = 5f;
         float x = (super.container.isFacingRight()) 
                   ? super.container.getBody().x + super.container.getBody().width
                   : super.container.getBody().x - w;
         float y = (super.container.getBody().y + super.container.getBody().height) - super.container.getBody().height * 0.35f;
         float h = 1;
         weaponArea.set(x, y, w, h);
-        if(CollisionHandler.checkCollisionBetweenBodyAndObject(this.player, weaponArea)){
-            this.player.receiveDamage(super.container.getBody(), 1);
+        if(CollisionHandler.checkCollisionBetweenBodyAndObject(super.player, weaponArea)){
+            super.player.receiveDamage(super.container.getBody(), 1);
         }
         CollisionHandler.rectanglePool.free(weaponArea);
     }

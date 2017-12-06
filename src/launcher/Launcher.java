@@ -7,6 +7,7 @@ package launcher;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import core.actors.CollisionHandler;
 import core.screens.ScreenHandler;
 
 /**
@@ -19,6 +20,7 @@ public class Launcher {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        CollisionHandler.iniatilizeRectangles();
         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
         config.title = "Symphony of the Agents";
 //        config.width = 1280;
