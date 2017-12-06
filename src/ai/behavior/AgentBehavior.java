@@ -76,8 +76,8 @@ public abstract class AgentBehavior extends TickerBehaviour{
         float dx = Math.abs(this.container.getBody().x - this.player.getBody().x);
         float dy = Math.abs(this.container.getBody().y - this.player.getBody().y);
         if(dx < camera.viewportWidth / 2f && dy < camera.viewportHeight / 2f){
-            this.container.setFoundPlayer(true);
-            this.container.getVelocity().x = this.container.getWalkingSpeed();
+//            this.container.setFoundPlayer(true);
+//            this.container.getVelocity().x = this.container.getWalkingSpeed();
         }
     }
     

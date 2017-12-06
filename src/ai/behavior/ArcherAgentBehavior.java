@@ -6,6 +6,7 @@
 package ai.behavior;
 
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import core.actors.CollisionHandler;
 import core.actors.GameActor;
@@ -20,7 +21,7 @@ import jade.core.Agent;
  */
 public class ArcherAgentBehavior extends AgentBehavior{
     
-    public static float TIME_TO_TRAVEL_RANGE = 5f;
+    public static float TIME_BEFORE_WALKING = 3f;
     private float attack_cooldown = 2f;
     private boolean arrowCreatedOnAtk = false;
     
@@ -57,7 +58,7 @@ public class ArcherAgentBehavior extends AgentBehavior{
         if(super.container.getStateTime() >= this.attack_cooldown && super.checkIfCanAtk()){
             return;
         }
-        if(super.container.getStateTime() >= TIME_TO_TRAVEL_RANGE / 2f){
+        if(super.container.getStateTime() >= TIME_BEFORE_WALKING){
             super.container.getVelocity().x = super.container.getWalkingSpeed();
             super.container.setFacingRight(!super.container.isFacingRight());
             super.container.setCurrentState(GameActor.State.WALKING);
@@ -68,7 +69,10 @@ public class ArcherAgentBehavior extends AgentBehavior{
         if(super.checkIfCanAtk()){
             return;
         }
-        if(super.container.getStateTime() >= TIME_TO_TRAVEL_RANGE){
+        Vector2 initialPosition = ((ArcherSkeleton)super.container).getInitialPosition();
+        float range = ((ArcherSkeleton)super.container).getWalkingRange();
+        float xNew = super.container.getBody().x += super.container.getVelocity().x * super.container.getGameScreen().getLastDelta() * ((super.container.isFacingRight()) ? 1: -1);
+        if((super.container.isFacingRight() && xNew > initialPosition.x + range) || (!super.container.isFacingRight() && xNew < initialPosition.x - range)){
             super.container.setStateTime(0);
             super.container.setCurrentState(GameActor.State.STANDING);
         }

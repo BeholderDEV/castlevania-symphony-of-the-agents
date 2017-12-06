@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import core.actors.GameActor;
 import core.map.MapHandler;
@@ -28,8 +29,10 @@ public class ArcherSkeleton extends Enemy{
     
     private Array<Arrow> arrows = new Array<>();
     private TextureRegion arrowImg;
+    private float walkingRange;
+    private Vector2 initialPosition;
     
-    public ArcherSkeleton(int walkingSpeed, Rectangle body, GameScreen gameScreen) {
+    public ArcherSkeleton(int walkingSpeed, Rectangle body, GameScreen gameScreen, float walkingRange) {
         super(walkingSpeed, body, gameScreen);
         super.standImg = standImg = new TextureRegion(AssetsManager.assets.get("assets/img/bone-archer.png", Texture.class), 48, 114, 65, 44);
         super.movingAnimation = AnimationManager.generateAnimation(AssetsManager.assets.get("assets/img/bone-archer.png", Texture.class),  new int[]{48, 151, 249}, new int[]{114, 114, 114}, new int[]{65, 65, 65}, new int[]{44, 44, 44}, Animation.PlayMode.LOOP, 0.40f);
@@ -37,6 +40,8 @@ public class ArcherSkeleton extends Enemy{
         super.spriteAdjustmentForCollision = new float[]{2.5f, 0.4f, -6f, -0.4f};
         this.arrowImg = new TextureRegion(AssetsManager.assets.get("assets/img/bone-archer.png", Texture.class), 332, 119, 33, 8);
         this.body.setSize(super.standImg.getRegionWidth() * MapHandler.unitScale, super .standImg.getRegionHeight()* MapHandler.unitScale);
+        this.walkingRange = walkingRange;
+        this.initialPosition = new Vector2(body.x, body.y);
         AgentCreator.getInstance().createAgent(EnemyFactory.enemyType.ARCHER_SKELETON, new Object[]{this});
     }
         
@@ -108,9 +113,16 @@ public class ArcherSkeleton extends Enemy{
         return arrows;
     }
 
+    public float getWalkingRange() {
+        return walkingRange;
+    }
+
+    public Vector2 getInitialPosition() {
+        return initialPosition;
+    }
+    
     public void setArrows(Array<Arrow> arrows) {
         this.arrows = arrows;
     }
-    
     
 }

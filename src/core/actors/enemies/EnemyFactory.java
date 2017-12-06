@@ -25,15 +25,19 @@ public class EnemyFactory {
         BAT
     }
     
-    public static Enemy createEnemy(enemyType type, int walkingSpeed, Vector2 position, GameScreen gameScreen){
+    public static Enemy createEnemy(enemyType type, int walkingSpeed, Vector2 position, GameScreen gameScreen, float walkingRange){
         Rectangle enemyBody = CollisionHandler.rectanglePool.obtain();
         enemyBody.setPosition(position);
         switch(type){
             case SWORD_SKELETON:
                 return new SwordSkeleton(walkingSpeed, enemyBody, gameScreen);
             case ARCHER_SKELETON:
-                return new ArcherSkeleton(walkingSpeed, enemyBody, gameScreen);
+                return new ArcherSkeleton(walkingSpeed, enemyBody, gameScreen, walkingRange);
         }
         return null;
+    }
+    
+    public static Enemy createEnemy(enemyType type, int walkingSpeed, Vector2 position, GameScreen gameScreen){
+        return createEnemy(type, walkingSpeed, position, gameScreen, 5f);
     }
 }
