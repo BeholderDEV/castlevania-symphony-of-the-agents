@@ -19,7 +19,8 @@ public class EnemyFactory {
     
     public enum enemyType{
         SWORD_SKELETON,
-        ARCHER_SKELETON
+        ARCHER_SKELETON,
+        BAT
     }
     
     public static Enemy createEnemy(enemyType type, int walkingSpeed, Vector2 position, float width, float height, GameScreen gameScreen){

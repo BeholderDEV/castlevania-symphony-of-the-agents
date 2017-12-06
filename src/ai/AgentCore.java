@@ -6,8 +6,10 @@
 package ai;
 
 import ai.behavior.ArcherAgentBehavior;
+import ai.behavior.BatAgentBehavior;
 import ai.behavior.SwordAgentBehavior;
 import core.actors.enemies.ArcherSkeleton;
+import core.actors.enemies.Bat;
 import core.actors.enemies.SwordSkeleton;
 import jade.core.Agent;
 
@@ -22,11 +24,14 @@ public class AgentCore extends Agent{
         System.out.println("Iniating agent: " + getAID().getName());
         Object [] args = getArguments();
         if(args != null && args.length > 0){
-            if(getAID().getName().startsWith("Skeleton_Sword")){
+            if(getAID().getName().startsWith("Sword_Skeleton")){
                 addBehaviour(new SwordAgentBehavior((SwordSkeleton) args[0], this, AgentCreator.BEHAVIOR_DELAY));
             }
-            if(getAID().getName().startsWith("Skeleton_Archer")){
+            if(getAID().getName().startsWith("Archer_Skeleton")){
                 addBehaviour(new ArcherAgentBehavior((ArcherSkeleton) args[0], this, AgentCreator.BEHAVIOR_DELAY));
+            }
+            if(getAID().getName().startsWith("Bat")){
+                addBehaviour(new BatAgentBehavior((Bat) args[0], this, AgentCreator.BEHAVIOR_DELAY));
             }
         }
     }

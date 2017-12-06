@@ -5,6 +5,8 @@
  */
 package ai;
 
+import core.actors.enemies.Enemy;
+import core.actors.enemies.EnemyFactory;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.wrapper.ContainerController;
@@ -20,10 +22,6 @@ import jade.core.Runtime;
  */
 
 public class AgentCreator {
-    public enum AgentType{
-        SKELETON_SWORD,
-        SKELETON_ARCHER
-    }
     
     private static AgentCreator instance = null;
     private final HashMap<String, ContainerController> containerMap = new HashMap<>();
@@ -57,15 +55,18 @@ public class AgentCreator {
         this.containerMap.put(name, rt.createAgentContainer(p));
     }
     
-    public void createAgent(String containerName, AgentType agentType, Object[] args){
+    public void createAgent(String containerName, EnemyFactory.enemyType agentType, Object[] args){
         ContainerController cc = this.containerMap.get(containerName);
         try {
             switch(agentType){
-                case SKELETON_SWORD:
-                    cc.createNewAgent("Skeleton_Sword_" + swordNameCount++, "ai.AgentCore", args).start();
+                case SWORD_SKELETON:
+                    cc.createNewAgent("Sword_Skeleton_" + swordNameCount++, "ai.AgentCore", args).start();
                 break;
-                case SKELETON_ARCHER:
-                    cc.createNewAgent("Skeleton_Archer_" + archerNameCount++, "ai.AgentCore", args).start();
+                case ARCHER_SKELETON:
+                    cc.createNewAgent("Archer_Skeleton_" + archerNameCount++, "ai.AgentCore", args).start();
+                break;
+                case BAT:
+                    cc.createNewAgent("Bat_" + archerNameCount++, "ai.AgentCore", args).start();
                 break;
             }
         } catch (StaleProxyException ex) {
@@ -73,7 +74,7 @@ public class AgentCreator {
         }
     }
     
-    public void createAgent(AgentType agentType, Object[] args){
+    public void createAgent(EnemyFactory.enemyType agentType, Object[] args){
         this.createAgent("Main-Container", agentType, args);
     }
 }

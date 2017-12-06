@@ -5,7 +5,6 @@
  */
 package ai.behavior;
 
-import static ai.behavior.SwordAgentBehavior.DISTANCE_TO_ATK_PLAYER;
 import com.badlogic.gdx.math.Rectangle;
 import core.actors.CollisionHandler;
 import core.actors.GameActor;
@@ -13,7 +12,6 @@ import core.actors.enemies.ArcherSkeleton;
 import core.actors.enemies.Enemy;
 import core.objects.Arrow;
 import jade.core.Agent;
-import java.awt.Point;
 
 /**
  *

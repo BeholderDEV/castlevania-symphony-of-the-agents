@@ -71,15 +71,6 @@ public class CollisionHandler {
                 actor.updatePosition(delta);
                 actor.setCurrentState(GameActor.State.STANDING);
             }
-            if(actor.getCurrentState() == GameActor.State.JUMPING){
-                actor.velocity.x *= -1;
-                actor.velocity.y *= -1;
-                actor.updatePosition(delta);
-                actor.velocity.y *= -1;
-                if(actor.getVelocity().y > 0){
-                    actor.getVelocity().y = 0;
-                }
-            }
             return true;
         }
         return false;

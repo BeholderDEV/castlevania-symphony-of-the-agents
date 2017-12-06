@@ -30,7 +30,7 @@ public class SwordSkeleton extends Enemy{
         super.movingAnimation = AnimationManager.generateAnimation(new TextureRegion(AssetsManager.assets.get("assets/img/superIV_Enemies.png", Texture.class), 312, 143, 58, 51), 29, 49, Animation.PlayMode.LOOP, 0.40f);
         super.atkAnimation = AnimationManager.generateAnimation(AssetsManager.assets.get("assets/img/superIV_Enemies.png", Texture.class),  new int[]{276, 250, 188}, new int[]{143, 124, 143}, new int[]{30, 26, 62}, new int[]{51, 69, 50}, Animation.PlayMode.NORMAL, GameActor.STANDARD_ATK_FRAME_TIME);
         this.spriteAdjustmentForCollision = new float[]{0.4f, 0.4f, 1.6f, 0.9f};
-        AgentCreator.getInstance().createAgent(AgentCreator.AgentType.SKELETON_SWORD, new Object[]{this});
+        AgentCreator.getInstance().createAgent(EnemyFactory.enemyType.SWORD_SKELETON, new Object[]{this});
     }
 
     @Override

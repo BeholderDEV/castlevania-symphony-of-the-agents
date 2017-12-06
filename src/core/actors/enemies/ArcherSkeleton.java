@@ -41,7 +41,7 @@ public class ArcherSkeleton extends Enemy{
         super.atkAnimation = AnimationManager.generateAnimation(AssetsManager.assets.get("assets/img/bone-archer.png", Texture.class),  new int[]{57*0, 57*1, 57*2, 57*3, 57*4, 57*5, 57*6}, new int[]{0, 0, 0, 0, 0, 0, 0}, new int[]{57, 57, 57, 57, 57, 57, 57}, new int[]{52, 52, 52, 52, 52, 52, 52}, Animation.PlayMode.NORMAL, PlayerAnimation.STANDARD_ATK_FRAME_TIME);
         this.spriteAdjustmentForCollision = new float[]{0.4f, 0.4f, 1.6f, 0.9f};
         this.arrowImg = new TextureRegion(AssetsManager.assets.get("assets/img/bone-archer.png", Texture.class), 57*3, 52*2, 57, 52);
-        AgentCreator.getInstance().createAgent(AgentCreator.AgentType.SKELETON_ARCHER, new Object[]{this});
+        AgentCreator.getInstance().createAgent(EnemyFactory.enemyType.ARCHER_SKELETON, new Object[]{this});
     }
 
     @Override
@@ -92,15 +92,6 @@ public class ArcherSkeleton extends Enemy{
 
     @Override
     public void drawDebugRec(SpriteBatch batch) {
-        if(super.currentState == GameActor.State.ATTACKING && super.stateTime >= GameActor.STANDARD_ATK_FRAME_TIME * 2){
-            float w = 3.5f;
-            float x = (super.facingRight) 
-                      ? super.body.x + super.body.width
-                      : super.body.x - w;
-            float y = (super.body.y + super.body.height) - super.body.height * 0.35f;
-            float h = 1;
-            batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), x, y, w, h);
-        }
         Iterator<Arrow> ai = arrows.iterator();
         while (ai.hasNext())
         {
@@ -120,7 +111,7 @@ public class ArcherSkeleton extends Enemy{
                 arrow.positionX -= 0.1f;
                 w *= -1;
             }
-            batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), arrow.positionX, arrow.positionY+3f, w, arrow.height-5f);
+            batch.draw(AssetsManager.assets.get("assets/img/squarer.png", Texture.class), arrow.positionX, arrow.positionY+3f, w, arrow.height-5f);
         }
     }
 
