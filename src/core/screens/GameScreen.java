@@ -11,7 +11,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -34,6 +33,7 @@ public class GameScreen implements Screen {
     private Array<GameActor> actors = new Array<>();
     private final MapHandler mapHandler;
     private OrthographicCamera camera;
+    private Vector2 oldCameraPosition = new Vector2(0, 0);
     private float lastDelta;
     
     public GameScreen(final ScreenHandler game, PlayerHandler player) {
@@ -69,7 +69,7 @@ public class GameScreen implements Screen {
         }
         this.updateCameraPosition();
         this.camera.update();
-                
+
         this.mapHandler.getMapRenderer().setView(camera);
         this.mapHandler.getMapRenderer().render();
         this.game.batch.setProjectionMatrix(camera.combined);
@@ -110,9 +110,35 @@ public class GameScreen implements Screen {
     }
     
     private void updateCameraPosition(){
+        //Debug
+        if(Gdx.input.isKeyPressed(Input.Keys.J) || Gdx.input.isKeyPressed(Input.Keys.L) || Gdx.input.isKeyPressed(Input.Keys.K) || Gdx.input.isKeyPressed(Input.Keys.I) || Gdx.input.isKeyPressed(Input.Keys.BACKSPACE) || (this.oldCameraPosition.x != 0 && this.oldCameraPosition.y != 0)){
+            if(this.oldCameraPosition.x == 0 && this.oldCameraPosition.y == 0){
+                this.oldCameraPosition.set(this.camera.position.x, this.camera.position.y);
+            }            
+            this.moveCameraForDebug();
+            return;
+        }
         TiledMapTileLayer mapFrontLayer = (TiledMapTileLayer) this.mapHandler.getMapRenderer().getMap().getLayers().get("front");
         this.updateCameraX(mapFrontLayer);
         this.updateCameraY(mapFrontLayer);
+    }
+    
+    private void moveCameraForDebug(){
+        if(Gdx.input.isKeyPressed(Input.Keys.J)){
+            this.camera.position.x -= 0.5f;
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.L)){
+            this.camera.position.x += 0.5f;
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.K)){
+            this.camera.position.y -= 0.5f;
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.I)){
+            this.camera.position.y += 0.5f;
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.BACKSPACE)){
+            this.oldCameraPosition.set(0, 0);
+        }
     }
     
     private void updateCameraX(TiledMapTileLayer mapFrontLayer){

@@ -14,7 +14,7 @@ import core.map.MapHandler;
  * @author Adson Esteves
  */
 public class Arrow {
-    public static final float ARROW_SPEED = 0.3f;
+    public static final float ARROW_SPEED = 0.4f;
     public static final float DISTANCE_FROM_GROUND = 3f;
     private final Rectangle collisionBody;
     private boolean faceToRight;
