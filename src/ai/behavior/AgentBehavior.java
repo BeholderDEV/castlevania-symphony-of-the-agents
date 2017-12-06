@@ -61,11 +61,20 @@ public abstract class AgentBehavior extends TickerBehaviour{
         }
     }
     
+    protected boolean checkIfCanAtk(){
+        if(this.container.foundPlayer() && this.isPlayerOnRange()){
+            this.container.setCurrentState(GameActor.State.ATTACKING);
+            this.container.setStateTime(0);
+            this.container.getVelocity().set(0, 0);
+            return true;
+        }
+        return false;
+    }
+    
     protected void checkIfFoundPlayer(){
         OrthographicCamera camera = this.container.getGameScreen().getCamera();
-        float dx = Math.abs(this.container.getBody().x - this.container.getGameScreen().getActors().get(0).getBody().x);
-        float dy = Math.abs(this.container.getBody().y - this.container.getGameScreen().getActors().get(0).getBody().y);
-//        System.out.println(camera.viewportWidth);
+        float dx = Math.abs(this.container.getBody().x - this.player.getBody().x);
+        float dy = Math.abs(this.container.getBody().y - this.player.getBody().y);
         if(dx < camera.viewportWidth / 2f && dy < camera.viewportHeight / 2f){
             this.container.setFoundPlayer(true);
             this.container.getVelocity().x = this.container.getWalkingSpeed();

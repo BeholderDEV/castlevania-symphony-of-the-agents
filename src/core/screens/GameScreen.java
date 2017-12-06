@@ -43,6 +43,7 @@ public class GameScreen implements Screen {
         this.camera.setToOrtho(false, SCREEN_WIDTH, SCREEN_HEIGHT);
 
         this.mapHandler = new MapHandler("assets/map/mapadahora.tmx");
+//        this.mapHandler = new MapHandler("assets/map/mapadahora2.tmx");
         
         this.camera.update();
         this.mapHandler.getMapRenderer().setView(camera);
@@ -51,9 +52,9 @@ public class GameScreen implements Screen {
     
     private void createActors(){
         PlayerHandler player = new PlayerHandler();
-        player.getBody().setPosition(23, 3.4f);
+        player.getBody().setPosition(3, 3.4f);
         this.actors.add(player);
-        this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.ARCHER_SKELETON, 6, new Vector2(40, 3.4f), this));
+        this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.ARCHER_SKELETON, 6, new Vector2(43, 3.4f), this));
 //        this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.SWORD_SKELETON, 12, new Vector2(33, 3.4f), this));
     }
 

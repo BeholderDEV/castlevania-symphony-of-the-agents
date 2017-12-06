@@ -14,13 +14,11 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import core.actors.GameActor;
-import core.actors.player.PlayerAnimation;
 import core.map.MapHandler;
 import core.objects.Arrow;
 import core.screens.GameScreen;
 import core.util.AnimationManager;
 import core.util.AssetsManager;
-import java.util.Iterator;
 
 /**
  *

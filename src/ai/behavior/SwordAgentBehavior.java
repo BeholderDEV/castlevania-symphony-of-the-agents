@@ -52,14 +52,12 @@ public class SwordAgentBehavior extends AgentBehavior{
     }
         
     private void defineActionWalking(){
+        if(super.checkIfCanAtk()){
+            return;
+        }
         if(super.container.getStateTime() >= 1f){
             super.container.setStateTime(0);
             super.container.setFacingRight(super.container.getBody().x - super.player.getBody().x < 0);
-        }
-        if(super.container.foundPlayer() && super.isPlayerOnRange()){
-            super.container.setStateTime(0);
-            super.container.getVelocity().set(0, 0);
-            super.container.setCurrentState(GameActor.State.ATTACKING);
         }
     }
 
