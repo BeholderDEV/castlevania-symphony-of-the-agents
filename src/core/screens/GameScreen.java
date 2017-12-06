@@ -126,15 +126,27 @@ public class GameScreen implements Screen {
     private void moveCameraForDebug(){
         if(Gdx.input.isKeyPressed(Input.Keys.J)){
             this.camera.position.x -= 0.5f;
+            if(this.camera.position.x - SCREEN_WIDTH / 2f < 0){
+                this.camera.position.x += 0.5f;
+            }
         }
         if(Gdx.input.isKeyPressed(Input.Keys.L)){
             this.camera.position.x += 0.5f;
+            if(this.camera.position.x + SCREEN_WIDTH / 2f  > this.mapHandler.getMapWidth()){
+                this.camera.position.x -= 0.5f;
+            }
         }
         if(Gdx.input.isKeyPressed(Input.Keys.K)){
             this.camera.position.y -= 0.5f;
+            if(this.camera.position.y - SCREEN_HEIGHT / 2f  < 0){
+                this.camera.position.y += 0.5f;
+            }
         }
         if(Gdx.input.isKeyPressed(Input.Keys.I)){
             this.camera.position.y += 0.5f;
+            if(this.camera.position.y + SCREEN_HEIGHT / 2f  > this.mapHandler.getMapHeight()){
+                this.camera.position.y -= 0.5f;
+            }
         }
         if(Gdx.input.isKeyPressed(Input.Keys.BACKSPACE)){
             this.oldCameraPosition.set(0, 0);
