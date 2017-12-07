@@ -6,16 +6,25 @@
 package ai.behavior;
 
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import core.actors.CollisionHandler;
 import core.actors.GameActor;
 import core.actors.enemies.Enemy;
+import jade.core.AID;
 import jade.core.Agent;
+import jade.domain.DFService;
+import jade.domain.FIPAException;
+import jade.lang.acl.ACLMessage;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author 5674867
  */
 public class SwordAgentBehavior extends AgentBehavior{
+    private AID patronArcherAddress;
+    private final Vector2 patronPosition = new Vector2();
     
     public SwordAgentBehavior(Enemy container, Agent a, long period) {
         super(container, a, period, 6);
@@ -25,6 +34,10 @@ public class SwordAgentBehavior extends AgentBehavior{
     public void defineAction(){
         if(super.container.isIsBlinking()){
             super.updateHurted();
+        }
+        ACLMessage msg = super.myAgent.receive();
+        if(msg != null){
+            this.checkReceivedMsg(msg);
         }
         switch(super.container.getCurrentState()){
             case STANDING:
@@ -40,8 +53,58 @@ public class SwordAgentBehavior extends AgentBehavior{
                 super.container.fallFromJump();
             break;
             case DYING:
-                super.myAgent.doDelete();
+                this.realizeAgentTakeDown();
             break;
+        }
+    }
+    
+    @Override
+    protected void realizeAgentTakeDown(){
+        if(patronArcherAddress == null){
+            try {
+                DFService.deregister(super.myAgent);
+            } catch (FIPAException ex) {
+                Logger.getLogger(SwordAgentBehavior.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        super.myAgent.doDelete();
+    }
+    
+    private void checkReceivedMsg(ACLMessage msg){
+        if(msg.getContent().startsWith("Requesting guard")){
+            this.receiveRequestForGuard(msg);
+        }
+        if(msg.getContent().startsWith("Guard confirmation")){
+            this.confirmGuard(msg);
+        }
+        if(msg.getContent().startsWith("Update Guard Position")){
+            String[] params = msg.getContent().split(",");
+            this.patronPosition.set(Float.parseFloat(params[1]), Float.parseFloat(params[2]));
+        }
+    }
+    
+    private void receiveRequestForGuard(ACLMessage msg){
+        if(this.patronArcherAddress == null){
+            this.sendAcceptanceMsg(msg);
+            return;
+        }
+    }
+    
+    private void sendAcceptanceMsg(ACLMessage msg){
+        ACLMessage reply = msg.createReply();
+        reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
+        reply.setContent("Accept");
+        super.myAgent.send(reply);
+    }
+    
+    private void confirmGuard(ACLMessage msg){
+        try {
+            this.patronArcherAddress = msg.getSender();
+            String[] params = msg.getContent().split(",");
+            this.patronPosition.set(Float.parseFloat(params[1]), Float.parseFloat(params[2]));
+            DFService.deregister(super.myAgent);
+        } catch (FIPAException ex) {
+            Logger.getLogger(SwordAgentBehavior.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -112,5 +175,13 @@ public class SwordAgentBehavior extends AgentBehavior{
             super.player.receiveDamage(super.container.getBody(), 1);
         }
         CollisionHandler.rectanglePool.free(weaponArea);
+    }
+
+    public AID getPatronArcher() {
+        return patronArcherAddress;
+    }
+
+    public void setPatronArcher(AID patronArcher) {
+        this.patronArcherAddress = patronArcher;
     }
 }

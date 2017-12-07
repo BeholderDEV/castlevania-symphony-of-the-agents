@@ -13,7 +13,17 @@ import core.actors.GameActor;
 import core.actors.enemies.ArcherSkeleton;
 import core.actors.enemies.Enemy;
 import core.objects.Arrow;
+import jade.core.AID;
 import jade.core.Agent;
+import jade.domain.DFService;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.domain.FIPAException;
+import jade.lang.acl.ACLMessage;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -24,12 +34,18 @@ public class ArcherAgentBehavior extends AgentBehavior{
     public static float TIME_BEFORE_WALKING = 3f;
     private float attack_cooldown = 2f;
     private boolean arrowCreatedOnAtk = false;
+    private final List<AID> swordGuardiansAdress = new ArrayList<>();
+    private final DFAgentDescription guardianSearcher = new DFAgentDescription();
+    private long lastPositionUpdateTime = 0;
     
     public ArcherAgentBehavior(Enemy container, Agent a, long period) {
         super(container, a, period, 30);
         super.container.setFacingRight(true);
         super.container.setCurrentState(GameActor.State.WALKING);
         super.container.getVelocity().set(super.container.getWalkingSpeed(), 0);
+        ServiceDescription sd = new ServiceDescription();
+        sd.setType("guard");
+        this.guardianSearcher.addServices(sd);
     }
     
     @Override
@@ -37,6 +53,7 @@ public class ArcherAgentBehavior extends AgentBehavior{
         if(super.container.isIsBlinking()){
             super.updateHurted();
         }
+        this.defineCommunicationWithGuardians();
         switch(super.container.getCurrentState()){
             case STANDING:
                 this.defineActionStanding();
@@ -51,6 +68,59 @@ public class ArcherAgentBehavior extends AgentBehavior{
                 super.myAgent.doDelete();
             break;
         }
+    }
+    
+    private void defineCommunicationWithGuardians(){
+        if(this.swordGuardiansAdress.isEmpty()){
+            this.searchForGuardians();
+        }else{
+            this.updatePositionForGuardians();
+        }
+    }
+    
+    private void updatePositionForGuardians(){
+        if(System.currentTimeMillis() - lastPositionUpdateTime < 2000){
+            return;
+        }
+        ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+        for (AID guard : swordGuardiansAdress) {
+            msg.addReceiver(guard);
+        }
+        msg.setContent("Update Guard Position," + this.container.getBody().x + "," + this.container.getBody().y );
+        super.myAgent.send(msg);
+        this.lastPositionUpdateTime = System.currentTimeMillis();
+    }
+    
+    private void searchForGuardians(){
+        ACLMessage msg = myAgent.receive();
+        if(msg == null){
+            this.sendMessageToGuardians();
+            return;
+        }
+        this.sendConfirmationMessage(msg);
+    }
+    
+    private void sendMessageToGuardians(){
+        try {
+            DFAgentDescription[] result = DFService.search(myAgent, this.guardianSearcher);
+            for (int i = 0; i < result.length; i++) {
+                ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
+                msg.addReceiver(result[i].getName());
+                msg.setContent("Requesting guard");
+                super.myAgent.send(msg);
+            }
+        } catch (FIPAException ex) {
+            Logger.getLogger(ArcherAgentBehavior.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void sendConfirmationMessage(ACLMessage msg){
+        this.swordGuardiansAdress.add(msg.getSender());
+        ACLMessage reply = msg.createReply();
+        reply.setPerformative(ACLMessage.CONFIRM);
+        Rectangle body = this.container.getBody();
+        reply.setContent("Guard confirmation," + body.x + "," + body.y);
+        super.myAgent.send(reply);
     }
     
     private void defineActionStanding(){
@@ -131,5 +201,9 @@ public class ArcherAgentBehavior extends AgentBehavior{
             }
             CollisionHandler.rectanglePool.free(weaponArea);
         }
+    }
+
+    public List<AID> getSwordGuardians() {
+        return swordGuardiansAdress;
     }
 }

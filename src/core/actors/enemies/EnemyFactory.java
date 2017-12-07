@@ -5,11 +5,9 @@
  */
 package core.actors.enemies;
 
-import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import core.actors.CollisionHandler;
-import core.map.MapHandler;
 import core.screens.GameScreen;
 
 /**

@@ -30,7 +30,7 @@ public abstract class AgentBehavior extends TickerBehaviour{
     @Override
     protected void onTick() {
         if(this.container.canDelete()){
-            this.myAgent.doDelete();
+            this.realizeAgentTakeDown();
             return;
         }
         if(!this.container.isPossibleToRender()){
@@ -45,6 +45,10 @@ public abstract class AgentBehavior extends TickerBehaviour{
         this.checkCollisions();
         this.checkStatus();
         this.container.setPossibleToRender(false);
+    }
+    
+    protected void realizeAgentTakeDown(){
+        this.myAgent.doDelete();
     }
     
     protected void updateHurted(){

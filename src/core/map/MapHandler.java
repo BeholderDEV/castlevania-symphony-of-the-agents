@@ -52,7 +52,6 @@ public class MapHandler {
             if(!(object instanceof RectangleMapObject)){
                 continue;
             }
-            System.out.println(object.getName());
             rectObject = ((RectangleMapObject)object).getRectangle();
             rectObject.x *= unitScale; 
             rectObject.y *= unitScale; 

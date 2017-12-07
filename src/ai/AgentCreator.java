@@ -35,7 +35,7 @@ public class AgentCreator {
 	p.setParameter(Profile.MAIN_HOST, "localhost");
 	p.setParameter(Profile.MAIN_PORT, "1099");
 	p.setParameter(Profile.CONTAINER_NAME, "Main-Container");
-//        p.setParameter(Profile.GUI, "true");
+        p.setParameter(Profile.GUI, "true");
         this.containerMap.put("Main-Container", rt.createMainContainer(p));
     }
     

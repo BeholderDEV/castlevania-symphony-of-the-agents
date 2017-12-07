@@ -10,8 +10,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import core.actors.GameActor;
-import core.map.MapHandler;
 import core.screens.GameScreen;
+import jade.util.leap.Serializable;
 /**
  *
  * @author Augustop
@@ -115,4 +115,5 @@ public abstract class Enemy extends GameActor{
     public void setFoundPlayer(boolean foundPlayer) {
         this.foundPlayer = foundPlayer;
     }
+
 }
