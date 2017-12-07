@@ -52,6 +52,7 @@ public class MapHandler {
             if(!(object instanceof RectangleMapObject)){
                 continue;
             }
+            System.out.println(object.getName());
             rectObject = ((RectangleMapObject)object).getRectangle();
             rectObject.x *= unitScale; 
             rectObject.y *= unitScale; 
@@ -158,6 +159,10 @@ public class MapHandler {
     
     public OrthogonalTiledMapRenderer getMapRenderer() {
         return mapRenderer;
+    }
+    
+    public MapObjects getMapObjetcs(){
+        return this.map.getLayers().get("objects").getObjects();
     }
     
     public int getMapHeight() {

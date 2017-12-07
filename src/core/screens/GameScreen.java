@@ -11,7 +11,11 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.MapObjects;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import core.actors.CollisionHandler;
@@ -34,6 +38,7 @@ public class GameScreen implements Screen {
     private final MapHandler mapHandler;
     private OrthographicCamera camera;
     private Vector2 oldCameraPosition = new Vector2(0, 0);
+    private float debugCameraSpeed = 1f;
     private float lastDelta;
     
     public GameScreen(final ScreenHandler game, PlayerHandler player) {
@@ -42,8 +47,8 @@ public class GameScreen implements Screen {
         this.camera = new OrthographicCamera();
         this.camera.setToOrtho(false, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-        this.mapHandler = new MapHandler("assets/map/mapadahora.tmx");
-//        this.mapHandler = new MapHandler("assets/map/mapadahora2.tmx");
+//        this.mapHandler = new MapHandler("assets/map/mapadahora.tmx");
+        this.mapHandler = new MapHandler("assets/map/mapadahora2.tmx");
         
         this.camera.update();
         this.mapHandler.getMapRenderer().setView(camera);
@@ -54,8 +59,24 @@ public class GameScreen implements Screen {
         PlayerHandler player = new PlayerHandler();
         player.getBody().setPosition(3, 3.4f);
         this.actors.add(player);
-        this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.ARCHER_SKELETON, 6, new Vector2(43, 3.4f), this));
-//        this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.SWORD_SKELETON, 12, new Vector2(33, 3.4f), this));
+        MapObjects objects = this.mapHandler.getMapObjetcs();
+        Rectangle rectObject;
+        for (MapObject object : objects) {
+            if(!(object instanceof RectangleMapObject)){
+                continue;
+            }
+            rectObject = ((RectangleMapObject)object).getRectangle();
+            switch(object.getName()){
+                case "sword":
+                    this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.SWORD_SKELETON, 12, new Vector2(rectObject.x, rectObject.y), this));
+                break;
+                case "archer":
+                    this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.ARCHER_SKELETON, 6, new Vector2(rectObject.x, rectObject.y), this));
+                break;
+            }
+        }
+//        this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.ARCHER_SKELETON, 6, new Vector2(43, 3.4f), this));
+//        this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.SWORD_SKELETON, 12, new Vector2(143, 3.4f), this));
     }
 
     @Override
@@ -125,27 +146,27 @@ public class GameScreen implements Screen {
     
     private void moveCameraForDebug(){
         if(Gdx.input.isKeyPressed(Input.Keys.J)){
-            this.camera.position.x -= 0.5f;
+            this.camera.position.x -= this.debugCameraSpeed;
             if(this.camera.position.x - SCREEN_WIDTH / 2f < 0){
-                this.camera.position.x += 0.5f;
+                this.camera.position.x += this.debugCameraSpeed;
             }
         }
         if(Gdx.input.isKeyPressed(Input.Keys.L)){
-            this.camera.position.x += 0.5f;
+            this.camera.position.x += this.debugCameraSpeed;
             if(this.camera.position.x + SCREEN_WIDTH / 2f  > this.mapHandler.getMapWidth()){
-                this.camera.position.x -= 0.5f;
+                this.camera.position.x -= this.debugCameraSpeed;
             }
         }
         if(Gdx.input.isKeyPressed(Input.Keys.K)){
-            this.camera.position.y -= 0.5f;
+            this.camera.position.y -= this.debugCameraSpeed;
             if(this.camera.position.y - SCREEN_HEIGHT / 2f  < 0){
-                this.camera.position.y += 0.5f;
+                this.camera.position.y += this.debugCameraSpeed;
             }
         }
         if(Gdx.input.isKeyPressed(Input.Keys.I)){
-            this.camera.position.y += 0.5f;
+            this.camera.position.y += this.debugCameraSpeed;
             if(this.camera.position.y + SCREEN_HEIGHT / 2f  > this.mapHandler.getMapHeight()){
-                this.camera.position.y -= 0.5f;
+                this.camera.position.y -= this.debugCameraSpeed;
             }
         }
         if(Gdx.input.isKeyPressed(Input.Keys.BACKSPACE)){
