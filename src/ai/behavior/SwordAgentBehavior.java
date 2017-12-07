@@ -128,6 +128,9 @@ public class SwordAgentBehavior extends AgentBehavior{
         if(super.container.getCurrentState() == GameActor.State.JUMPING){
             if(super.container.getVelocity().y == 0){
                 super.container.getVelocity().y = super.container.getJumpingSpeed();
+                if(super.rand.nextInt(10) > 6){
+                    return;
+                }
                 if(this.patronArcherAddress != null && super.container.foundPlayer() && !this.closeToPatron){
                     super.container.setFacingRight(super.container.getBody().x - this.patronPosition.x < 0);
                 }

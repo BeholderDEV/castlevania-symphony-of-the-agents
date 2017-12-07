@@ -10,12 +10,14 @@ import core.actors.GameActor;
 import core.actors.enemies.Enemy;
 import jade.core.Agent;
 import jade.core.behaviours.TickerBehaviour;
+import java.util.Random;
 
 /**
  *
  * @author Augustop
  */
 public abstract class AgentBehavior extends TickerBehaviour{
+    protected Random rand;
     protected float distanceToAtkPlayer;
     protected Enemy container;
     protected GameActor player;
@@ -25,6 +27,7 @@ public abstract class AgentBehavior extends TickerBehaviour{
         this.container = container;
         this.player = this.container.getGameScreen().getActors().get(0);
         this.distanceToAtkPlayer = distanceToAtkPlayer;
+        this.rand = new Random(System.nanoTime());
     }
     
     @Override
