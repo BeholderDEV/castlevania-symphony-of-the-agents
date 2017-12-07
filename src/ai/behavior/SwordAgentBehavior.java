@@ -23,11 +23,13 @@ import java.util.logging.Logger;
  * @author 5674867
  */
 public class SwordAgentBehavior extends AgentBehavior{
+    public static final float SWORD_DISTANCE_TO_ATK = 6f;
     private AID patronArcherAddress;
     private final Vector2 patronPosition = new Vector2();
+    private boolean closeToPatron = false;
     
     public SwordAgentBehavior(Enemy container, Agent a, long period) {
-        super(container, a, period, 6);
+        super(container, a, period, SWORD_DISTANCE_TO_ATK);
     }
     
     @Override
@@ -39,6 +41,7 @@ public class SwordAgentBehavior extends AgentBehavior{
         if(msg != null){
             this.checkReceivedMsg(msg);
         }
+        this.checkIfCloseToPatron();
         switch(super.container.getCurrentState()){
             case STANDING:
                 this.defineActionStanding();
@@ -59,6 +62,11 @@ public class SwordAgentBehavior extends AgentBehavior{
     }
     
     private void defineActionStanding(){
+        if(this.patronArcherAddress != null && super.container.foundPlayer() && !this.closeToPatron){
+            this.lurePlayerToArcher();
+            super.container.setFacingRight(super.container.getBody().x - super.player.getBody().x < 0);
+            return;
+        }
         super.container.setCurrentState(GameActor.State.WALKING);
         super.container.getVelocity().x = (super.container.foundPlayer()) ? super.container.getWalkingSpeed(): super.container.getWalkingSpeed() / 2f;
         super.container.setFacingRight(super.container.getBody().x - super.player.getBody().x < 0);
@@ -72,6 +80,29 @@ public class SwordAgentBehavior extends AgentBehavior{
             super.container.setStateTime(0);
             super.container.setFacingRight(super.container.getBody().x - super.player.getBody().x < 0);
         }
+        if(this.patronArcherAddress != null && super.container.foundPlayer() && !this.closeToPatron){
+            this.lurePlayerToArcher();
+        }
+    }
+    
+    private void lurePlayerToArcher(){
+        float dx = Math.abs(super.container.getBody().x - this.player.getBody().x);
+        if(dx > 20){
+            super.container.getVelocity().setZero();
+            super.container.setCurrentState(GameActor.State.STANDING);
+            return;
+        }
+        super.container.setCurrentState(GameActor.State.WALKING);
+        super.container.getVelocity().x = super.container.getWalkingSpeed();
+        super.container.setFacingRight(super.container.getBody().x - this.patronPosition.x < 0);
+    }
+    
+    private void checkIfCloseToPatron(){
+        if(this.patronArcherAddress == null){
+            return;
+        }
+        float dx = Math.abs(super.container.getBody().x - this.patronPosition.x);
+        this.closeToPatron = dx < ArcherAgentBehavior.ARCHER_DISTANCE_TO_ATK / 2f;
     }
 
     @Override
@@ -97,6 +128,9 @@ public class SwordAgentBehavior extends AgentBehavior{
         if(super.container.getCurrentState() == GameActor.State.JUMPING){
             if(super.container.getVelocity().y == 0){
                 super.container.getVelocity().y = super.container.getJumpingSpeed();
+                if(this.patronArcherAddress != null && super.container.foundPlayer() && !this.closeToPatron){
+                    super.container.setFacingRight(super.container.getBody().x - this.patronPosition.x < 0);
+                }
             }
         }else{
             super.container.getVelocity().y = 0;
@@ -158,6 +192,7 @@ public class SwordAgentBehavior extends AgentBehavior{
         }
         if(msg.getContent().startsWith("Patron died")){
             this.patronArcherAddress = null;
+            this.closeToPatron = false;
         }
     }
     

@@ -31,15 +31,17 @@ import java.util.logging.Logger;
  */
 public class ArcherAgentBehavior extends AgentBehavior{
     
+    public static final float ARCHER_DISTANCE_TO_ATK = 30f;
     public static float TIME_BEFORE_WALKING = 3f;
     private float attack_cooldown = 2f;
     private boolean arrowCreatedOnAtk = false;
     private final List<AID> swordGuardiansAdress = new ArrayList<>();
     private final DFAgentDescription guardianSearcher = new DFAgentDescription();
     private long lastPositionUpdateTime = 0;
+    private long lastGuardianSearchTime = 0;
     
     public ArcherAgentBehavior(Enemy container, Agent a, long period) {
-        super(container, a, period, 30);
+        super(container, a, period, ARCHER_DISTANCE_TO_ATK);
         super.container.setFacingRight(true);
         super.container.setCurrentState(GameActor.State.WALKING);
         super.container.getVelocity().set(super.container.getWalkingSpeed(), 0);
@@ -110,12 +112,12 @@ public class ArcherAgentBehavior extends AgentBehavior{
     }
 
     @Override
-    protected void checkIfFoundPlayer() {
+    protected boolean checkIfFoundPlayer() {
         if (super.container.isFacingRight() && super.container.getBody().x + super.container.getSpriteAdjustmentForCollision()[0] > this.player.getBody().x
         || !super.container.isFacingRight() && super.container.getBody().x - super.container.getSpriteAdjustmentForCollision()[0] < this.player.getBody().x){
-            return;
+            return false;
         }
-        super.checkIfFoundPlayer();
+        return super.checkIfFoundPlayer();
     }
     
     @Override
@@ -191,6 +193,9 @@ public class ArcherAgentBehavior extends AgentBehavior{
     }
     
     private void sendMessageToAvaliableGuardians(){
+        if(System.currentTimeMillis() - this.lastGuardianSearchTime < 1000){
+            return;
+        }
         try {
             DFAgentDescription[] result = DFService.search(myAgent, this.guardianSearcher);
             for (int i = 0; i < result.length; i++) {
@@ -202,6 +207,7 @@ public class ArcherAgentBehavior extends AgentBehavior{
         } catch (FIPAException ex) {
             Logger.getLogger(ArcherAgentBehavior.class.getName()).log(Level.SEVERE, null, ex);
         }
+        this.lastGuardianSearchTime = System.currentTimeMillis();
     }
     
     private void sendConfirmationMessage(ACLMessage msg){

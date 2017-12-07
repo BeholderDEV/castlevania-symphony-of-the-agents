@@ -5,7 +5,6 @@
  */
 package ai;
 
-import core.actors.enemies.Enemy;
 import core.actors.enemies.EnemyFactory;
 import jade.core.Profile;
 import jade.core.ProfileImpl;

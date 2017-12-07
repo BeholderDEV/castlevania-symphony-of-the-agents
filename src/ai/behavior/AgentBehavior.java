@@ -37,9 +37,7 @@ public abstract class AgentBehavior extends TickerBehaviour{
             return;
         }
 //        this.container.setStateTime(this.container);
-        if(!this.container.foundPlayer()){
-            this.checkIfFoundPlayer();
-        }
+        this.container.setFoundPlayer(this.checkIfFoundPlayer());
         this.defineAction();
         this.container.updatePosition(this.container.getGameScreen().getLastDelta());
         this.checkCollisions();
@@ -75,14 +73,15 @@ public abstract class AgentBehavior extends TickerBehaviour{
         return false;
     }
     
-    protected void checkIfFoundPlayer(){
+    protected boolean checkIfFoundPlayer(){
         OrthographicCamera camera = this.container.getGameScreen().getCamera();
         float dx = Math.abs(this.container.getBody().x - this.player.getBody().x);
         float dy = Math.abs(this.container.getBody().y - this.player.getBody().y);
         if(dx < camera.viewportWidth / 2f && dy < camera.viewportHeight / 2f){
-            this.container.setFoundPlayer(true);
             this.container.getVelocity().x = this.container.getWalkingSpeed();
+            return true;
         }
+        return false;
     }
     
     protected boolean isPlayerOnRange(){
