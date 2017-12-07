@@ -11,6 +11,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
@@ -31,14 +32,15 @@ import core.actors.player.PlayerHandler;
  * @author Augustop
  */
 public class GameScreen implements Screen {
-    public final int SCREEN_WIDTH = 50;
-    public final int SCREEN_HEIGHT = 20;
+    public static final int SCREEN_WIDTH = 50;
+    public static final int SCREEN_HEIGHT = 20;
     private final ScreenHandler game;
     private Array<GameActor> actors = new Array<>();
     private final MapHandler mapHandler;
     private OrthographicCamera camera;
     private Vector2 oldCameraPosition = new Vector2(0, 0);
     private float debugCameraSpeed = 1f;
+    private final TextureRegion heartImg;
     private float lastDelta;
     
     public GameScreen(final ScreenHandler game, PlayerHandler player) {
@@ -48,7 +50,8 @@ public class GameScreen implements Screen {
         this.camera.setToOrtho(false, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 //        this.mapHandler = new MapHandler("assets/map/mapadahora.tmx");
-        this.mapHandler = new MapHandler("assets/map/mapadahora2.tmx");
+        this.heartImg = new TextureRegion(AssetsManager.assets.get("assets/img/heart.png", Texture.class), 16,16);
+        this.mapHandler = new MapHandler("assets/map/mapadahora.tmx");
         
         this.camera.update();
         this.mapHandler.getMapRenderer().setView(camera);
@@ -68,7 +71,7 @@ public class GameScreen implements Screen {
             rectObject = ((RectangleMapObject)object).getRectangle();
             switch(object.getName()){
                 case "sword":
-//                    this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.SWORD_SKELETON, 12, new Vector2(rectObject.x, rectObject.y), this));
+                    this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.SWORD_SKELETON, 12, new Vector2(rectObject.x, rectObject.y), this));
                 break;
                 case "archer":
                     this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.ARCHER_SKELETON, 6, new Vector2(rectObject.x, rectObject.y), this));
@@ -76,7 +79,7 @@ public class GameScreen implements Screen {
             }
         }
 //        this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.ARCHER_SKELETON, 6, new Vector2(43, 3.4f), this));
-        this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.SWORD_SKELETON, 14, new Vector2(43, 3.4f), this));
+//        this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.SWORD_SKELETON, 14, new Vector2(43, 3.4f), this));
     }
 
     @Override
@@ -95,6 +98,11 @@ public class GameScreen implements Screen {
         this.mapHandler.getMapRenderer().render();
         this.game.batch.setProjectionMatrix(camera.combined);
         this.game.batch.begin();
+        for(int i=0; i<this.actors.get(0).getLifePoints(); i++){
+            this.game.batch.draw(heartImg, this.camera.position.x-SCREEN_WIDTH/2f+2+i, this.camera.position.y+SCREEN_HEIGHT/2f-2,1f,1f);
+        }
+        
+        
         for (GameActor actor : actors) {
             actor.renderActor(this.game.batch);
             actor.drawRecOverBody(this.game.batch);
@@ -108,7 +116,7 @@ public class GameScreen implements Screen {
     
     private void verifyPlayerDeath(){
         if(this.actors.get(0).getBody().y + this.actors.get(0).getBody().height < 0 || this.actors.get(0).isDead()){
-            AssetsManager.assets.load("assets/img/gameover_screen.png", Texture.class);
+            AssetsManager.assets.load("assets/img/gameover_screen.jpeg", Texture.class);
             for (GameActor actor : actors) {
                 if(actor instanceof Enemy){
                     ((Enemy)actor).setForDelete();
@@ -147,27 +155,27 @@ public class GameScreen implements Screen {
     private void moveCameraForDebug(){
         if(Gdx.input.isKeyPressed(Input.Keys.J)){
             this.camera.position.x -= this.debugCameraSpeed;
-            if(this.camera.position.x - SCREEN_WIDTH / 2f < 0){
-                this.camera.position.x += this.debugCameraSpeed;
-            }
+//            if(this.camera.position.x - SCREEN_WIDTH / 2f < 0){
+//                this.camera.position.x += this.debugCameraSpeed;
+//            }
         }
         if(Gdx.input.isKeyPressed(Input.Keys.L)){
             this.camera.position.x += this.debugCameraSpeed;
-            if(this.camera.position.x + SCREEN_WIDTH / 2f  > this.mapHandler.getMapWidth()){
-                this.camera.position.x -= this.debugCameraSpeed;
-            }
+//            if(this.camera.position.x + SCREEN_WIDTH / 2f  > this.mapHandler.getMapWidth()){
+//                this.camera.position.x -= this.debugCameraSpeed;
+//            }
         }
         if(Gdx.input.isKeyPressed(Input.Keys.K)){
             this.camera.position.y -= this.debugCameraSpeed;
-            if(this.camera.position.y - SCREEN_HEIGHT / 2f  < 0){
-                this.camera.position.y += this.debugCameraSpeed;
-            }
+//            if(this.camera.position.y - SCREEN_HEIGHT / 2f  < 0){
+//                this.camera.position.y += this.debugCameraSpeed;
+//            }
         }
         if(Gdx.input.isKeyPressed(Input.Keys.I)){
             this.camera.position.y += this.debugCameraSpeed;
-            if(this.camera.position.y + SCREEN_HEIGHT / 2f  > this.mapHandler.getMapHeight()){
-                this.camera.position.y -= this.debugCameraSpeed;
-            }
+//            if(this.camera.position.y + SCREEN_HEIGHT / 2f  > this.mapHandler.getMapHeight()){
+//                this.camera.position.y -= this.debugCameraSpeed;
+//            }
         }
         if(Gdx.input.isKeyPressed(Input.Keys.BACKSPACE)){
             this.oldCameraPosition.set(0, 0);

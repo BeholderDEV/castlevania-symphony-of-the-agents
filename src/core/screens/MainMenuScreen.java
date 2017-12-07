@@ -18,13 +18,21 @@ import core.actors.player.PlayerHandler;
  * @author Augustop
  */
 public class MainMenuScreen extends ImageScreen{
-
+    
+    private float screenImgState = 0f;
+    
     public MainMenuScreen(ScreenHandler game) {
-        super(game, "assets/img/titlescreen.jpg");
+        super(game, "assets/img/titlescreen.jpeg");
     }
 
     @Override
     public void render(float delta) {
+        this.screenImgState += (delta*1.5);
+        if((int)this.screenImgState %2 == 0){
+            this.screenImage = AssetsManager.assets.get("assets/img/titlescreen.jpeg", Texture.class);
+        }else{
+            this.screenImage = AssetsManager.assets.get("assets/img/titlescreenclean.jpeg", Texture.class);
+        }
         super.render(delta);
         if(Gdx.input.isKeyPressed(Input.Keys.ENTER) || Gdx.input.isTouched()){
             AssetsManager.loadFirstFaseAssets();

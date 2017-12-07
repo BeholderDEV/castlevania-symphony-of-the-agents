@@ -66,6 +66,9 @@ public class ArcherAgentBehavior extends AgentBehavior{
             case ATTACKING:
                 this.defineActionAtk();
             break;
+            case JUMPING:
+                this.container.fallFromJump();
+            break;
             case DYING:
                 this.realizeAgentTakeDown();
             break;
@@ -122,10 +125,38 @@ public class ArcherAgentBehavior extends AgentBehavior{
     
     @Override
     public void checkCollisions(){
+        this.groundBehavior();
+        this.wallBehavior();
         if(((ArcherSkeleton)super.container).getArrows().size != 0){
             this.updateWeaponHit();
-        }        
-        
+        }
+    }
+    
+    private void wallBehavior(){
+        boolean wallCollision = CollisionHandler.checkWallCollision(super.container.getGameScreen().getMapHandler(), this.container, super.container.getGameScreen().getLastDelta());
+        if(wallCollision){
+            super.container.getVelocity().x = super.container.getWalkingSpeed();
+            super.container.getVelocity().y = super.container.getJumpingSpeed();
+            super.container.setCurrentState(GameActor.State.JUMPING);
+        }
+    }
+    
+    private void groundBehavior(){
+        CollisionHandler.checkGroundCollision(super.container.getGameScreen().getMapHandler(), super.container);
+        if(super.container.getCurrentState() == GameActor.State.JUMPING){
+            if(super.container.getVelocity().y == 0){
+                super.container.getVelocity().y = super.container.getJumpingSpeed();
+                if(super.rand.nextInt(10) > 6){
+                    return;
+                }
+//                if(this.patronArcherAddress != null && super.container.foundPlayer() && !this.closeToPatron){;
+//                    super.container.setFacingRight(super.container.getBody().x - this.patronPosition.x < 0);
+//                }
+            }
+        }else{
+            super.container.getVelocity().y = 0;
+        }
+
     }
     
     @Override

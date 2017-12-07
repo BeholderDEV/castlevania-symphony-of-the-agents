@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import core.actors.GameActor;
 import core.map.MapHandler;
+import core.screens.GameScreen;
 
 /**
  *
@@ -24,6 +25,7 @@ public class PlayerHandler extends GameActor{
     
     public PlayerHandler() {
         super(new Rectangle(0, 0, PlayerBehavior.NORMAL_WIDTH, PlayerBehavior.NORMAL_HEIGHT));
+        this.lifePoints = 3;
         this.animationHandler = new PlayerAnimation();
         this.behaviorHandler = new PlayerBehavior(this);
         this.spriteAdjustmentForCollision = new float[]{0.4f, 0.4f, -1.6f, -0.9f};
@@ -158,6 +160,12 @@ public class PlayerHandler extends GameActor{
     
     public void changeStateTime(float delta){
         super.stateTime += delta;
+    }
+
+    @Override
+    public void renderActor(SpriteBatch batch) {        
+        super.renderActor(batch); //To change body of generated methods, choose Tools | Templates.
+        
     }
 
     

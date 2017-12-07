@@ -16,7 +16,7 @@ import core.actors.player.PlayerHandler;
 public class GameOverScreen extends ImageScreen{
     
     public GameOverScreen(ScreenHandler game) {
-        super(game, "assets/img/gameover_screen.png");
+        super(game, "assets/img/gameover_screen.jpeg");
     }
     
     @Override

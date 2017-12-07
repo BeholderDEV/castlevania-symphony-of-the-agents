@@ -38,6 +38,7 @@ public class PlayerAnimation {
         this.crouchImg = new TextureRegion(AssetsManager.assets.get("assets/img/playerSprites.png", Texture.class), 62, 19, 26, 37);
         this.jumpImg = new TextureRegion(AssetsManager.assets.get("assets/img/playerSprites.png", Texture.class), 121, 9, 25, 47);
         this.hurtedImg = new TextureRegion(AssetsManager.assets.get("assets/img/playerSprites.png", Texture.class), 448, 91, 30, 47);
+        
         this.prepareAnimations();
     }
     

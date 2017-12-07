@@ -2,6 +2,24 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/C:/Users/Alisson/Documents/Git/castlevania-symphony-of-the-agents/src/ai/behavior/AgentBehavior.java</file>
+            <file>file:/C:/Users/Alisson/Documents/Git/castlevania-symphony-of-the-agents/src/core/actors/player/PlayerHandler.java</file>
+            <file>file:/C:/Users/Alisson/Documents/Git/castlevania-symphony-of-the-agents/src/core/actors/GameActor.java</file>
+            <file>file:/C:/Users/Alisson/Documents/Git/castlevania-symphony-of-the-agents/src/core/screens/ImageScreen.java</file>
+            <file>file:/C:/Users/Alisson/Documents/Git/castlevania-symphony-of-the-agents/src/ai/behavior/ArcherAgentBehavior.java</file>
+            <file>file:/C:/Users/Alisson/Documents/Git/castlevania-symphony-of-the-agents/src/core/actors/enemies/EnemyFactory.java</file>
+            <file>file:/C:/Users/Alisson/Documents/Git/castlevania-symphony-of-the-agents/src/core/screens/GameOverScreen.java</file>
+            <file>file:/C:/Users/Alisson/Documents/Git/castlevania-symphony-of-the-agents/src/core/screens/GameScreen.java</file>
+            <file>file:/C:/Users/Alisson/Documents/Git/castlevania-symphony-of-the-agents/src/core/actors/enemies/SwordSkeleton.java</file>
+            <file>file:/C:/Users/Alisson/Documents/Git/castlevania-symphony-of-the-agents/src/core/screens/ScreenHandler.java</file>
+            <file>file:/C:/Users/Alisson/Documents/Git/castlevania-symphony-of-the-agents/src/core/actors/enemies/Enemy.java</file>
+            <file>file:/C:/Users/Alisson/Documents/Git/castlevania-symphony-of-the-agents/src/core/screens/MainMenuScreen.java</file>
+            <file>file:/C:/Users/Alisson/Documents/Git/castlevania-symphony-of-the-agents/src/core/actors/player/PlayerAnimation.java</file>
+            <file>file:/C:/Users/Alisson/Documents/Git/castlevania-symphony-of-the-agents/src/ai/behavior/SwordAgentBehavior.java</file>
+            <file>file:/C:/Users/Alisson/Documents/Git/castlevania-symphony-of-the-agents/src/core/actors/CollisionHandler.java</file>
+            <file>file:/C:/Users/Alisson/Documents/Git/castlevania-symphony-of-the-agents/src/core/util/AssetsManager.java</file>
+            <file>file:/C:/Users/Alisson/Documents/Git/castlevania-symphony-of-the-agents/src/core/actors/enemies/ArcherSkeleton.java</file>
+        </group>
     </open-files>
 </project-private>

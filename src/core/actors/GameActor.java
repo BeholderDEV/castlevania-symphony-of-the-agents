@@ -32,7 +32,7 @@ public abstract class GameActor {
     protected Array<Rectangle> collidableObject = new Array<>();
     protected float spriteAdjustmentForCollision[] = {0, 0, 0, 0};
     protected final Vector2 renderCorrection = new Vector2(0, 0);
-    protected int lifePoints = 3;
+    protected int lifePoints = 1;
     protected boolean possibleToRender = false;
     
     
