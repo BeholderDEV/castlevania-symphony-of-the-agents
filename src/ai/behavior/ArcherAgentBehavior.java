@@ -65,62 +65,9 @@ public class ArcherAgentBehavior extends AgentBehavior{
                 this.defineActionAtk();
             break;
             case DYING:
-                super.myAgent.doDelete();
+                this.realizeAgentTakeDown();
             break;
         }
-    }
-    
-    private void defineCommunicationWithGuardians(){
-        if(this.swordGuardiansAdress.isEmpty()){
-            this.searchForGuardians();
-        }else{
-            this.updatePositionForGuardians();
-        }
-    }
-    
-    private void updatePositionForGuardians(){
-        if(System.currentTimeMillis() - lastPositionUpdateTime < 2000){
-            return;
-        }
-        ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-        for (AID guard : swordGuardiansAdress) {
-            msg.addReceiver(guard);
-        }
-        msg.setContent("Update Guard Position," + this.container.getBody().x + "," + this.container.getBody().y );
-        super.myAgent.send(msg);
-        this.lastPositionUpdateTime = System.currentTimeMillis();
-    }
-    
-    private void searchForGuardians(){
-        ACLMessage msg = myAgent.receive();
-        if(msg == null){
-            this.sendMessageToGuardians();
-            return;
-        }
-        this.sendConfirmationMessage(msg);
-    }
-    
-    private void sendMessageToGuardians(){
-        try {
-            DFAgentDescription[] result = DFService.search(myAgent, this.guardianSearcher);
-            for (int i = 0; i < result.length; i++) {
-                ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
-                msg.addReceiver(result[i].getName());
-                msg.setContent("Requesting guard");
-                super.myAgent.send(msg);
-            }
-        } catch (FIPAException ex) {
-            Logger.getLogger(ArcherAgentBehavior.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
-    private void sendConfirmationMessage(ACLMessage msg){
-        this.swordGuardiansAdress.add(msg.getSender());
-        ACLMessage reply = msg.createReply();
-        reply.setPerformative(ACLMessage.CONFIRM);
-        Rectangle body = this.container.getBody();
-        reply.setContent("Guard confirmation," + body.x + "," + body.y);
-        super.myAgent.send(reply);
     }
     
     private void defineActionStanding(){
@@ -187,6 +134,12 @@ public class ArcherAgentBehavior extends AgentBehavior{
         }
     }
     
+    @Override
+    protected void realizeAgentTakeDown(){
+        this.prepareMessageToGuards("Patron died");
+        super.myAgent.doDelete();
+    }
+    
     private void updateWeaponHit(){
         Array<Arrow> arrows = ((ArcherSkeleton)super.container).getArrows();
         Rectangle arrow;
@@ -201,6 +154,72 @@ public class ArcherAgentBehavior extends AgentBehavior{
             }
             CollisionHandler.rectanglePool.free(weaponArea);
         }
+    }
+    
+    private void defineCommunicationWithGuardians(){
+        ACLMessage msg = myAgent.receive();
+        if(msg != null){
+            switch(msg.getContent()){
+                case "Accept":
+                    this.sendConfirmationMessage(msg);
+                break;
+                case "Guardian died":
+                    this.swordGuardiansAdress.remove(msg.getSender());
+                break;
+            }
+        }else{
+            this.searchForGuardians();
+        }
+        
+        if(!this.swordGuardiansAdress.isEmpty()){
+            this.updatePositionForGuardians();
+        }
+    }
+    
+    private void searchForGuardians(){
+        if(this.swordGuardiansAdress.isEmpty()){
+            this.sendMessageToAvaliableGuardians();
+        }
+    }
+    
+    private void updatePositionForGuardians(){
+        if(System.currentTimeMillis() - lastPositionUpdateTime < 2000){
+            return;
+        }
+        this.prepareMessageToGuards("Update Guard Position," + this.container.getBody().x + "," + this.container.getBody().y);
+        this.lastPositionUpdateTime = System.currentTimeMillis();
+    }
+    
+    private void sendMessageToAvaliableGuardians(){
+        try {
+            DFAgentDescription[] result = DFService.search(myAgent, this.guardianSearcher);
+            for (int i = 0; i < result.length; i++) {
+                ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
+                msg.addReceiver(result[i].getName());
+                msg.setContent("Requesting guard");
+                super.myAgent.send(msg);
+            }
+        } catch (FIPAException ex) {
+            Logger.getLogger(ArcherAgentBehavior.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void sendConfirmationMessage(ACLMessage msg){
+        this.swordGuardiansAdress.add(msg.getSender());
+        ACLMessage reply = msg.createReply();
+        reply.setPerformative(ACLMessage.CONFIRM);
+        Rectangle body = this.container.getBody();
+        reply.setContent("Guard confirmation," + body.x + "," + body.y);
+        super.myAgent.send(reply);
+    }
+    
+    private void prepareMessageToGuards(String msgContent){
+        ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+        for (AID guard : swordGuardiansAdress) {
+            msg.addReceiver(guard);
+        }
+        msg.setContent(msgContent);
+        super.myAgent.send(msg);
     }
 
     public List<AID> getSwordGuardians() {

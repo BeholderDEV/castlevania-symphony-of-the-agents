@@ -57,7 +57,7 @@ public class GameScreen implements Screen {
     
     private void createActors(){
         PlayerHandler player = new PlayerHandler();
-        player.getBody().setPosition(3, 3.4f);
+        player.getBody().setPosition(23, 3.4f);
         this.actors.add(player);
         MapObjects objects = this.mapHandler.getMapObjetcs();
         Rectangle rectObject;
@@ -68,7 +68,7 @@ public class GameScreen implements Screen {
             rectObject = ((RectangleMapObject)object).getRectangle();
             switch(object.getName()){
                 case "sword":
-                    this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.SWORD_SKELETON, 12, new Vector2(rectObject.x, rectObject.y), this));
+//                    this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.SWORD_SKELETON, 12, new Vector2(rectObject.x, rectObject.y), this));
                 break;
                 case "archer":
                     this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.ARCHER_SKELETON, 6, new Vector2(rectObject.x, rectObject.y), this));
@@ -76,7 +76,7 @@ public class GameScreen implements Screen {
             }
         }
 //        this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.ARCHER_SKELETON, 6, new Vector2(43, 3.4f), this));
-//        this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.SWORD_SKELETON, 12, new Vector2(143, 3.4f), this));
+        this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.SWORD_SKELETON, 12, new Vector2(3, 3.4f), this));
     }
 
     @Override

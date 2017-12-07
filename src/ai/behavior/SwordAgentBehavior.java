@@ -58,56 +58,6 @@ public class SwordAgentBehavior extends AgentBehavior{
         }
     }
     
-    @Override
-    protected void realizeAgentTakeDown(){
-        if(patronArcherAddress == null){
-            try {
-                DFService.deregister(super.myAgent);
-            } catch (FIPAException ex) {
-                Logger.getLogger(SwordAgentBehavior.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        super.myAgent.doDelete();
-    }
-    
-    private void checkReceivedMsg(ACLMessage msg){
-        if(msg.getContent().startsWith("Requesting guard")){
-            this.receiveRequestForGuard(msg);
-        }
-        if(msg.getContent().startsWith("Guard confirmation")){
-            this.confirmGuard(msg);
-        }
-        if(msg.getContent().startsWith("Update Guard Position")){
-            String[] params = msg.getContent().split(",");
-            this.patronPosition.set(Float.parseFloat(params[1]), Float.parseFloat(params[2]));
-        }
-    }
-    
-    private void receiveRequestForGuard(ACLMessage msg){
-        if(this.patronArcherAddress == null){
-            this.sendAcceptanceMsg(msg);
-            return;
-        }
-    }
-    
-    private void sendAcceptanceMsg(ACLMessage msg){
-        ACLMessage reply = msg.createReply();
-        reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
-        reply.setContent("Accept");
-        super.myAgent.send(reply);
-    }
-    
-    private void confirmGuard(ACLMessage msg){
-        try {
-            this.patronArcherAddress = msg.getSender();
-            String[] params = msg.getContent().split(",");
-            this.patronPosition.set(Float.parseFloat(params[1]), Float.parseFloat(params[2]));
-            DFService.deregister(super.myAgent);
-        } catch (FIPAException ex) {
-            Logger.getLogger(SwordAgentBehavior.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
     private void defineActionStanding(){
         super.container.setCurrentState(GameActor.State.WALKING);
         super.container.getVelocity().x = (super.container.foundPlayer()) ? super.container.getWalkingSpeed(): super.container.getWalkingSpeed() / 2f;
@@ -161,6 +111,24 @@ public class SwordAgentBehavior extends AgentBehavior{
             super.container.setCurrentState(GameActor.State.DYING);
         }
     }
+    
+        
+    @Override
+    protected void realizeAgentTakeDown(){
+        if(this.patronArcherAddress == null){
+            try {
+                DFService.deregister(super.myAgent);
+            } catch (FIPAException ex) {
+                Logger.getLogger(SwordAgentBehavior.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }else{
+            ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+            msg.addReceiver(this.patronArcherAddress);
+            msg.setContent("Guardian died");
+            super.myAgent.send(msg);
+        }
+        super.myAgent.doDelete();
+    }
 
     private void updateWeaponHit(){
         Rectangle weaponArea = CollisionHandler.rectanglePool.obtain();
@@ -175,6 +143,47 @@ public class SwordAgentBehavior extends AgentBehavior{
             super.player.receiveDamage(super.container.getBody(), 1);
         }
         CollisionHandler.rectanglePool.free(weaponArea);
+    }
+    
+    private void checkReceivedMsg(ACLMessage msg){
+        if(msg.getContent().startsWith("Requesting guard")){
+            this.receiveRequestForGuard(msg);
+        }
+        if(msg.getContent().startsWith("Guard confirmation")){
+            this.confirmGuard(msg);
+        }
+        if(msg.getContent().startsWith("Update Guard Position")){
+            String[] params = msg.getContent().split(",");
+            this.patronPosition.set(Float.parseFloat(params[1]), Float.parseFloat(params[2]));
+        }
+        if(msg.getContent().startsWith("Patron died")){
+            this.patronArcherAddress = null;
+        }
+    }
+    
+    private void receiveRequestForGuard(ACLMessage msg){
+        if(this.patronArcherAddress == null){
+            this.sendAcceptanceMsg(msg);
+            return;
+        }
+    }
+    
+    private void sendAcceptanceMsg(ACLMessage msg){
+        ACLMessage reply = msg.createReply();
+        reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
+        reply.setContent("Accept");
+        super.myAgent.send(reply);
+    }
+    
+    private void confirmGuard(ACLMessage msg){
+        try {
+            this.patronArcherAddress = msg.getSender();
+            String[] params = msg.getContent().split(",");
+            this.patronPosition.set(Float.parseFloat(params[1]), Float.parseFloat(params[2]));
+            DFService.deregister(super.myAgent);
+        } catch (FIPAException ex) {
+            Logger.getLogger(SwordAgentBehavior.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public AID getPatronArcher() {
