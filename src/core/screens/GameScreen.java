@@ -35,6 +35,7 @@ import static core.util.AssetsManager.assets;
  * @author Augustop
  */
 public class GameScreen implements Screen {
+    public static final boolean DEBUGGING = false;
     public static final int SCREEN_WIDTH = 50;
     public static final int SCREEN_HEIGHT = 20;
     private final ScreenHandler game;
@@ -65,7 +66,7 @@ public class GameScreen implements Screen {
     
     private void createActors(){
         PlayerHandler player = new PlayerHandler();
-        player.getBody().setPosition(153, 3.4f);
+//        player.getBody().setPosition(153, 3.4f);
         this.actors.add(player);
         MapObjects objects = this.mapHandler.getMapObjetcs();
         Rectangle rectObject;
@@ -76,20 +77,20 @@ public class GameScreen implements Screen {
             rectObject = ((RectangleMapObject)object).getRectangle();
             switch(object.getName()){
                 case "sword":
-                    //this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.SWORD_SKELETON, 12, new Vector2(rectObject.x, rectObject.y), this));
+                    this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.SWORD_SKELETON, 12, new Vector2(rectObject.x, rectObject.y), this));
                 break;
                 case "archer":
-                    //this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.ARCHER_SKELETON, 6, new Vector2(rectObject.x, rectObject.y), this));
+                    this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.ARCHER_SKELETON, 6, new Vector2(rectObject.x, rectObject.y), this));
                 break;
                 case "bat":
-//                    this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.BAT, 12, new Vector2(rectObject.x, rectObject.y), this));
+                    this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.BAT, 12, new Vector2(rectObject.x, rectObject.y), this));
                 break;
             }
         }
 //        this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.ARCHER_SKELETON, 6, new Vector2(153, 3.4f), this));
 //        this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.ARCHER_SKELETON, 6, new Vector2(133, 3.4f), this));
 //        this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.ARCHER_SKELETON, 6, new Vector2(143, 3.4f), this));
-        this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.SWORD_SKELETON, 14, new Vector2(84, 3.4f), this));
+//        this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.SWORD_SKELETON, 14, new Vector2(84, 3.4f), this));
 //        this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.SWORD_SKELETON, 14, new Vector2(83, 3.4f), this));
 //        this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.BAT, 14, new Vector2(84, 3.4f), this));
     }
@@ -116,8 +117,10 @@ public class GameScreen implements Screen {
         
         for (GameActor actor : actors) {
             actor.renderActor(this.game.batch);
-            actor.drawRecOverBody(this.game.batch);
-            actor.drawDebugRec(this.game.batch);
+            if(DEBUGGING){
+                actor.drawRecOverBody(this.game.batch);
+                actor.drawDebugRec(this.game.batch);
+            }
         }
         this.game.batch.end();
         this.playSounds();

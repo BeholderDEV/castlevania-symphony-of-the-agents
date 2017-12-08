@@ -20,9 +20,12 @@ import core.actors.player.PlayerHandler;
 public class MainMenuScreen extends ImageScreen{
     
     private float screenImgState = 0f;
+    private final GameScreen gameScreen;
     
     public MainMenuScreen(ScreenHandler game) {
         super(game, "assets/img/titlescreen.jpeg");
+        AssetsManager.loadFirstFaseAssets();
+        gameScreen = new GameScreen(super.game, new PlayerHandler());
     }
 
     @Override
@@ -35,8 +38,7 @@ public class MainMenuScreen extends ImageScreen{
         }
         super.render(delta);
         if(Gdx.input.isKeyPressed(Input.Keys.ENTER) || Gdx.input.isTouched()){
-            AssetsManager.loadFirstFaseAssets();
-            super.game.setScreen(new GameScreen(super.game, new PlayerHandler()));
+            super.game.setScreen(gameScreen);
             this.dispose();
         }
     }
@@ -65,4 +67,6 @@ public class MainMenuScreen extends ImageScreen{
     public void dispose() {
         super.dispose();
     }
+    
+    
 }
