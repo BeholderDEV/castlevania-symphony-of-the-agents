@@ -53,9 +53,9 @@ public class GameScreen implements Screen {
         this.camera = new OrthographicCamera();
         this.camera.setToOrtho(false, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-        this.mapHandler = new MapHandler("assets/map/mapadahora.tmx");
+//        this.mapHandler = new MapHandler("assets/map/mapadahora.tmx");
         this.heartImg = new TextureRegion(AssetsManager.assets.get("assets/img/heart.png", Texture.class), 16,16);
-//        this.mapHandler = new MapHandler("assets/map/mapadahora2.tmx");
+        this.mapHandler = new MapHandler("assets/map/mapadahora2.tmx");
         
         this.camera.update();
         this.mapHandler.getMapRenderer().setView(camera);
@@ -65,7 +65,7 @@ public class GameScreen implements Screen {
     
     private void createActors(){
         PlayerHandler player = new PlayerHandler();
-        player.getBody().setPosition(153, 3.4f);
+        player.getBody().setPosition(350, 3.4f);
         this.actors.add(player);
         MapObjects objects = this.mapHandler.getMapObjetcs();
         Rectangle rectObject;
@@ -82,14 +82,14 @@ public class GameScreen implements Screen {
                     //this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.ARCHER_SKELETON, 6, new Vector2(rectObject.x, rectObject.y), this));
                 break;
                 case "bat":
-//                    this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.BAT, 12, new Vector2(rectObject.x, rectObject.y), this));
+                    this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.BAT, 12, new Vector2(rectObject.x, rectObject.y), this));
                 break;
             }
         }
 //        this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.ARCHER_SKELETON, 6, new Vector2(153, 3.4f), this));
 //        this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.ARCHER_SKELETON, 6, new Vector2(133, 3.4f), this));
 //        this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.ARCHER_SKELETON, 6, new Vector2(143, 3.4f), this));
-        this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.SWORD_SKELETON, 14, new Vector2(84, 3.4f), this));
+//        this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.SWORD_SKELETON, 14, new Vector2(84, 3.4f), this));
 //        this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.SWORD_SKELETON, 14, new Vector2(83, 3.4f), this));
 //        this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.BAT, 14, new Vector2(84, 3.4f), this));
     }
