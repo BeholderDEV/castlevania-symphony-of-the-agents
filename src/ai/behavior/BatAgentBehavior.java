@@ -9,7 +9,6 @@ import core.actors.CollisionHandler;
 import core.actors.GameActor;
 import core.actors.enemies.Enemy;
 import jade.core.Agent;
-import jade.lang.acl.ACLMessage;
 
 /**
  *
@@ -49,12 +48,13 @@ public class BatAgentBehavior extends AgentBehavior{
     
     private void defineActionAttacking()
     {
-        float distX = this.player.getBody().x - this.container.getBody().x;
-        float distY = this.player.getBody().y - this.container.getBody().y;
-
-        float distance = (float) Math.sqrt((distX*distX)+(distY*distY));
-
-
+        float dx = Math.abs(this.player.getBody().x - super.container.getBody().x);
+        float dy = Math.abs(this.player.getBody().y - super.container.getBody().y);
+//        float distance = (float) Math.sqrt((dx*dx)+(dy*dy));
+        float distance = 0.394f * (dx + dy) + 0.554f *  Math.max(dx, dy);
+        if(distance == 0){
+            distance = 0.01f;
+        }
         super.container.getVelocity().x = super.container.getWalkingSpeed()*(this.player.getBody().x - this.container.getBody().x)/distance;
         super.container.getVelocity().y = super.container.getWalkingSpeed()*(this.player.getBody().y+3f - this.container.getBody().y)/distance;
         super.container.setFacingRight(super.container.getBody().x - this.player.getBody().x < 0);

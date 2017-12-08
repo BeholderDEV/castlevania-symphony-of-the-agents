@@ -24,16 +24,16 @@ import java.util.logging.Logger;
  */
 public class SwordAgentBehavior extends AgentBehavior{
     public static final float SWORD_DISTANCE_TO_ATK = 6f;
+    public static final int RANGE_TO_STAY_AWAY_FROM_PLAYER = 5;
     private AID patronArcherAddress;
     private final Vector2 patronPosition = new Vector2();
     private boolean closeToPatron = false;
     private boolean alreadySendedConfirmationMsg = false;
-    public static final int rangeToStayAwayFromPlayer = 5;
-    private float definedDistance = 0f;
+    private float distanceFromPlayerOnLure;
     
     public SwordAgentBehavior(Enemy container, Agent a, long period) {
         super(container, a, period, SWORD_DISTANCE_TO_ATK);
-        this.definedDistance = this.rand.nextInt(rangeToStayAwayFromPlayer) * ((this.rand.nextInt(2) == 0) ? -1: 1);
+        this.distanceFromPlayerOnLure = this.rand.nextInt(RANGE_TO_STAY_AWAY_FROM_PLAYER) * ((this.rand.nextInt(2) == 0) ? -1: 1);
     }
     
     @Override
@@ -92,12 +92,12 @@ public class SwordAgentBehavior extends AgentBehavior{
     
     private void lurePlayerToArcher(){
         float dx = Math.abs(super.container.getBody().x - this.player.getBody().x);
-        if(dx > 20 - this.definedDistance){
+        if(dx > 20 - this.distanceFromPlayerOnLure){
             super.container.getVelocity().setZero();
             super.container.setCurrentState(GameActor.State.STANDING);
             return;
         }
-        this.definedDistance = this.rand.nextInt(rangeToStayAwayFromPlayer) * ((this.rand.nextInt(2) == 0) ? -1: 1);
+        this.distanceFromPlayerOnLure = this.rand.nextInt(RANGE_TO_STAY_AWAY_FROM_PLAYER) * ((this.rand.nextInt(2) == 0) ? -1: 1);
         super.container.setCurrentState(GameActor.State.WALKING);
         super.container.getVelocity().x = super.container.getWalkingSpeed();
         super.container.setFacingRight(super.container.getBody().x - this.patronPosition.x < 0);

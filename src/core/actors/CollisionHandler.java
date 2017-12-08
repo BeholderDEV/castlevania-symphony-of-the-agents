@@ -57,6 +57,9 @@ public class CollisionHandler {
             endY = Math.round(actor.getBody().y + actor.getBody().height * 0.01f);
         if(map.checkLayerCollision(MapHandler.Layer.GROUND, startX, startY, endX, endY)){
             if(actor.getCurrentState() == GameActor.State.JUMPING || (actor.getCurrentState() == GameActor.State.ATTACKING && actor.getAtkState() == GameActor.Atk_State.JUMP_ATK)){
+                if(actor.getVelocity().y > 0){
+                    return;
+                }
                 if(actor.getCurrentState() != GameActor.State.HURTED){
                     actor.setCurrentState(GameActor.State.STANDING);
                 }

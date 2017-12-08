@@ -29,7 +29,7 @@ public class Bat extends Enemy{
         super.standImg = standImg = new TextureRegion(AssetsManager.assets.get("assets/img/superIV_Enemies.png", Texture.class), 252, 2329, 17, 18);
         super.movingAnimation = AnimationManager.generateAnimation(new TextureRegion(AssetsManager.assets.get("assets/img/superIV_Enemies.png", Texture.class), 201, 2329, 51, 18), 17, 18, Animation.PlayMode.LOOP, 0.40f);
         super.atkAnimation = super.movingAnimation;
-        this.spriteAdjustmentForCollision = new float[]{0.8f, 0.4f, -1.6f, -0.9f};
+        this.spriteAdjustmentForCollision = new float[]{1.5f, 0.4f, -0.8f, -0.9f};
         this.body.setSize(super.standImg.getRegionWidth() * MapHandler.unitScale, super .standImg.getRegionHeight()* MapHandler.unitScale);
         AgentCreator.getInstance().createAgent(EnemyFactory.enemyType.BAT, new Object[]{this});
     }

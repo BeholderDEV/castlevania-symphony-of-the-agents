@@ -38,7 +38,6 @@ public class ArcherAgentBehavior extends AgentBehavior{
     private float attack_cooldown = 2f;
     private boolean arrowCreatedOnAtk = false;
     private final List<AID> swordGuardiansAdress = new ArrayList<>();
-//    private float closestGuardian = -1f;
     private final DFAgentDescription guardianSearcher = new DFAgentDescription();
     private long lastPositionUpdateTime = 0;
     private long lastGuardianSearchTime = 0;
