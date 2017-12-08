@@ -141,7 +141,7 @@ public abstract class AgentBehavior extends TickerBehaviour{
     protected void wallBehavior(){
         boolean wallCollision = CollisionHandler.checkWallCollision(this.container.getGameScreen().getMapHandler(), this.container, this.container.getGameScreen().getLastDelta());
         if(wallCollision){
-            this.container.getVelocity().x = this.container.getWalkingSpeed();
+//            this.container.getVelocity().x = this.container.getWalkingSpeed();
             this.container.getVelocity().y = this.container.getJumpingSpeed();
             this.container.setCurrentState(GameActor.State.JUMPING);
         }

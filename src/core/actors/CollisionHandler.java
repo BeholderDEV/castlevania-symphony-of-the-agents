@@ -55,7 +55,8 @@ public class CollisionHandler {
             startY = Math.round(actor.getBody().y), 
             endX = Math.round(actor.getBody().x + actor.getBody().width), 
             endY = Math.round(actor.getBody().y + actor.getBody().height * 0.01f);
-        if(map.checkLayerCollision(MapHandler.Layer.GROUND, startX, startY, endX, endY)){
+        int centerX = Math.round((actor.getBody().x + actor.getBody().width / 2f ));
+        if(map.checkLayerCollision(MapHandler.Layer.GROUND, centerX - 1, startY, centerX + 1, startY)){
             if(actor.getCurrentState() == GameActor.State.JUMPING || (actor.getCurrentState() == GameActor.State.ATTACKING && actor.getAtkState() == GameActor.Atk_State.JUMP_ATK)){
                 if(actor.getVelocity().y > 0){
                     return;
@@ -80,6 +81,7 @@ public class CollisionHandler {
             startY = Math.round(y + h * 0.05f), 
             endX = Math.round(x + w), 
             endY = Math.round(y + h * 0.95f);
+//        int centerX = Math.round((x + w / 2f ));
         if(map.checkLayerCollision(MapHandler.Layer.WALL, startX, startY, endX, endY)){
             actor.velocity.x *= -1;
             float oldVelY = actor.velocity.y;
@@ -92,14 +94,14 @@ public class CollisionHandler {
             }
             return true;
         }
-        if(map.checkLayerCollision(MapHandler.Layer.GROUND, startX, startY, endX, endY)){
-            if(actor.getCurrentState() == GameActor.State.WALKING){
-                actor.setCurrentState(GameActor.State.STANDING);
-                actor.velocity.y = 0;
-                actor.velocity.x *= -1;
-                actor.updatePosition(delta);
-            }
-        }
+//        if(map.checkLayerCollision(MapHandler.Layer.GROUND, startX, startY, endX, endY)){
+//            if(actor.getCurrentState() == GameActor.State.WALKING){
+//                actor.setCurrentState(GameActor.State.STANDING);
+//                actor.velocity.y = 0;
+//                actor.velocity.x *= -1;
+//                actor.updatePosition(delta);
+//            }
+//        }
         return false;
     }
     
