@@ -181,6 +181,8 @@ public class GameScreen implements Screen {
                 CollisionHandler.rectanglePool.free(this.actors.get(i).getBody());
                 this.actors.removeIndex(i);
                 i--;
+                Sound death = assets.get("assets/sound/enemyDeath.mp3", Sound.class);
+                death.play(1, 2f, 0);
             }
         }
     }

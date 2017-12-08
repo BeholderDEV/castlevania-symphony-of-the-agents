@@ -32,6 +32,7 @@ public class AssetsManager {
         assets.load("assets/sound/bloodyTears.mp3", Music.class); 
         assets.load("assets/sound/whipSound.wav", Music.class);
         assets.load("assets/sound/hurtSound.wav", Music.class);
+        assets.load("assets/sound/enemyDeath.mp3", Sound.class);
         assets.finishLoading(); // Forces to wait until all assets are loaded
 //        assets.get("assets/img/playerSprites.png", Texture.class).setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 //        float progress = assets.getProgress();
