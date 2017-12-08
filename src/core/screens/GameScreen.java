@@ -8,6 +8,8 @@ package core.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -26,6 +28,7 @@ import core.actors.enemies.Enemy;
 import core.actors.enemies.EnemyFactory;
 import core.map.MapHandler;
 import core.actors.player.PlayerHandler;
+import static core.util.AssetsManager.assets;
 
 /**
  *
@@ -84,7 +87,7 @@ public class GameScreen implements Screen {
 //        this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.ARCHER_SKELETON, 6, new Vector2(153, 3.4f), this));
 //        this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.ARCHER_SKELETON, 6, new Vector2(133, 3.4f), this));
 //        this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.ARCHER_SKELETON, 6, new Vector2(143, 3.4f), this));
-//        this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.SWORD_SKELETON, 14, new Vector2(84, 3.4f), this));
+        this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.SWORD_SKELETON, 14, new Vector2(84, 3.4f), this));
 //        this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.SWORD_SKELETON, 14, new Vector2(83, 3.4f), this));
 //        this.actors.add(EnemyFactory.createEnemy(EnemyFactory.enemyType.BAT, 14, new Vector2(84, 3.4f), this));
     }
@@ -109,18 +112,52 @@ public class GameScreen implements Screen {
             this.game.batch.draw(heartImg, this.camera.position.x-SCREEN_WIDTH/2f+2+i, this.camera.position.y+SCREEN_HEIGHT/2f-2,1f,1f);
         }
         
-        
         for (GameActor actor : actors) {
             actor.renderActor(this.game.batch);
             actor.drawRecOverBody(this.game.batch);
             actor.drawDebugRec(this.game.batch);
         }
-        this.game.batch.end();        
+        this.game.batch.end();
+        this.playSounds();
         this.verifyPlayerDeath();
         this.verifyEnemyDeath();
         this.verifyMenuInputs();
     }
     
+    private void playSounds(){
+        GameActor player = this.actors.get(0);
+        this.playAtkSound(player);
+        this.playHurtSound(player);
+    }
+    
+    private void playAtkSound(GameActor player){
+        Music whip = assets.get("assets/sound/whipSound.wav", Music.class);
+        if(player.getCurrentState() == GameActor.State.ATTACKING){
+            if(whip.isPlaying()){
+                return;
+            }
+            if(player.getAtkState() != GameActor.Atk_State.JUMP_ATK && player.getStateTime() > GameActor.STANDARD_ATK_FRAME_TIME * 1.8f){
+                assets.get("assets/sound/whipSound.wav", Music.class).play();
+            }
+            if(player.getAtkState() == GameActor.Atk_State.JUMP_ATK && player.getStateTime() >= 0.2f){
+                assets.get("assets/sound/whipSound.wav", Music.class).play();
+            }
+        }else{
+            whip.stop();
+        }
+    }
+    
+    private void playHurtSound(GameActor player){
+        Music hurt = assets.get("assets/sound/hurtSound.wav", Music.class);
+        if(player.getCurrentState() == GameActor.State.HURTED){
+            if(!hurt.isPlaying()){
+                hurt.play();
+            }
+        }else{
+            hurt.stop();
+        }
+    }
+        
     private void verifyPlayerDeath(){
         if(this.actors.get(0).getBody().y + this.actors.get(0).getBody().height < 0 || this.actors.get(0).isDead()){
             AssetsManager.assets.load("assets/img/gameover_screen.jpeg", Texture.class);
@@ -226,7 +263,10 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
-//        this.rainMusic.play();
+        Music bgm = assets.get("assets/sound/bloodyTears.mp3", Music.class);
+        bgm.setLooping(true);
+        bgm.setVolume(0.5f);
+        bgm.play();
     }
 
     @Override
