@@ -106,6 +106,14 @@ public class PlayerBehavior {
     }
     
     private void defineActionJumping(float deltaTime){
+        if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
+            this.playerHandler.getVelocity().x = this.playerHandler.getWalkingSpeed();
+            this.playerHandler.setFacingRight(false);       
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
+            this.playerHandler.getVelocity().x = this.playerHandler.getWalkingSpeed();
+            this.playerHandler.setFacingRight(true); 
+        }
         this.playerHandler.fallFromJump();
         if(this.playerHandler.getCurrentState() != GameActor.State.ATTACKING && (Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) || Gdx.input.isKeyPressed(Input.Keys.F))){
             this.playerHandler.setCurrentState(GameActor.State.ATTACKING);
