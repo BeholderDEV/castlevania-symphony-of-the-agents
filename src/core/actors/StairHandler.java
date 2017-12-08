@@ -112,9 +112,7 @@ public class StairHandler {
         }
 //            System.out.println(stairDirection);
         if((stairDirection.equals("rightUp") && facesRight) || (stairDirection.equals("leftUp") && !facesRight)){
-            if(!(Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W))){
-                return null;
-            }
+
             this.upstairs = true;
         }else if((stairDirection.equals("rightDown") && facesRight) || (stairDirection.equals("leftDown") && !facesRight)){
             this.upstairs = false;
