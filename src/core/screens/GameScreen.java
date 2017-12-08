@@ -36,7 +36,7 @@ import static core.util.AssetsManager.assets;
  */
 public class GameScreen implements Screen {
     public static final boolean DEBUGGING = false;
-    public static final int SCREEN_WIDTH = 50;
+    public static final int SCREEN_WIDTH = 40;
     public static final int SCREEN_HEIGHT = 20;
     private final ScreenHandler game;
     private Array<GameActor> actors = new Array<>();
@@ -56,7 +56,7 @@ public class GameScreen implements Screen {
 
 //        this.mapHandler = new MapHandler("assets/map/mapadahora.tmx");
         this.heartImg = new TextureRegion(AssetsManager.assets.get("assets/img/heart.png", Texture.class), 16,16);
-        this.mapHandler = new MapHandler("assets/map/muitogrande.tmx");
+        this.mapHandler = new MapHandler("assets/map/mapadahora.tmx");
         
         this.camera.update();
         this.mapHandler.getMapRenderer().setView(camera);
@@ -66,7 +66,7 @@ public class GameScreen implements Screen {
     
     private void createActors(){
         PlayerHandler player = new PlayerHandler();
-//        player.getBody().setPosition(5, 3.4f);
+//        player.getBody().setPosition(220, 3.4f);
 
         this.actors.add(player);
         MapObjects objects = this.mapHandler.getMapObjetcs();

@@ -25,7 +25,7 @@ public class PlayerHandler extends GameActor{
     
     public PlayerHandler() {
         super(new Rectangle(0, 0, PlayerBehavior.NORMAL_WIDTH, PlayerBehavior.NORMAL_HEIGHT));
-        this.lifePoints = 3;
+        this.lifePoints = 5;
         this.animationHandler = new PlayerAnimation();
         this.behaviorHandler = new PlayerBehavior(this);
         this.spriteAdjustmentForCollision = new float[]{0.4f, 0.4f, -1.6f, -0.9f};
