@@ -28,9 +28,12 @@ public class SwordAgentBehavior extends AgentBehavior{
     private final Vector2 patronPosition = new Vector2();
     private boolean closeToPatron = false;
     private boolean alreadySendedConfirmationMsg = false;
+    public static final int rangeToStayAwayFromPlayer = 5;
+    private float definedDistance = 0f;
     
     public SwordAgentBehavior(Enemy container, Agent a, long period) {
         super(container, a, period, SWORD_DISTANCE_TO_ATK);
+        this.definedDistance = this.rand.nextInt(rangeToStayAwayFromPlayer) * ((this.rand.nextInt(2) == 0) ? -1: 1);
     }
     
     @Override
@@ -89,11 +92,12 @@ public class SwordAgentBehavior extends AgentBehavior{
     
     private void lurePlayerToArcher(){
         float dx = Math.abs(super.container.getBody().x - this.player.getBody().x);
-        if(dx > 20){
+        if(dx > 20 - this.definedDistance){
             super.container.getVelocity().setZero();
             super.container.setCurrentState(GameActor.State.STANDING);
             return;
         }
+        this.definedDistance = this.rand.nextInt(rangeToStayAwayFromPlayer) * ((this.rand.nextInt(2) == 0) ? -1: 1);
         super.container.setCurrentState(GameActor.State.WALKING);
         super.container.getVelocity().x = super.container.getWalkingSpeed();
         super.container.setFacingRight(super.container.getBody().x - this.patronPosition.x < 0);
