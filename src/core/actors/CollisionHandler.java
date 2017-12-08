@@ -72,16 +72,23 @@ public class CollisionHandler {
     }
     
     public static boolean checkWallCollision(MapHandler map, GameActor actor, float delta){
-        int startX = Math.round(actor.getBody().x), 
-            startY = Math.round(actor.getBody().y + actor.getBody().height * 0.05f), 
-            endX = Math.round(actor.getBody().x + actor.getBody().width), 
-            endY = Math.round(actor.getBody().y + actor.getBody().height * 0.95f);
-        if(map.checkLayerCollision(MapHandler.Layer.GROUND, startX, startY, endX, endY)){
+        float x = actor.getBody().x + actor.getSpriteAdjustmentForCollision()[0];
+        float y = actor.getBody().y + actor.getSpriteAdjustmentForCollision()[1];
+        float w = actor.getBody().width + actor.getSpriteAdjustmentForCollision()[2];
+        float h = actor.getBody().height + actor.getSpriteAdjustmentForCollision()[3];
+        int startX = Math.round(x), 
+            startY = Math.round(y + h * 0.05f), 
+            endX = Math.round(x + w), 
+            endY = Math.round(y + h * 0.95f);
+        if(map.checkLayerCollision(MapHandler.Layer.WALL, startX, startY, endX, endY)){
+            actor.velocity.x *= -1;
+            float oldVelY = actor.velocity.y;
+            actor.velocity.y = 0;
+            actor.updatePosition(delta);
+            actor.velocity.y = oldVelY;
             if(actor.getCurrentState() == GameActor.State.WALKING){
-                actor.velocity.x *= -1;
-                actor.velocity.y *= -1;
-                actor.updatePosition(delta);
                 actor.setCurrentState(GameActor.State.STANDING);
+                actor.velocity.y = 0;
             }
             return true;
         }

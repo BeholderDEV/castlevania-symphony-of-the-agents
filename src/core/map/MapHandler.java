@@ -26,7 +26,7 @@ import java.awt.Dimension;
 public class MapHandler {
     
     public enum Layer{
-        GROUND, STAIR
+        GROUND, STAIR, WALL
     }
     
     public static final float unitScale = 1 / 8f;

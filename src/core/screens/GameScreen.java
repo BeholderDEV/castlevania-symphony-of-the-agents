@@ -60,7 +60,7 @@ public class GameScreen implements Screen {
     
     private void createActors(){
         PlayerHandler player = new PlayerHandler();
-        player.getBody().setPosition(63, 3.4f);
+        player.getBody().setPosition(153, 3.4f);
         this.actors.add(player);
         MapObjects objects = this.mapHandler.getMapObjetcs();
         Rectangle rectObject;
@@ -162,27 +162,27 @@ public class GameScreen implements Screen {
     private void moveCameraForDebug(){
         if(Gdx.input.isKeyPressed(Input.Keys.J)){
             this.camera.position.x -= this.debugCameraSpeed;
-//            if(this.camera.position.x - SCREEN_WIDTH / 2f < 0){
-//                this.camera.position.x += this.debugCameraSpeed;
-//            }
+            if(this.camera.position.x - SCREEN_WIDTH / 2f < 0){
+                this.camera.position.x += this.debugCameraSpeed;
+            }
         }
         if(Gdx.input.isKeyPressed(Input.Keys.L)){
             this.camera.position.x += this.debugCameraSpeed;
-//            if(this.camera.position.x + SCREEN_WIDTH / 2f  > this.mapHandler.getMapWidth()){
-//                this.camera.position.x -= this.debugCameraSpeed;
-//            }
+            if(this.camera.position.x + SCREEN_WIDTH / 2f  > this.mapHandler.getMapWidth()){
+                this.camera.position.x -= this.debugCameraSpeed;
+            }
         }
         if(Gdx.input.isKeyPressed(Input.Keys.K)){
             this.camera.position.y -= this.debugCameraSpeed;
-//            if(this.camera.position.y - SCREEN_HEIGHT / 2f  < 0){
-//                this.camera.position.y += this.debugCameraSpeed;
-//            }
+            if(this.camera.position.y - SCREEN_HEIGHT / 2f  < 0){
+                this.camera.position.y += this.debugCameraSpeed;
+            }
         }
         if(Gdx.input.isKeyPressed(Input.Keys.I)){
             this.camera.position.y += this.debugCameraSpeed;
-//            if(this.camera.position.y + SCREEN_HEIGHT / 2f  > this.mapHandler.getMapHeight()){
-//                this.camera.position.y -= this.debugCameraSpeed;
-//            }
+            if(this.camera.position.y + SCREEN_HEIGHT / 2f  > this.mapHandler.getMapHeight()){
+                this.camera.position.y -= this.debugCameraSpeed;
+            }
         }
         if(Gdx.input.isKeyPressed(Input.Keys.BACKSPACE)){
             this.oldCameraPosition.set(0, 0);

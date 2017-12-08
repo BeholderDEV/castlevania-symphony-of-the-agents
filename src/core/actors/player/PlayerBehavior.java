@@ -239,19 +239,20 @@ public class PlayerBehavior {
 
 //    Used for debug
     public void drawRec(SpriteBatch batch){
+        Rectangle b = this.playerHandler.getBody();
         if((this.playerHandler.getCurrentState() == GameActor.State.ATTACKING && this.playerHandler.getAtkState() != GameActor.Atk_State.JUMP_ATK) && this.playerHandler.getStateTime() >= GameActor.STANDARD_ATK_FRAME_TIME * 2f 
         || (this.playerHandler.getCurrentState() == GameActor.State.ATTACKING && this.playerHandler.getAtkState() == GameActor.Atk_State.JUMP_ATK) && this.playerHandler.getStateTime() >= 0.2){
             float w = 6f;
             float x = (this.playerHandler.isFacingRight()) 
-                      ? (this.playerHandler.getBody().x + this.playerHandler.getBody().width) - this.playerHandler.getBody().width * ((this.FOOT_SIZE.width - 30f) / 100f) 
-                      : this.playerHandler.getBody().x - w;
+                      ? (b.x + b.width) - b.width * ((this.FOOT_SIZE.width - 30f) / 100f) 
+                      : b.x - w;
             float y;
             if(this.playerHandler.getAtkState() == GameActor.Atk_State.JUMP_ATK){
-                y = (this.playerHandler.getBody().y + this.playerHandler.getBody().height) - this.playerHandler.getBody().height * 0.5f;
+                y = (b.y + b.height) - b.height * 0.5f;
             }else if(this.playerHandler.getAtkState() == GameActor.Atk_State.STAIRS_ATK){
-                y = (this.playerHandler.getBody().y + this.playerHandler.getBody().height) - this.playerHandler.getBody().height * 0.45f;
+                y = (b.y + b.height) - b.height * 0.45f;
             }else{
-                y = (this.playerHandler.getBody().y + this.playerHandler.getBody().height) - this.playerHandler.getBody().height * 0.35f;
+                y = (b.y + b.height) - b.height * 0.35f;
             } 
             float h = 1;
             batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), x, y, w, h);
@@ -260,16 +261,23 @@ public class PlayerBehavior {
             int footTileX = 0;
             int footTileY = 0;
             if((this.playerHandler.isFacingRight() && this.stairHandler.isUpstairs()) || (!this.playerHandler.isFacingRight() && !this.stairHandler.isUpstairs())){
-                footTileX = Math.round((this.playerHandler.getBody().x + this.playerHandler.getBody().width) - this.playerHandler.getBody().width * (this.FOOT_SIZE.width / 100f));
-                footTileY = Math.round(this.playerHandler.getBody().y + this.FOOT_SIZE.height / 100f);
+                footTileX = Math.round((b.x + b.width) - b.width * (this.FOOT_SIZE.width / 100f));
+                footTileY = Math.round(b.y + this.FOOT_SIZE.height / 100f);
             }
             if((!this.playerHandler.isFacingRight() && this.stairHandler.isUpstairs()) || (this.playerHandler.isFacingRight() && !this.stairHandler.isUpstairs())){
-                footTileX = Math.round(this.playerHandler.getBody().x);
-                footTileY = Math.round(this.playerHandler.getBody().y + this.FOOT_SIZE.height / 100f);
+                footTileX = Math.round(b.x);
+                footTileY = Math.round(b.y + this.FOOT_SIZE.height / 100f);
             }
             batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), footTileX, footTileY, 1, 1);
 //            batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), footTileX, footTileY - 1, 1, 1);
         }
+        
+        int startX = Math.round(b.x + this.playerHandler.getSpriteAdjustmentForCollision()[0]), 
+            startY = Math.round(b.y + this.playerHandler.getSpriteAdjustmentForCollision()[1] + (b.height + this.playerHandler.getSpriteAdjustmentForCollision()[3]) * 0.05f), 
+            endX = Math.round(b.x + this.playerHandler.getSpriteAdjustmentForCollision()[0] + (b.width + this.playerHandler.getSpriteAdjustmentForCollision()[2])), 
+            endY = Math.round(b.y + this.playerHandler.getSpriteAdjustmentForCollision()[1] + (b.height + this.playerHandler.getSpriteAdjustmentForCollision()[3]) * 0.95f);
+        batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), startX, startY, 1, 1);
+        batch.draw(AssetsManager.assets.get("assets/img/square.png", Texture.class), endX, endY, 1, 1);
     }
         
     public boolean isUpstairs(){
