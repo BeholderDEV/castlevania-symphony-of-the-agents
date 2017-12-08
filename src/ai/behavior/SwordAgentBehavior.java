@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import core.actors.CollisionHandler;
 import core.actors.GameActor;
 import core.actors.enemies.Enemy;
+import core.actors.enemies.SwordSkeleton;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.domain.DFService;
@@ -34,6 +35,7 @@ public class SwordAgentBehavior extends AgentBehavior{
     public SwordAgentBehavior(Enemy container, Agent a, long period) {
         super(container, a, period, SWORD_DISTANCE_TO_ATK);
         this.distanceFromPlayerOnLure = this.rand.nextInt(RANGE_TO_STAY_AWAY_FROM_PLAYER) * ((this.rand.nextInt(2) == 0) ? -1: 1);
+        super.registerGuardService(this.container);
     }
     
     @Override
@@ -195,6 +197,7 @@ public class SwordAgentBehavior extends AgentBehavior{
             this.patronArcherAddress = null;
             this.closeToPatron = false;
             this.alreadySendedConfirmationMsg = false;
+            super.registerGuardService(this.container);
         }
     }
     

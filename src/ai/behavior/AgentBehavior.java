@@ -5,14 +5,23 @@
  */
 package ai.behavior;
 
+import ai.AgentCore;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import core.actors.CollisionHandler;
 import core.actors.GameActor;
 import core.actors.enemies.Bat;
 import core.actors.enemies.Enemy;
+import core.actors.enemies.SwordSkeleton;
 import jade.core.Agent;
 import jade.core.behaviours.TickerBehaviour;
+import jade.domain.DFService;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.Property;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.domain.FIPAException;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -50,6 +59,23 @@ public abstract class AgentBehavior extends TickerBehaviour{
         this.container.setPossibleToRender(false);
     }
     
+    
+    protected void registerGuardService(Enemy container){
+        DFAgentDescription dfd = new DFAgentDescription();
+        dfd.setName(super.myAgent.getAID());
+        ServiceDescription sd = new ServiceDescription();
+        sd.setName(super.myAgent.getLocalName());
+        sd.setType("guard");
+        sd.addProperties(new Property("x", container.getBody().x));
+        sd.addProperties(new Property("y", container.getBody().y));
+        dfd.addServices(sd);
+        try {
+            DFService.register(super.myAgent, dfd);
+        } catch (FIPAException ex) {
+            Logger.getLogger(AgentCore.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     protected void realizeAgentTakeDown(){
         this.myAgent.doDelete();
     }
