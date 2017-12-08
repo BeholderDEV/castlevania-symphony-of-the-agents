@@ -27,6 +27,7 @@ public class SwordAgentBehavior extends AgentBehavior{
     private AID patronArcherAddress;
     private final Vector2 patronPosition = new Vector2();
     private boolean closeToPatron = false;
+    private boolean alreadySendedConfirmationMsg = false;
     
     public SwordAgentBehavior(Enemy container, Agent a, long period) {
         super(container, a, period, SWORD_DISTANCE_TO_ATK);
@@ -51,6 +52,7 @@ public class SwordAgentBehavior extends AgentBehavior{
             break;
             case ATTACKING:
                 super.updateAtk();
+                this.container.getVelocity().set(0, 0);
             break;
             case JUMPING:
                 super.container.fallFromJump();
@@ -101,6 +103,7 @@ public class SwordAgentBehavior extends AgentBehavior{
         if(this.patronArcherAddress == null){
             return;
         }
+//        System.out.println(super.myAgent.getAID().getName() +" --- "+ this.patronArcherAddress);
         float dx = Math.abs(super.container.getBody().x - this.patronPosition.x);
         this.closeToPatron = dx < ArcherAgentBehavior.ARCHER_DISTANCE_TO_ATK / 2f;
     }
@@ -114,16 +117,8 @@ public class SwordAgentBehavior extends AgentBehavior{
         }
     }
     
-    private void wallBehavior(){
-        boolean wallCollision = CollisionHandler.checkWallCollision(super.container.getGameScreen().getMapHandler(), this.container, super.container.getGameScreen().getLastDelta());
-        if(wallCollision){
-            super.container.getVelocity().x = super.container.getWalkingSpeed();
-            super.container.getVelocity().y = super.container.getJumpingSpeed();
-            super.container.setCurrentState(GameActor.State.JUMPING);
-        }
-    }
-    
-    private void groundBehavior(){
+    @Override
+    protected void groundBehavior(){
         CollisionHandler.checkGroundCollision(super.container.getGameScreen().getMapHandler(), super.container);
         if(super.container.getCurrentState() == GameActor.State.JUMPING){
             if(super.container.getVelocity().y == 0){
@@ -138,7 +133,6 @@ public class SwordAgentBehavior extends AgentBehavior{
         }else{
             super.container.getVelocity().y = 0;
         }
-
     }
     
     @Override
@@ -196,17 +190,19 @@ public class SwordAgentBehavior extends AgentBehavior{
         if(msg.getContent().startsWith("Patron died")){
             this.patronArcherAddress = null;
             this.closeToPatron = false;
+            this.alreadySendedConfirmationMsg = false;
         }
     }
     
     private void receiveRequestForGuard(ACLMessage msg){
-        if(this.patronArcherAddress == null){
+        if(this.patronArcherAddress == null && !this.alreadySendedConfirmationMsg){
             this.sendAcceptanceMsg(msg);
             return;
         }
     }
     
     private void sendAcceptanceMsg(ACLMessage msg){
+        this.alreadySendedConfirmationMsg = true;
         ACLMessage reply = msg.createReply();
         reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
         reply.setContent("Accept");
