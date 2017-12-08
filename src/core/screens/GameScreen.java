@@ -45,6 +45,7 @@ public class GameScreen implements Screen {
     private float debugCameraSpeed = 1f;
     private final TextureRegion heartImg;
     private float lastDelta;
+    private Music bgm;
     
     public GameScreen(final ScreenHandler game, PlayerHandler player) {
         this.game = game;
@@ -59,6 +60,7 @@ public class GameScreen implements Screen {
         this.camera.update();
         this.mapHandler.getMapRenderer().setView(camera);
         this.createActors();
+        this.bgm = assets.get("assets/sound/bloodyTears.mp3", Music.class);
     }
     
     private void createActors(){
@@ -167,6 +169,7 @@ public class GameScreen implements Screen {
                 }
             }
             AssetsManager.assets.finishLoading();
+            this.bgm.stop();
             this.game.setScreen(new GameOverScreen(game));
             this.mapHandler.disposeMap();
         }
@@ -263,10 +266,9 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
-        Music bgm = assets.get("assets/sound/bloodyTears.mp3", Music.class);
-        bgm.setLooping(true);
-        bgm.setVolume(0.5f);
-        bgm.play();
+        this.bgm.setLooping(true);
+        this.bgm.setVolume(0.5f);
+        this.bgm.play();
     }
 
     @Override
