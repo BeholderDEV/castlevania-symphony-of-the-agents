@@ -92,6 +92,14 @@ public class CollisionHandler {
             }
             return true;
         }
+        if(map.checkLayerCollision(MapHandler.Layer.GROUND, startX, startY, endX, endY)){
+            if(actor.getCurrentState() == GameActor.State.WALKING){
+                actor.setCurrentState(GameActor.State.STANDING);
+                actor.velocity.y = 0;
+                actor.velocity.x *= -1;
+                actor.updatePosition(delta);
+            }
+        }
         return false;
     }
     
