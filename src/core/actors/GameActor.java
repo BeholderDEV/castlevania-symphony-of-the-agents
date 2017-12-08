@@ -88,7 +88,7 @@ public abstract class GameActor {
             w = currentFrame.getRegionWidth() * MapHandler.unitScale;
             h = currentFrame.getRegionHeight() * MapHandler.unitScale;
             if(this.atkState == GameActor.Atk_State.CROUCH_ATK){
-                h += 1.2f;
+                h += 0.2f;
             }
         }
         if(this.facingRight){

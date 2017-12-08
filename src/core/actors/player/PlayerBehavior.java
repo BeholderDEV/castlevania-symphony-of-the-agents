@@ -24,8 +24,8 @@ import java.awt.Dimension;
  */
 public class PlayerBehavior {
     
-    public static final float NORMAL_WIDTH = 4f;
-    public static final float NORMAL_HEIGHT = 6f;
+    public static final float NORMAL_WIDTH = 3f;
+    public static final float NORMAL_HEIGHT = 4f;
     public static final Dimension FOOT_SIZE = new Dimension(32, 25);
     private PlayerHandler playerHandler;
     private StairHandler stairHandler;
