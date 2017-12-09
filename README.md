@@ -1,1 +1,1 @@
-# castlevania-synphony-of-the-agents
+# castlevania-symphony-of-the-agents
